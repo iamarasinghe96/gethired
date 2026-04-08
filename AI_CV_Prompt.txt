@@ -1,0 +1,114 @@
+You are an expert Australian recruitment consultant, ATS optimisation specialist, and LaTeX typographer with 15 years of experience helping candidates land interviews in the Australian public and private sector. You understand how Applicant Tracking Systems (ATS) parse resumes, what Australian hiring managers look for, and how to craft CVs that pass both the machine and the human screen.
+I will give you:
+
+A job description
+My complete profile and experience content bank
+
+Your task is to produce a fully tailored, ATS-optimised, professional LaTeX CV that maximises my chances of landing an interview for this specific role in Australia.
+
+THE JOB DESCRIPTION
+[PASTE JOB DESCRIPTION HERE]
+
+MY PROFILE & EXPERIENCE CONTENT BANK
+[PASTE YOUR FULL MASTER CV CONTENT BANK HERE]
+
+YOUR INSTRUCTIONS
+STEP 1 — ANALYSE THE JOB DESCRIPTION
+Before writing anything, silently extract:
+
+The exact job title (use this verbatim in my CV headline)
+Every hard skill mentioned (tools, systems, methodologies, certifications)
+Every soft skill mentioned (communication, stakeholder management, etc.)
+The industry language and terminology used (mirror this exactly)
+The selection criteria keywords that an ATS will scan for
+Whether it is a public sector or private sector role (tone differs)
+Whether it requires a Key Selection Criteria (KSC) style or achievement-based style
+
+STEP 2 — MAP MY EXPERIENCE TO THE ROLE
+Match my content bank to the job requirements:
+
+Select only the experience, skills, and stories most relevant to THIS role
+Drop anything irrelevant — a cluttered CV hurts more than it helps
+Reframe job titles and bullet points using the language of the job description
+Pull the most powerful story from my Story Bank that proves I can do the hardest part of this job
+Prioritise Australian experience and local context (Albury/Wodonga region where relevant)
+
+STEP 3 — APPLY THESE ATS & AUSTRALIAN HIRING RULES
+ATS rules:
+
+Use standard section headings: Summary, Experience, Education, Skills, Certifications
+Never use tables, columns, text boxes, headers/footers, or graphics for key content — ATS cannot read these
+Use clean bullet points starting with strong action verbs
+Mirror exact keywords and phrases from the job description — do not paraphrase them
+Spell out acronyms at least once (e.g. "Corrective and Preventive Action (CAPA)")
+Include the job title I am applying for in my professional summary
+Do not use images, icons, or fancy formatting in the ATS-safe version
+
+Australian hiring rules:
+
+Do not include photo, date of birth, marital status, or religion (illegal to request in AU; including them looks unpopular with modern HR)
+DO include right to work status — this is critical in Australia: "Full working rights — Subclass 485 visa, valid until 2029"
+Use Australian English spelling throughout (organisation not organization, programme not program, etc.)
+Quantify everything possible — Australian hiring managers respond strongly to numbers, percentages, dollar values, team sizes, and timeframes
+For public sector roles: structure bullet points using the STAR method (Situation, Task, Action, Result) implied within each point
+For private sector roles: lead with impact and results first, then context
+Keep CV to 2 pages maximum for most roles; 3 pages maximum for senior roles
+Use a professional summary of 3–4 lines that includes the job title, years of experience, and two or three strongest proof points for THIS role
+
+STEP 4 — WRITE THE CV CONTENT
+Structure in this order:
+
+Name and contact details (phone, email, LinkedIn, portfolio, location — no full street address, suburb and state only)
+Right to Work statement
+Professional Summary (3–4 lines, job-title specific)
+Core Skills (keyword-rich, 2-column layout — 10 to 16 skills maximum, every one pulled from the JD)
+Professional Experience (reverse chronological — for each role: company, title, dates, location, then 4–6 bullet points maximum using strong action verbs and quantified outcomes)
+Education (reverse chronological — institution, degree, year only — no GPA unless role is graduate-level)
+Certifications (only those relevant to the role)
+Referees: "Available upon request" unless the role specifically asks for them
+
+STEP 5 — WRITE THE LaTeX CODE
+Produce complete, compilable LaTeX code using these specifications:
+
+Document class: article
+Margins: 1.5cm all sides using the geometry package
+Font: Clean, professional — use \usepackage{lmodern} or \usepackage{helvet} with \renewcommand{\familydefault}{\sfdefault} for a modern sans-serif look
+Font size: 10pt body, 11pt section headings, 14pt name
+Colour: Use one accent colour for section headings and the name — a professional dark blue (\usepackage{xcolor} with \definecolor{accentblue}{RGB}{31, 78, 121})
+Section dividers: a thin horizontal rule under each section heading
+Skills section: use a two-column multicols environment
+Bullet points: use itemize with \setlength\itemsep{1pt} for tight spacing
+No tables for layout — use minipage or tabular only where genuinely needed
+The entire document must compile on Overleaf without errors using standard packages only
+At the bottom of the LaTeX code, add a commented-out section % ATS NOTE listing the top 10 keywords from the JD that are embedded in this CV
+
+STEP 6 — AFTER THE LaTeX CODE, PROVIDE:
+A. Keyword match report — list the top 15 ATS keywords from the JD and confirm whether each one appears in the CV (yes/no/partially)
+B. What was left out and why — briefly note any experience from my content bank that was deliberately excluded for this application and the reason
+C. Cover letter hook — one powerful opening paragraph (4–5 sentences) tailored to this specific role, written in first person, that I can use to start my cover letter. It should reference the organisation by name, the role by name, and lead with my single strongest proof point for this job.
+D. One interview question to prepare for — identify the hardest behavioural question likely to come from this JD (e.g. "Tell me about a time you managed a complex project with multiple stakeholders") and suggest which story from my Story Bank to use to answer it using the STAR method.
+
+QUALITY STANDARDS
+
+Every bullet point must start with a past-tense action verb (Led, Delivered, Developed, Managed, Built, Reduced, Achieved, Designed, Implemented, Coordinated, etc.)
+No bullet point should be longer than two lines
+No generic filler phrases ("responsible for," "assisted with," "helped to," "worked on") — replace all with specific, owned, active language
+The professional summary must not begin with "I"
+The CV must feel like it was written specifically for this job — not a generic document with the job title swapped in
+If the role is in the Albury-Wodonga region, reference local proximity naturally where it adds genuine value
+If the role is in sustainability, ESG, or climate: lead with the Climate Transition Tool and 2,000+ client delivery
+If the role is in project management or administration: lead with the 40-member team, 100% KPI compliance, and zero incidents record
+If the role is in finance or billing: lead with the DAC gap recovery ($5.3M to $0.3M in 7 months) and ATD test achievement
+If the role is in tech or AI: lead with AI integration, tool development, and the ESG evidence library automation story
+If the role is in community, healthcare, or education: lead with iSpeak, AWH projects, and the Kids Clinic
+
+
+FINAL OUTPUT FORMAT
+Deliver in this exact order:
+
+A brief note (3–5 sentences) on your tailoring strategy for this specific role
+The complete LaTeX code (fully compilable on Overleaf)
+Keyword match report
+What was excluded and why
+Cover letter opening hook
+Interview question to prepare for

@@ -1,0 +1,520 @@
+INDIKA AMARASINGHE — MASTER CV CONTENT BANK
+(Merged: PDF CV + LinkedIn + All Cover Letters — March 2026)
+
+PERSONAL INFORMATION
+
+Full Name: L.I.D. Amarasinghe (Indika Amarasinghe)
+Date of Birth: 23rd April 1996
+Address: 634, Loma Place, Albury, NSW 2640, Australia
+Mobile: +61 484 920 892
+Sri Lanka Phone: +94 11 223 2172
+Email: iamarasinghe96@gmail.com
+LinkedIn: www.linkedin.com/in/indika96
+GitHub / Portfolio: iamarasinghe96.github.io/himate
+Sex: Male
+Civil Status: Married
+Ethnic Group: Sinhalese
+NIC: 961142474V
+Right to Work (Australia): Unrestricted — Subclass 485 visa, valid until 2029
+Location note: Based in Albury NSW — 3 minutes from Premise Albury, near Albury Wodonga Health, Charles Sturt University, SS&A Club, Federation Council, and Wodonga City Council precincts
+Languages: English (fluent), Sinhala (native), Mandarin (competent)
+
+
+PROFESSIONAL SUMMARY / ABOUT ME
+Experienced project manager combating global greenhouse gas emissions with finance tools. Focuses on client transition planning and monitoring solutions.
+An enthusiastic and empathetic professional with deep expertise in project management, AI integration, and sustainable finance. Driven by a mission to connect people, institutions, communities, and societies with the benefits of technological advancement.
+Aspires to a world where AI is used to minimise environmental pollution and e-wastage. Possesses excellent communication and leadership skills. Embodies the principle that 1+1 > 2 — collaboration multiplies outcomes beyond individual contributions.
+Versatile across industries: telecommunications, sustainable finance, ESG advisory, AI-assisted development, investment banking, healthcare, government, aviation, and digital content creation.
+LinkedIn Headline: Project Execution Expert | AI Integrationist | ESG | Developer | Man in the mirror
+Personal tagline used across applications: "As someone from an engineering family background, I value sincerity, teamwork, and perseverance, and I approach every role with a genuine commitment to deliver meaningful results."
+
+SKILLS & PROFICIENCIES
+Artificial Intelligence & Technology
+
+AI integration and prompt engineering expert
+AI-assisted development (AIAD)
+Proficient in leveraging AI tools for analysis, automation, and sustainability advisory
+Building and debugging AI-driven workflows and tools
+Co-developing AI-human hybrid solutions to address sustainability issues (Gaia Symbiosis)
+Web tool development (converted full cloud-based workflow to solo-built web tool)
+
+Project & Programme Management
+
+End-to-end project management across large, global, cross-functional teams (30–40+ members)
+Delivery lead: scoping, milestone planning, stakeholder management, risk control
+Project kick-offs, weekly progress meetings, monthly governance calls, strategic discussions, post-project retrospectives
+Client KPI and deadline management — 100% KPI compliance record
+SOP creation and process standardisation — SOP owner for 3 years; templates adopted organisation-wide
+CAPA (Corrective and Preventive Action) protocol — initiated and owned; zero reported incidents through to project completion
+Customised QC checks and quality review advisory
+Agile and iterative delivery methods
+Revenue, billing, and compliance management — zero incompliant cases
+Lead to Cash project lifecycle management
+Backlog resolution and project visibility management
+Post-project internal audits
+Timesheet compliance management
+Effort estimation for hiring and workload planning
+Resource allocation — including insourcing/outsourcing coordination
+WHS/EHS administration, incident reporting, training matrices, CAPA protocol ownership (0 EHS incidents on 40+ member projects)
+
+Sustainable Finance & ESG
+
+Climate Transition Tool (CTP) development, delivery, and advisory (2,000+ clients)
+PCAF compliance (Partnership for Carbon Accounting Financials)
+TNFD-aligned nature and deforestation disclosure
+Climate-related financial disclosures
+CSRD fundamentals and readiness
+Introduction to ESG (certified)
+Introduction to Climate Risk Management (certified)
+ESG Remediation — Wholesale Banking (loan portfolio data)
+Climate transition planning and monitoring
+General sustainability advisory
+ISO 14001 awareness through third-party assurance provider engagement (zero reject rate during tenure; KPI was 5 refusals based on prior year)
+Environmental monitoring: water quality, air emissions (NOx, SOx, CO₂, PM2.5, PM10), waste management, biodiversity, cultural heritage
+Satellite deforestation monitoring tool (personally developed)
+Environmental Management Systems (EMS) — policy development through to training delivery
+
+Data, Analytics & Automation
+
+Advanced Excel: Macros, Formulas & Functions, Pivot Tables, Charts & Graphs, Power Query
+Advanced Google Sheets skills
+Excel engine development for complex tools
+Dashboard automation and macro-based analysis
+Data wrangling and pivot analysis
+Investment banking process automation (high-volume workflows)
+Automated reminder and follow-up macros (hundreds of test runs before deployment — never failed once)
+Gantt chart and project tracker creation
+Data cleansing, transformation and compliance
+Converted entire facility agreement analysis workflow (7,800+ documents) from manual to fully automated — solo, within 4 months, with a team of 10 analysts
+Real-time project monitoring dashboards for daily huddles and weekly management reviews
+DAC gap management: reduced from $5.3M to under $0.3M in 7 months
+
+Finance & Billing
+
+Project revenue and billing management specialist
+Invoicing, billing summaries, and financial reporting — 100% KPI compliance on revenue triggering
+Daily revenue updates and weekly billing reports to CEO, CFO, and 100+ person project teams
+DAC clearance forecasting and material delivery timeline management
+WIP reviews, debtor management, accounts receivable follow-up
+Payroll model development capability
+Passed ATD (Attention to Detail) test for investment banking credit analysis recruits — required in absence of specific PM ATD test
+
+Documentation & Communication Materials
+
+User manuals, FAQs, explainer materials, and simulator creation
+Communication templates and mass communication drafts for front-office staff
+Marketing materials, illustrations, and mock HTML websites for client outreach
+Process maps, management reporting decks, and progress reports
+HTML interface and dashboard creation
+Promotional video production and media placement
+Meeting minutes — personal template praised and adopted by multiple departments
+Version management tool for document sign-offs (replaces Adobe Sign; keeps signatures, changes, and dates secure with full audit trail)
+
+Web Development
+
+Web development skills (LinkedIn top skill)
+HTML interface creation for project tools and client outreach
+Mock HTML website development
+Web-based solution implementation for non-profits (Gaia Symbiosis)
+Founder: "My AWH" — referral letter generator for doctors; "AWHi" — patient information portal for Albury Wodonga Health
+Founder: "The Kids Clinic" — sustainable, secure patient management system developed with healthcare staff, consultants, and patients
+
+Sales, Commercial & Business Development
+
+Technical and commercial negotiation with enterprise clients (junior to CXO level)
+RFP responses, BOQ preparation, and solution proposals
+Bid preparation, quotation and budget analysis
+Commercial analysis and cost optimisation
+Key Account Management (KAM) — Axiata/Dialog/Airtel/Hutch/Mobitel/SLT
+Annual sales target achievement ($1.3M target achieved; challenge target exceeded in 2022)
+Network transformation strategy development aligned with industry roadmaps
+Add-on sales identification through regular customer network and business analysis
+Salesforce and other CRM platforms (Huawei iSales — detailed CRM scheduling system)
+Artwork, infographics, and promotional content for marketing campaigns
+
+Training & Knowledge Transfer
+
+Trained new employees on sustainability concepts, workflows, Excel skills, and project execution
+Authored training programs, materials, exams, and trivia for policy implementation
+iSpeak initiative (Yi Gao Education) — student communication, confidence, and leadership program; received recognition from Oxford for innovative approach
+Tutored international students in accounting individually and in groups
+Created online course material distribution networks
+Kindergarten English teaching (Yi Gao Education, Chengdu)
+
+Healthcare & Community
+
+Founded "My AWH" referral letter generator and "AWHi" patient portal for Albury Wodonga Health
+Founded "The Kids Clinic" patient management system
+Experience in facility and ward management solutions
+Pastoral care and student support experience (Yi Gao Education)
+Founded iSpeak initiative for student development
+
+Communication & Leadership
+
+Public speaking and presentation skills
+Cross-cultural communication (Chinese, Sri Lankan, Australian, multinational environments)
+Stakeholder management across junior to CXO level
+Team leadership (managed 30–40+ person delivery teams across 6.5 years)
+Conflict resolution and customer-first approach
+Mentoring and tutoring
+Debate and oratory: multiple regional championships
+Empathetic people management — led large teams without pressure through technology and creative solutions
+
+Creative, Content & Media
+
+Adobe Creative Suite: Photoshop, Lightroom, Illustrator, After Effects
+Canva platform proficiency
+Logo and vector design
+Infographics and flyer design
+Artwork coordination for marketing campaigns
+Promotional video production and media placement
+Storytelling-style content creation — TikTok video reached 71K organic views
+Social media marketing: Meta platforms specialist, demographic analytics, algorithm-aware content strategy
+Short-form video planning, editing, and publishing
+Audio editing and content creation
+Drone videography (Instagram: rakshitha.jpg | TikTok: raxitha6)
+EDM creation and management
+Macro-enabled workflow automation for membership/content teams
+
+Technical & Digital
+
+Microsoft Office Suite (advanced)
+HCIA — Cloud Service (Huawei certified)
+CNBG Sales General Capability Enablement (Huawei certified)
+Google Digital Garage: Fundamentals of Digital Marketing
+Microsoft Teams scheduling and coordination
+UX design support for enterprise tools
+Backend team support for tool design and user-friendly process integration
+Adobe Sign familiarity (and developed replacement version management tool)
+
+
+WORK HISTORY
+Delivery Lead — Sustainable Finance
+Employer: Acuity Knowledge Partners — Colombo Delivery Centre
+Period: April 2025 – Present
+Nature: Led delivery of Climate Transition Tool for 2,000+ clients; award-winning project for a multinational bank
+
+Led delivery of the Climate Transition Tool for 2,000+ clients, coordinating a 30-member team, supporting pilot builds, debugging early versions, refining workflows, and resolving delivery bottlenecks with technical teams.
+Conducted project kick-offs, weekly progress meetings, monthly governance calls, strategic discussions, and post-project retrospectives while ensuring client KPIs and deadlines were consistently met.
+Prepared user manuals, FAQs, communication templates, explainer materials, videos, simulators, and mass communication drafts for front-office staff.
+Handled inquiries and issue tickets, delivered timely resolutions within SLAs, and designed automated reminder and follow-up macros.
+Created project trackers, templates, HTML interfaces, dashboards, progress reports, Gantt charts, process maps, and management reporting decks.
+Performed data wrangling, pivot and macro-based analysis, dashboard automation, and provided effort estimations for hiring and workload planning.
+Developed SOPs, standardised workflows, CAPA procedures, and customised QC checks; advised on quality reviews, rework issues, and subject-matter queries for CTP assessments.
+Trained new employees on concepts, workflows, sustainability theory, Excel skills, and practical project execution.
+Built Excel engines, macros, automation scripts, and dashboards; supported UX and backend teams on tool design and user-friendly process integration.
+Contributed to climate transition planning, ESG remediation, PCAF reporting solutions, TNFD/nature disclosure work, and general sustainability advisory projects.
+Prepared marketing materials, illustrations, and mock HTML websites for client outreach.
+Managed timesheet compliance, backlog resolution, KPI monitoring, hiring-related effort estimates, project visibility, and conducted post-project internal audits.
+
+
+Senior Associate — Sustainable Finance
+Employer: Acuity Knowledge Partners — Colombo Delivery Centre
+Period: June 2023 – April 2025 (1 year, 11 months)
+(Promoted to Delivery Lead April 2025)
+
+Core responsibilities fed into the Climate Transition Tool project throughout this period.
+Initiated the CAPA protocol for climate transition analysis; enforced learnings through new joiner training, pop quizzes, and morning huddle discussions — zero reported incidents through to project completion.
+Developed satellite deforestation monitoring tool personally.
+Screened 7,800+ publications annually for ESG evidence library (see Story Bank for full detail).
+Built and owned the ESG evidence digital library — from outreach through analysis to dashboard monitoring.
+Passed ATD test for investment banking credit analysis recruits (required due to absence of specific PM test).
+
+
+Founder
+Organisation: Gaia Symbiosis (Non-Profit) — Colombo, Sri Lanka
+Period: February 2025 – Present
+
+Co-developing and deploying AI-human hybrid solutions to address local sustainability issues.
+Supporting local organisations in adopting web-based solutions that reduce environmental impact.
+Supports local organisations with environmental data analysis, EMS implementation, and ISO 14001-aligned compliance services.
+
+
+Key Account Executive — Axiata Account
+Employer: Huawei Technologies Lanka Co. (Pvt) Ltd — Colombo Sri Lanka Rep Office
+Period: November 2019 – May 2023 (3 years, 7 months)
+
+Built and maintained healthy relationships with key customers through regular marketing activities.
+Designed and coordinated artworks, infographics, promotional video production, and media placement for marketing campaigns and brand promotion.
+Engaged with R&D and post-sales teams to identify potential Huawei solutions for deployment in customer networks.
+Worked closely with customers to convert new sales leads into opportunities through open discussions, technical presentations, and workshops.
+Early engagement with customers to devise network transformation strategies aligned with industry roadmaps.
+Led technical negotiations on bidding projects including responding to RFPs, preparing BOQs and solution proposals.
+Supported commercial negotiations by preparing quotations, commercial analysis, and identifying optimisations to align with customer budgets.
+Supported delivery team by mediating with customers to ensure project delivery aligned with agreed deliverables.
+Performed regular customer network and business analysis to identify and promote add-on sales.
+Achieved annual sales targets ($1.3M target achieved; challenge target exceeded in 2022).
+Worked with customers, R&D, regional solutions teams, and delivery teams across full Lead-to-Cash lifecycle.
+Engaged with junior to CXO level customers to find new opportunities and close projects.
+Won major contracts: Airtel AMC and Hutch 4G Project.
+Project Director, Airtel Core Network Expansion Project 2022 — delivered on time with strong customer satisfaction.
+Project revenue and billing management for Career Network business domain (Dialog, Airtel, Hutch, Mobitel, SLT) — zero incompliant cases.
+Provided daily revenue updates and weekly billing reports to CEO, CFO, and 100+ person project teams.
+Reduced DAC gap from $5.3M (during COVID period) to under $0.3M in 7 months.
+Revenue and Billing Specialist — first training assignment was as daily resource allocation officer during year-end rollout sprint.
+
+
+Founder — Healthcare Tech Projects
+Projects: My AWH, AWHi, The Kids Clinic
+Period: Ongoing (Albury, NSW)
+
+My AWH: Referral letter generator for doctors at Albury Wodonga Health — reduces inefficiencies in patient management and addresses resource constraints.
+AWHi: Information portal for patients at Albury Wodonga Health — streamlines patient access to information.
+The Kids Clinic: First-of-its-kind, sustainable, highly secure patient management system developed in collaboration with healthcare staff, consultants, and patients.
+
+
+iSpeak Initiative — Founder
+Organisation: Yi Gao Education — Chengdu, China
+Period: During teaching tenure (2018–2019)
+
+Founded iSpeak, a student communication, confidence, and leadership development initiative.
+Received recognition from Oxford for its innovative approach to student engagement.
+
+
+Part-Time English Tutor
+Employer: Yi Gao Education — Chengdu, China
+Period: July 2018 – July 2019 (1 year, 1 month)
+
+Part-time kindergarten English Tutor; developed child-friendly curriculum and communication approaches.
+Provided pastoral care and academic support to students from diverse backgrounds.
+
+
+Freelancer
+Platform: Fiverr
+Period: February 2017 – July 2018 (1 year, 5 months)
+
+Content creation, logo vector design, infographics design, and flyer design for international clients.
+
+
+HR Trainee (Summer Internship)
+Employer: Hayleys Fentons Limited — Colombo, Sri Lanka
+Period: July 2016 – August 2016 (2 months)
+
+Created and updated employee databases.
+Updated CV database.
+Summarised evaluation data from training programmes coordinated by the HR team.
+
+
+EDUCATION
+Master of Business Administration (MBA) — Marketing
+
+Cardiff Metropolitan University, Cardiff, United Kingdom (World Ranking: 1879 | Country Rank: 105)
+Grade: Merit | Period: 2020–2022
+Dissertation: The Relationship Between Technical Training and Employee Job Satisfaction
+
+Bachelor of Management (BMgt) — Business Management & Accounting (Double Major)
+
+Southwestern University of Finance and Economics (SWUFE), Chengdu, China (World Ranking: 1054 | Country Rank: 112)
+RIEM — EQUIS Accredited, Double First Class University
+GPA: 3.2 | September 2015 – June 2019
+Full Tuition Scholarship Holder
+Thesis: The Impact of Leadership Style on Emotional Exhaustion of the Followers
+
+Bachelor of Commerce (Qualified Entry)
+
+University of Sri Jayewardenepura, Sri Lanka — Business/Commerce, General (2017)
+
+High School Diploma — Business/Commerce
+
+Ananda College, Colombo, Sri Lanka — Best Results Achiever (2015)
+
+English Language Training
+
+British Council EnglishScore, Colombo, Sri Lanka (2013)
+
+Computer Literacy
+
+CECO Computer School, Ekala, Sri Lanka — General Computer Course
+
+Junior School
+
+Jayanthi Vidyalaya, Ja-ela, Sri Lanka — Best Results Achiever of the School (Class of 2012)
+
+
+CERTIFICATIONS & PUBLICATIONS
+Sustainable Finance / Climate
+
+Climate-Related Financial Disclosures — Continuing the Journey
+Introduction to ESG
+Introduction to Climate Risk Management
+CSRD Fundamentals
+
+Technology / Huawei
+
+HCIA — Cloud Service
+CNBG Sales General Capability Enablement
+Product & Solution Sales: Required Knowledge in Account Direct Sales
+Knowledge of Account Direct Sales for MSSD Director
+
+Digital Marketing
+
+Google Digital Garage: The Fundamentals of Digital Marketing
+
+Academic Publications
+
+The Relationship Between Technical Training and Employee Job Satisfaction — Cardiff Metropolitan University (MBA)
+The Impact of Leadership Style on Emotional Exhaustion of the Followers — SWUFE, Chengdu (Bachelor's)
+
+Awards
+
+Most Valuable Team Award — ESG.X (Acuity Knowledge Partners)
+Best Results Achiever — Ananda College (2015)
+Best Results Achiever of the School — Jayanthi Vidyalaya (2012)
+Full Tuition Scholarship — SWUFE China (2015–2019)
+
+
+STORY BANK — KEY NARRATIVES FOR COVER LETTERS
+These are proven storylines extracted from your cover letters. Use them as evidence when writing tailored applications.
+
+STORY 1: The ESG Evidence Library — Automation & Problem Solving
+Best used for: Project management, data/analytics, automation, admin, operations, environmental roles
+The team was tasked with analysing 7,800+ facility agreements and publications annually and building a digital evidence library. The challenge: contributors were not dedicated to this task — their full-time roles were elsewhere, they were busy, and getting documents from them required genuine interpersonal skill and persistence. Rather than applying pressure, I handled it through technology and creative thinking.
+I built macros from scratch — after hundreds of test runs, they never failed once after deployment. I developed Excel templates for day-to-day analysis, QC templates, troubleshooting macros for data input issues, and a monitoring and search dashboard for the entire library. Individual access to sensitive files was coordinated via email with parent account managers. After analysis and PAM approval, evidence emails were saved back into the library automatically.
+The entire workflow — which would normally require a full web/cloud-based solution team — was built by me, solo. The project was completed within four months with only ten analysts, including myself, with three team members sick for two weeks. No pressure was put on any individual. Delivery quality was praised by the client and converted a one-time project into a BAU (Business As Usual) project.
+
+STORY 2: The DAC Gap — Finance & Billing Recovery
+Best used for: Finance, billing, project administration, operations roles
+During my time as Revenue and Billing Specialist at Huawei, the DAC (Days After Completion) gap stood at $5.3M during the COVID period — a significant revenue risk for the organisation. Through disciplined forecasting, daily revenue tracking, structured escalation, and close coordination with project and finance teams, I brought that gap down to under $0.3M within 7 months. I provided daily revenue updates and weekly billing reports to the CEO, CFO, and a 100+ person project team throughout this period.
+
+STORY 3: The CAPA Protocol — Governance & Incident Prevention
+Best used for: Governance, compliance, environmental, admin, operations, WHS roles
+When I joined the climate transition analysis project, there was no formal incident management or corrective action structure in place. I initiated and became the owner of the CAPA (Corrective and Preventive Action) protocol. I enforced learnings through new joiner training sessions, pop quizzes, and discussions during morning huddles. The result: zero reported incidents from implementation through to project completion. The previous year's KPI for the equivalent function had allowed for five refusals — I brought it to zero.
+
+STORY 4: The Meeting Minutes Template — Communication & Standardisation
+Best used for: Administration, governance, project support, coordinator roles
+I developed a personal meeting minutes template that was eventually praised and adopted by other departments for its clarity and efficiency. The template was designed not just to record what was said, but to track why the meeting was held and whether its objectives were actually achieved. This turned what can often become "coffee-drinking events" into structured, accountable sessions with real follow-through.
+
+STORY 5: The SOP Reporting Template — Process Standardisation
+Best used for: Administration, governance, compliance, project roles
+As SOP owner across multiple projects for three years, I developed a reporting template that was eventually adopted across the entire department. The template was designed for ease of use, accuracy, and audit-readiness — reducing rework and ensuring that every team member could follow processes without ambiguity.
+
+STORY 6: The Satellite Deforestation Monitoring Tool — Innovation
+Best used for: Environmental, ESG, sustainability, tech, innovation roles
+I personally developed a satellite deforestation monitoring tool as part of the climate and biodiversity work at Acuity. This tool was used to track commodity-specific deforestation in targeted regions, feeding directly into TNFD-aligned nature disclosure reporting for institutional clients.
+
+STORY 7: The SL Rails Elephant Collision Prevention System — Innovation
+Best used for: Environmental, technology, innovation, community roles
+During the COVID period, together with a close group of technologist friends, I developed a thermal and GPS tracking monitoring system to prevent elephant collisions on Sri Lankan railway routes, as a pilot project. The app was named "SL Rails." The concept was based on thermal readings and seasonal elephant movement patterns. This idea was subsequently implemented by the Sri Lankan government.
+
+STORY 8: The Version Management Tool — Process & Document Control
+Best used for: Administration, governance, document control, legal support roles
+Adobe Sign was in use for official document sign-offs, but I identified limitations in version tracking and audit transparency. I developed a version management tool that keeps signatures, changes, and dates secure while maintaining a smooth, transparent process — without missing any modification — and fully supporting internal auditing requirements.
+
+STORY 9: The Publication Screening Workflow Transformation — Solo Problem Solving
+Best used for: Data, research, environmental, ESG, operations roles
+A project required the team to screen 7,800 publications annually. Initially handled through basic Excel approaches, I single-handedly converted the entire workflow — which would normally require a full web/cloud-based solution team — using web tool development skills and creative thinking, within five months of joining. Delivery quality was praised by the client and the project converted from a one-time engagement to a BAU project.
+
+STORY 10: iSpeak Initiative — Community & Education Leadership
+Best used for: Education, community, student services, coordinator, residential life roles
+While teaching at Yi Gao Education in Chengdu, I founded iSpeak — a student development initiative focused on enhancing communication, confidence, and leadership skills. The programme received recognition from Oxford for its innovative approach to student engagement and development.
+
+STORY 11: Healthcare Tech Solutions — Community Innovation
+Best used for: Healthcare administration, resourcing, community, coordinator roles
+I founded two solutions for Albury Wodonga Health: "My AWH," a referral letter generator for doctors to reduce inefficiencies in patient management, and "AWHi," an information portal for patients. I also developed "The Kids Clinic," a first-of-its-kind, sustainable, and highly secure patient management system, built in genuine collaboration with healthcare staff, consultants, and patients.
+
+STORY 12: TikTok 71K Views — Organic Content Creation
+Best used for: Social media, marketing, content, communications roles
+A storytelling-style video I created reached 71,000 organic views on TikTok. This was achieved through deliberate content strategy — understanding audience behaviour, platform algorithms, and the principles of authentic visual storytelling — not paid promotion. This is backed by experience across drone videography, Adobe Suite editing, and social media analytics.
+
+STORY 13: The Climate Transition Tool — Large Scale Delivery
+Best used for: Project management, ESG, sustainability, senior project officer roles
+Led a 30–40 member team to deliver a climate transition tool covering 2,000+ institutional clients for a multinational bank. The project was award-winning. I debugged early builds, developed Excel engines, supported UX design, implemented CAPA protocols, authored training materials, built dashboards, resolved delivery bottlenecks, and maintained 100% KPI compliance — all with zero EHS incidents.
+
+STORY 14: ATD Test Pass — Attention to Detail
+Best used for: Finance, banking, administration, investment banking, operations roles
+I passed one of the hardest ATD (Attention to Detail) tests used for investment banking credit analysis recruits. This test was required due to the absence of a specific ATD instrument for the Project Manager role — meaning I voluntarily undertook and passed a test designed for a more analytically intensive position. I am experienced in preparing, approving, and proofreading SOPs as a direct result of this standard.
+
+STORY 15: Huawei KAM — CXO Relationship Management
+Best used for: Sales, account management, client services, business development roles
+As Key Account Executive for Huawei's Axiata account, I was responsible for engaging with some of the busiest people on both sides of the relationship — from junior technical staff through to CXO level. I achieved the annual $1.3M sales target and exceeded the challenge target in 2022. I won Airtel AMC and Hutch 4G contracts through a combination of technical negotiation, relationship building, and structured commercial proposals.
+
+PERSONAL PROJECTS & SIDE VENTURES
+
+Gaia Symbiosis (Non-Profit): AI-human hybrid solutions for local sustainability issues; ISO 14001-aligned EMS services for local organisations
+My AWH: Referral letter generator for Albury Wodonga Health doctors
+AWHi: Patient information portal for Albury Wodonga Health
+The Kids Clinic: Secure patient management system built with healthcare professionals
+SL Rails: Thermal and GPS elephant collision prevention system for Sri Lankan railways (piloted during COVID; concept later implemented by government)
+iSpeak: Student communication and leadership programme (Oxford-recognised)
+Satellite Deforestation Monitoring Tool: Personally developed for commodity-specific biodiversity tracking
+
+
+ACHIEVEMENTS & EXTRACURRICULAR
+Awards
+
+Most Valuable Team Award — ESG.X (Acuity Knowledge Partners)
+Best Results Achiever — Ananda College (2015)
+Best Results Achiever of the School — Jayanthi Vidyalaya (2012)
+Full Tuition Scholarship — SWUFE China (2015–2019)
+
+Music Competitions
+
+2009: All-island 2nd place — harmonium solo; Western Province 1st; Negombo Zone 1st
+2008: Negombo Zone 1st place
+
+Commerce / Debate
+
+2012 & 2011: 1st place divisional & zonal debate competitions
+2012 & 2011: 1st place divisional advertisement demonstration competition
+
+English Language (2012)
+
+2nd place zonal creative writing; 1st place divisional
+Pair improvisation: 1st place divisional & zonal
+
+Cricket
+
+4th place, Gampaha District Under-13 — Negombo South International Trophy (2007/2008)
+
+Young Inventor
+
+Designed specialised braking system for three-wheelers to prevent unexpected overturns
+
+Volunteering — SWUFE China (2015–2019)
+
+Voluntary kindergarten English Teacher
+Member of Young Volunteers Association
+Blood donor
+Tutored international students in accounting
+Created online course material distribution network
+
+School Leadership — Jayanthi Vidyalaya (2011–2012)
+
+Head Prefect
+President — Oratory and Debating Society (Sinhala)
+President — Information and Communication Unit
+President — English Literary Circle
+
+Ananda College (2013–2014)
+
+Active member of the school Commerce Society
+
+
+REFEREES
+Mrs. Sulani Gunasena
+
+Title: Associate Director, Acuity Analytics
+Email: sulani.gunasena@gmail.com
+Phone: +94 77 360 5579
+
+Mr. Samitha Bandara
+
+Title: Project Director, Huawei Technologies Lanka
+Email: cmsamitha@gmail.com
+Phone: +94 77 395 8081
+
+
+USAGE NOTES — WHICH STORIES TO USE FOR WHICH ROLES
+AI / Tech roles: Stories 6, 9, 11, 13 + AI integration skills
+ESG / Sustainability / Environmental: Stories 1, 3, 6, 7, 13 + PCAF/TNFD/CSRD certifications
+Project Management / Senior Project Officer: Stories 1, 2, 3, 4, 13, 15 + 40-member delivery, KPI compliance
+Finance / Billing / Project Administrator: Stories 2, 14 + DAC recovery, ATD pass, billing management
+Governance / Compliance / Admin: Stories 3, 4, 5, 8 + CAPA, SOP ownership, version control tool
+Sales / Business Development / KAM: Stories 2, 15 + Huawei KAM, $1.3M target, CXO engagement
+Administration / Operations: Stories 1, 4, 5, 8, 14 + Excel automation, document control
+Healthcare / Resourcing: Stories 11 + AWH projects, resource planning, interpersonal skills
+Education / Student Services / Residential Life: Story 10 + iSpeak, tutoring, pastoral care
+Creative / Social Media / Marketing: Story 12 + TikTok 71K, Adobe Suite, drone videography, Canva
+Community / Environmental Innovation: Stories 7, 11 + SL Rails, Gaia Symbiosis
+Australian market — always include: Subclass 485 unrestricted work rights (valid to 2029), Albury NSW location
+APAC / China-facing roles: SWUFE scholarship, 4+ years Chengdu, Mandarin competency
