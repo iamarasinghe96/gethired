@@ -641,7 +641,7 @@ function workHistoryBodyHTML() {
       ${fg(3,
         fi('Start Date', inp(`workHistory.${i}.startDate`, 'e.g. April 2025')),
         fi('End Date', inp(`workHistory.${i}.endDate`, 'e.g. Present')),
-        fi('Project / Nature Summary <span class="opt">optional</span>', inp(`workHistory.${i}.nature`, 'e.g. Led delivery of Climate Transition Tool for 2,000+ clients'))
+        fi('Nature of Employment <span class="opt">optional</span>', inp(`workHistory.${i}.nature`, 'e.g. Full-time, Permanent'))
       )}
       ${fg(1, fi('Bullet Points (one per line)', ta(`workHistory.${i}.bullets`, 'Led delivery of...\nCoordinated a 30-member team...\nBuilt automated dashboards...\n...', 6)))}
     </div>`).join('');
