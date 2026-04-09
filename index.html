@@ -1367,7 +1367,10 @@ function injectPersonalInfo(template, info) {
 // PROMPT BUILDER — CORE LOGIC
 // ═══════════════════════════════════════════════════════════════
 function loadPromptBuilder() {
-  document.getElementById('cv-bank').value   = localStorage.getItem('cv_content_bank') || '';
+  // Always regenerate cv-bank from current profile so it's never stale
+  const cvBankText = generateCVBankText();
+  document.getElementById('cv-bank').value = cvBankText;
+  if (cvBankText.length > 20) localStorage.setItem('cv_content_bank', cvBankText);
   document.getElementById('cl-prompt').value = localStorage.getItem('cl_prompt')        || DEFAULTS.cl;
   document.getElementById('cv-prompt').value = localStorage.getItem('cv_prompt')        || DEFAULTS.cvp;
   updateCount('cv-bank','cv-count');
@@ -1572,6 +1575,7 @@ function switchView(view) {
   document.querySelectorAll('.main-nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById(`view-${view}`).classList.add('active');
   document.getElementById(`nav-${view}`).classList.add('active');
+  if (view === 'prompt') loadPromptBuilder();
 }
 
 // ═══════════════════════════════════════════════════════════════
