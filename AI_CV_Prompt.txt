@@ -75,7 +75,7 @@ Margins: 1.5cm all sides using the geometry package
 Font: Clean, professional — use \usepackage{lmodern} or \usepackage{helvet} with \renewcommand{\familydefault}{\sfdefault} for a modern sans-serif look
 Font size: 10pt body, 11pt section headings, 14pt name
 Colour: Use one accent colour for section headings and the name — a professional dark blue (\usepackage{xcolor} with \definecolor{accentblue}{RGB}{31, 78, 121})
-Section dividers: a thin horizontal rule under each section heading
+Section dividers: a thin horizontal rule under each section heading. Section heading spacing rule: all vertical space must appear BEFORE the heading, not after the rule. Use \vspace{10pt} immediately before each section heading and zero extra space between the rule and the content that follows. The pattern for every section must be: \vspace{10pt} → heading text → \noindent\rule{\linewidth}{0.4pt} → content (no gap). Never insert \vspace or \medskip or \smallskip after the rule.
 Skills section: use a two-column multicols environment
 Bullet points: use itemize with \setlength\itemsep{1pt} for tight spacing
 No tables for layout — use minipage or tabular only where genuinely needed
