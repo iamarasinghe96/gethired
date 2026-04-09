@@ -848,7 +848,6 @@ function generateCVBankText() {
     P.skills.forEach(s => {
       if (!s.category && !s.items) return;
       push(s.category || 'Skills');
-      nl();
       (s.items || '').split('\n').filter(Boolean).forEach(i => push(i));
       nl();
     });
@@ -900,19 +899,16 @@ function generateCVBankText() {
     P.certifications.forEach(c => {
       if (!c.category && !c.items) return;
       push(c.category || 'Certifications');
-      nl();
       (c.items || '').split('\n').filter(Boolean).forEach(i => push(i));
       nl();
     });
     if (P.publications.academic) {
       push('Academic Publications');
-      nl();
       P.publications.academic.split('\n').filter(Boolean).forEach(p2 => push(p2));
       nl();
     }
     if (P.publications.awards) {
       push('Awards');
-      nl();
       P.publications.awards.split('\n').filter(Boolean).forEach(a => push(a));
       nl();
     }
@@ -953,7 +949,6 @@ function generateCVBankText() {
     P.achievements.forEach(a => {
       if (!a.category && !a.items) return;
       push(a.category || 'Achievements');
-      nl();
       (a.items || '').split('\n').filter(Boolean).forEach(i => push(i));
       nl();
     });
@@ -1077,13 +1072,8 @@ function parseCVBankText(text) {
     for (const block of blocks) {
       const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
       if (!blines.length) continue;
-      if (blines.length === 1) {
-        if (curCat !== null) cats.push({ category: curCat, items: curItems.join('\n') });
-        curCat = blines[0]; curItems = [];
-      } else {
-        if (curCat !== null) cats.push({ category: curCat, items: curItems.join('\n') });
-        curCat = blines[0]; curItems = blines.slice(1);
-      }
+      if (curCat !== null) cats.push({ category: curCat, items: curItems.join('\n') });
+      curCat = blines[0]; curItems = blines.slice(1);
     }
     if (curCat !== null) cats.push({ category: curCat, items: curItems.join('\n') });
     if (cats.length) result.skills = cats;
@@ -1173,22 +1163,17 @@ function parseCVBankText(text) {
     for (const block of blocks) {
       const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
       if (!blines.length) continue;
-      if (blines.length === 1) {
-        const lc = blines[0].toLowerCase();
-        if (lc === 'academic publications') { mode = 'academic'; continue; }
-        if (lc === 'awards') { mode = 'awards'; continue; }
-        // If already in publications/awards mode, treat as content (single-line entry)
-        if (mode === 'academic') { acLines.push(blines[0]); continue; }
-        if (mode === 'awards')   { awLines.push(blines[0]); continue; }
-        mode = 'cert';
-        if (curCert) certs.push(curCert);
-        curCert = { category: blines[0], items: '' };
-      } else {
-        if (mode === 'academic') { acLines.push(...blines); continue; }
-        if (mode === 'awards')   { awLines.push(...blines); continue; }
-        if (!curCert) curCert = { category: '', items: '' };
-        curCert.items = (curCert.items ? curCert.items + '\n' : '') + blines.join('\n');
+      const lc0 = blines[0].toLowerCase();
+      if (lc0 === 'academic publications') {
+        mode = 'academic'; acLines.push(...blines.slice(1)); continue;
       }
+      if (lc0 === 'awards') {
+        mode = 'awards'; awLines.push(...blines.slice(1)); continue;
+      }
+      if (mode === 'academic') { acLines.push(...blines); continue; }
+      if (mode === 'awards')   { awLines.push(...blines); continue; }
+      if (curCert) certs.push(curCert);
+      curCert = { category: blines[0], items: blines.slice(1).join('\n') };
     }
     if (curCert) certs.push(curCert);
     if (certs.length) result.certifications = certs;
@@ -1238,13 +1223,8 @@ function parseCVBankText(text) {
     for (const block of blocks) {
       const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
       if (!blines.length) continue;
-      if (blines.length === 1) {
-        if (curAch !== null) achs.push({ category: curAch, items: curItems.join('\n') });
-        curAch = blines[0]; curItems = [];
-      } else {
-        if (curAch !== null) achs.push({ category: curAch, items: curItems.join('\n') });
-        curAch = blines[0]; curItems = blines.slice(1);
-      }
+      if (curAch !== null) achs.push({ category: curAch, items: curItems.join('\n') });
+      curAch = blines[0]; curItems = blines.slice(1);
     }
     if (curAch !== null) achs.push({ category: curAch, items: curItems.join('\n') });
     if (achs.length) result.achievements = achs;
