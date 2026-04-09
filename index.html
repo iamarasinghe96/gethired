@@ -242,14 +242,14 @@
     </div>
     <div class="grid">
 
-      <!-- Panel 1: CV Content Bank -->
+      <!-- Panel 1: CV Content Bank (textarea hidden — edit via Profile Builder) -->
       <div class="panel flex-col">
         <div class="panel-header">
           <div class="panel-label">
             <div class="panel-number">1</div>
             <div class="panel-meta">
               <div class="panel-title">Master CV Content Bank</div>
-              <div class="panel-desc">Your compiled profile — auto-fills from Profile Builder</div>
+              <div class="panel-desc">Auto-fills from Profile Builder — edit your profile to update</div>
             </div>
           </div>
           <div class="panel-badges">
@@ -257,16 +257,11 @@
             <span class="badge badge-count" id="cv-count">0 chars</span>
           </div>
         </div>
-        <div class="textarea-wrap">
+        <div class="textarea-wrap" style="display:none">
           <textarea id="cv-bank" placeholder="Build your profile in the Profile Builder tab, then click 'Use in Prompt Builder' — or paste your CV Bank here directly." oninput="autosave('cv-bank','cv_content_bank');updateCount('cv-bank','cv-count')"></textarea>
         </div>
-        <div class="toolbar">
-          <button class="btn btn-outline" onclick="clearField('cv-bank','cv_content_bank','cv-count')">&#x2715; Clear</button>
-          <button class="btn btn-ghost" onclick="copyField('cv-bank')">&#x2398; Copy</button>
+        <div class="toolbar" style="padding:12px 16px">
           <button class="btn btn-ghost" onclick="switchView('profile')">&#x2190; Edit Profile</button>
-          <div class="toolbar-right">
-            <button class="btn btn-primary" onclick="saveField('cv-bank','cv_content_bank')">Save</button>
-          </div>
         </div>
       </div>
 
@@ -294,8 +289,8 @@
         </div>
       </div>
 
-      <!-- Panel 3: Cover Letter Prompt -->
-      <div class="panel flex-col">
+      <!-- Panel 3: Cover Letter Prompt (hidden — template loaded from repo txt file) -->
+      <div class="panel flex-col" style="display:none">
         <div class="panel-header">
           <div class="panel-label">
             <div class="panel-number">2</div>
@@ -321,8 +316,8 @@
         </div>
       </div>
 
-      <!-- Panel 4: CV LaTeX Prompt -->
-      <div class="panel flex-col">
+      <!-- Panel 4: CV LaTeX Prompt (hidden — template loaded from repo txt file) -->
+      <div class="panel flex-col" style="display:none">
         <div class="panel-header">
           <div class="panel-label">
             <div class="panel-number">3</div>
@@ -376,7 +371,7 @@
             <span class="output-panel-title">COVER LETTER PROMPT — CV Bank + JD injected</span>
             <button class="btn btn-outline" onclick="copyOutput('out-cover-letter')">&#x2398; Copy</button>
           </div>
-          <div class="output-content" id="out-cl-content">
+          <div class="output-content" id="out-cl-content" style="display:none">
             <div class="output-empty"><div class="empty-icon">&#x1F4C4;</div>Hit <strong>Build Prompts</strong> to generate your cover letter prompt.</div>
           </div>
         </div>
@@ -385,7 +380,7 @@
             <span class="output-panel-title">CV / LATEX PROMPT — CV Bank + JD injected</span>
             <button class="btn btn-outline" onclick="copyOutput('out-cv-latex')">&#x2398; Copy</button>
           </div>
-          <div class="output-content" id="out-cv-content">
+          <div class="output-content" id="out-cv-content" style="display:none">
             <div class="output-empty"><div class="empty-icon">&#x1F4DD;</div>Hit <strong>Build Prompts</strong> to generate your CV / LaTeX prompt.</div>
           </div>
         </div>
