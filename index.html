@@ -1177,6 +1177,9 @@ function parseCVBankText(text) {
         const lc = blines[0].toLowerCase();
         if (lc === 'academic publications') { mode = 'academic'; continue; }
         if (lc === 'awards') { mode = 'awards'; continue; }
+        // If already in publications/awards mode, treat as content (single-line entry)
+        if (mode === 'academic') { acLines.push(blines[0]); continue; }
+        if (mode === 'awards')   { awLines.push(blines[0]); continue; }
         mode = 'cert';
         if (curCert) certs.push(curCert);
         curCert = { category: blines[0], items: '' };
