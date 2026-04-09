@@ -65,7 +65,7 @@ Core Skills (keyword-rich, 2-column layout — 10 to 16 skills maximum, every on
 Professional Experience (reverse chronological — for each role: company, title, dates, location, then 4–6 bullet points maximum using strong action verbs and quantified outcomes)
 Education (reverse chronological — institution, degree, year only — no GPA unless role is graduate-level)
 Certifications (only those relevant to the role)
-Referees: "Available upon request" unless the role specifically asks for them
+Referees: Use the referee details from the REFEREES section of the content bank — include each referee's name, title, email, and phone. If no referee data is provided in the content bank, write "Available upon request."
 
 STEP 5 — WRITE THE LaTeX CODE
 Produce complete, compilable LaTeX code using these specifications:
