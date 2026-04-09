@@ -442,8 +442,8 @@ function defaultP() {
     },
     summary: { headline:'', tagline:'', paragraphs:'' },
     skills:       [{ category:'', items:'' }],
-    workHistory:  [{ title:'', employer:'', period:'', nature:'', bullets:'' }],
-    education:    [{ degree:'', institution:'', period:'', gpa:'', thesis:'', notes:'' }],
+    workHistory:  [{ title:'', employer:'', startDate:'', endDate:'', nature:'', bullets:'' }],
+    education:    [{ degree:'', institution:'', startYear:'', endYear:'', gpa:'', thesis:'', notes:'' }],
     certifications: [{ category:'', items:'' }],
     publications: { academic:'', awards:'' },
     storyBank:    [{ title:'', usedFor:'', text:'' }],
@@ -594,7 +594,7 @@ function personalBodyHTML() {
     )}
     ${fg(2,
       fi('LinkedIn URL <span class="req">*</span>', inp(`${p}.linkedin`, 'e.g. https://linkedin.com/in/yourname')),
-      fi('Portfolio / GitHub URL <span class="req">*</span>', inp(`${p}.portfolio`, 'e.g. https://yourname.github.io'))
+      fi('Portfolio / GitHub URL <span class="opt">optional</span>', inp(`${p}.portfolio`, 'e.g. https://yourname.github.io'))
     )}
     ${fg(2,
       fi('Right to Work URL <span class="opt">optional</span>', inp(`${p}.rtwUrl`, 'e.g. https://yourname.github.io/rtw — leave blank if none')),
@@ -643,13 +643,14 @@ function workHistoryBodyHTML() {
         fi('Job Title', inp(`workHistory.${i}.title`, 'e.g. Delivery Lead — Sustainable Finance')),
         fi('Employer', inp(`workHistory.${i}.employer`, 'e.g. Acuity Knowledge Partners'))
       )}
-      ${fg(2,
-        fi('Period', inp(`workHistory.${i}.period`, 'e.g. April 2025 – Present')),
+      ${fg(3,
+        fi('Start Date', inp(`workHistory.${i}.startDate`, 'e.g. April 2025')),
+        fi('End Date', inp(`workHistory.${i}.endDate`, 'e.g. Present')),
         fi('Project / Nature Summary <span class="opt">optional</span>', inp(`workHistory.${i}.nature`, 'e.g. Led delivery of Climate Transition Tool for 2,000+ clients'))
       )}
       ${fg(1, fi('Bullet Points (one per line)', ta(`workHistory.${i}.bullets`, 'Led delivery of...\nCoordinated a 30-member team...\nBuilt automated dashboards...\n...', 6)))}
     </div>`).join('');
-  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('workHistory',{title:'',employer:'',period:'',nature:'',bullets:''})">+ Add Role</button></div>`;
+  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('workHistory',{title:'',employer:'',startDate:'',endDate:'',nature:'',bullets:''})">+ Add Role</button></div>`;
 }
 
 function educationBodyHTML() {
@@ -660,9 +661,10 @@ function educationBodyHTML() {
         <button class="btn btn-danger" onclick="removeItem('education',${i})">&#x2715; Remove</button>
       </div>
       ${fg(1, fi('Degree / Qualification', inp(`education.${i}.degree`, 'e.g. Master of Business Administration (MBA) — Marketing')))}
-      ${fg(2,
+      ${fg(3,
         fi('Institution', inp(`education.${i}.institution`, 'e.g. Cardiff Metropolitan University, UK')),
-        fi('Period / Year', inp(`education.${i}.period`, 'e.g. 2020–2022'))
+        fi('Start Year', inp(`education.${i}.startYear`, 'e.g. 2020')),
+        fi('End Year', inp(`education.${i}.endYear`, 'e.g. 2022'))
       )}
       ${fg(2,
         fi('Grade / GPA <span class="opt">optional</span>', inp(`education.${i}.gpa`, 'e.g. Merit / 3.2 GPA')),
@@ -670,7 +672,7 @@ function educationBodyHTML() {
       )}
       ${fg(1, fi('Additional Notes <span class="opt">optional</span>', inp(`education.${i}.notes`, 'e.g. Full Tuition Scholarship Holder')))}
     </div>`).join('');
-  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('education',{degree:'',institution:'',period:'',gpa:'',thesis:'',notes:''})">+ Add Education</button></div>`;
+  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('education',{degree:'',institution:'',startYear:'',endYear:'',gpa:'',thesis:'',notes:''})">+ Add Education</button></div>`;
 }
 
 function certificationsBodyHTML() {
@@ -713,10 +715,8 @@ function projectsBodyHTML() {
         <span class="entry-card-title">PROJECT ${i+1}</span>
         <button class="btn btn-danger" onclick="removeItem('projects',${i})">&#x2715; Remove</button>
       </div>
-      ${fg(2,
-        fi('Project Name', inp(`projects.${i}.name`, 'e.g. Gaia Symbiosis (Non-Profit)')),
-        fi('Description', inp(`projects.${i}.description`, 'e.g. AI-human hybrid solutions for local sustainability issues'))
-      )}
+      ${fg(1, fi('Project Name', inp(`projects.${i}.name`, 'e.g. Gaia Symbiosis (Non-Profit)')))}
+      ${fg(1, fi('Description', ta(`projects.${i}.description`, 'e.g. AI-human hybrid solutions for local sustainability issues; ISO 14001-aligned EMS services for local organisations', 3)))}
     </div>`).join('');
   return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('projects',{name:'',description:''})">+ Add Project</button></div>`;
 }
@@ -868,7 +868,8 @@ function generateCVBankText() {
       if (!j.title && !j.employer) return;
       push(j.title || 'Role');
       if (j.employer) push(`Employer: ${j.employer}`);
-      if (j.period)   push(`Period: ${j.period}`);
+      const jPeriod = [j.startDate, j.endDate].filter(Boolean).join(' \u2013 ');
+      if (jPeriod)    push(`Period: ${jPeriod}`);
       if (j.nature)   push(`Nature: ${j.nature}`);
       nl();
       (j.bullets || '').split('\n').filter(Boolean).forEach(b => push(b));
@@ -885,7 +886,8 @@ function generateCVBankText() {
       push(e.degree || 'Degree');
       nl();
       let instLine = e.institution || '';
-      if (e.period) instLine += ` (${e.period})`;
+      const ePeriod = [e.startYear, e.endYear].filter(Boolean).join('\u2013');
+      if (ePeriod) instLine += ` (${ePeriod})`;
       if (instLine) push(instLine);
       if (e.gpa)    push(`Grade/GPA: ${e.gpa}`);
       if (e.thesis) push(`Dissertation/Thesis: ${e.thesis}`);
@@ -1100,7 +1102,7 @@ function parseCVBankText(text) {
       const trimmed = block.trim();
       if (!trimmed) continue;
       const blines = trimmed.split('\n');
-      const job = { title:'', employer:'', period:'', nature:'', bullets:'' };
+      const job = { title:'', employer:'', startDate:'', endDate:'', nature:'', bullets:'' };
       const bullets = [];
       let headerDone = false;
       for (const line of blines) {
@@ -1110,7 +1112,12 @@ function parseCVBankText(text) {
         const per = t.match(/^Period:\s*(.+)/);
         const nat = t.match(/^Nature:\s*(.+)/);
         if (emp) { job.employer = emp[1]; continue; }
-        if (per) { job.period = per[1]; continue; }
+        if (per) {
+          const parts = per[1].split(/\s*[\u2013\u2014-]\s*/);
+          job.startDate = parts[0]?.trim() || per[1].trim();
+          job.endDate   = parts[1]?.trim() || '';
+          continue;
+        }
         if (nat) { job.nature = nat[1]; continue; }
         if (!job.title) { job.title = t; continue; }
         if (headerDone || (!emp && !per && !nat)) bullets.push(t);
@@ -1132,7 +1139,7 @@ function parseCVBankText(text) {
       const firstLine = blines[0];
       const isLabel = /^(Employer|Period|Grade|Dissertation|Thesis|GPA):/i.test(firstLine);
       if (!isLabel && !curEdu) {
-        curEdu = { degree: firstLine, institution:'', period:'', gpa:'', thesis:'', notes:'' };
+        curEdu = { degree: firstLine, institution:'', startYear:'', endYear:'', gpa:'', thesis:'', notes:'' };
         edus.push(curEdu);
         continue;
       }
@@ -1142,7 +1149,18 @@ function parseCVBankText(text) {
         const the = line.match(/^(?:Dissertation|Thesis):\s*(.+)/i);
         if (gpa) { curEdu.gpa = gpa[1]; continue; }
         if (the) { curEdu.thesis = the[1]; continue; }
-        if (!curEdu.institution) { curEdu.institution = line; continue; }
+        if (!curEdu.institution) {
+          // institution line may include "(2020–2022)" — extract year range
+          const yearM = line.match(/\((\d{4})\s*[\u2013\u2014-]\s*(\d{4}|Present|present)\)/);
+          if (yearM) {
+            curEdu.institution = line.replace(yearM[0], '').trim().replace(/,?\s*$/, '');
+            curEdu.startYear = yearM[1];
+            curEdu.endYear   = yearM[2];
+          } else {
+            curEdu.institution = line;
+          }
+          continue;
+        }
         curEdu.notes = (curEdu.notes ? curEdu.notes + '\n' : '') + line;
       }
     }
