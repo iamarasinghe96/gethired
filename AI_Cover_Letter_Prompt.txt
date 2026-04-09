@@ -380,8 +380,8 @@ LETTERHEAD BLOCK — place this at the very top of the document body, before the
 Line 1 — sender name only:
 {\Large\bfseries\color{accentblue} [YOUR_FULL_NAME]}
 
-Line 2 — all contact details AND all hyperlinks on a single line, using \textbar{} as the separator between items, wrapped in \small and \noindent so it never wraps to a second line. Use this exact structure:
-\noindent{\small [YOUR_PHONE] \textbar{} [YOUR_EMAIL] \textbar{} [YOUR_LOCATION] \textbar{} \href{[YOUR_LINKEDIN_URL]}{LinkedIn} \textbar{} \href{[YOUR_PORTFOLIO_URL]}{Portfolio Website} \textbar{} \href{[YOUR_RIGHT_TO_WORK_URL]}{Right to Work}}
+Line 2 — all contact details AND all hyperlinks on a single line, using \textbar{} as the separator between items, wrapped in \fontsize{8.5}{10}\selectfont and \noindent so it never wraps to a second line. Use this exact structure:
+\noindent{\fontsize{8.5}{10}\selectfont [YOUR_PHONE] \textbar{} [YOUR_EMAIL] \textbar{} [YOUR_LOCATION] \textbar{} \href{[YOUR_LINKEDIN_URL]}{LinkedIn} \textbar{} \href{[YOUR_PORTFOLIO_URL]}{Portfolio Website} \textbar{} \href{[YOUR_RIGHT_TO_WORK_URL]}{Right to Work}}
 
 Both hyperlink labels are plain words only — no raw URLs shown, no angle brackets. Link colour is accentblue via hypersetup.
 
