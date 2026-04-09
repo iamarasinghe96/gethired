@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GetHired — CV Prompt Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#1F4E79; --navy-light:#2563a8; --navy-pale:#e8f0f9;
+    --ink:#1a1f2e; --slate:#4a5568; --muted:#8896a8;
+    --border:#d1dce8; --surface:#f7f9fc; --white:#ffffff;
+    --green:#0d7a5f; --green-pale:#e6f4f0;
+    --amber:#b45309; --amber-pale:#fef3e2;
+    --red:#c0392b; --red-pale:#fdecea;
+    --radius:8px;
+    --shadow:0 1px 3px rgba(31,78,121,0.08),0 4px 16px rgba(31,78,121,0.06);
+    --shadow-lg:0 8px 32px rgba(31,78,121,0.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.6;}
+
+  /* HEADER */
+  header{background:var(--navy);color:white;padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+  .header-brand{display:flex;align-items:center;gap:12px;}
+  .header-logo{width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-weight:500;font-size:13px;}
+  .header-title{font-size:15px;font-weight:600;}
+  .header-sub{font-size:11px;color:rgba(255,255,255,0.55);font-family:'DM Mono',monospace;}
+  .header-actions{display:flex;gap:8px;align-items:center;}
+
+  /* MAIN NAV */
+  .main-nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;gap:0;padding:0 28px;}
+  .main-nav-tab{padding:12px 20px;font-size:13px;font-weight:600;border:none;border-bottom:3px solid transparent;background:transparent;cursor:pointer;color:var(--slate);transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+  .main-nav-tab:hover{color:var(--navy);background:var(--navy-pale);}
+  .main-nav-tab.active{color:var(--navy);border-bottom-color:var(--navy);}
+
+  /* VIEWS */
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* CONTAINER */
+  .container{max-width:1400px;margin:0 auto;padding:24px 28px 60px;}
+  .page-intro{margin-bottom:20px;padding:14px 18px;background:var(--navy-pale);border-left:3px solid var(--navy);border-radius:0 var(--radius) var(--radius) 0;font-size:13px;color:var(--navy);line-height:1.7;}
+  .page-intro strong{font-weight:600;}
+
+  /* PANELS */
+  .panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px;}
+  .panel-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+  .panel-label{display:flex;align-items:center;gap:10px;}
+  .panel-number{width:22px;height:22px;background:var(--navy);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;flex-shrink:0;}
+  .panel-number.green{background:var(--green);}
+  .panel-number.amber{background:var(--amber);}
+  .panel-meta{display:flex;flex-direction:column;gap:2px;}
+  .panel-title{font-size:13px;font-weight:600;color:var(--ink);}
+  .panel-desc{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;}
+  .panel-badges{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+
+  /* BADGES */
+  .badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:3px;font-weight:500;white-space:nowrap;}
+  .badge-saved{background:var(--green-pale);color:var(--green);border:1px solid rgba(13,122,95,0.2);}
+  .badge-nosave{background:var(--amber-pale);color:var(--amber);border:1px solid rgba(180,83,9,0.2);}
+  .badge-count{background:var(--navy-pale);color:var(--navy);border:1px solid rgba(31,78,121,0.2);}
+
+  /* BUTTONS */
+  .btn{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;white-space:nowrap;}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--navy);color:white;border-color:var(--navy);}
+  .btn-primary:hover{background:var(--navy-light);}
+  .btn-outline{background:white;color:var(--navy);border-color:var(--border);}
+  .btn-outline:hover{border-color:var(--navy);background:var(--navy-pale);}
+  .btn-ghost{background:transparent;color:var(--slate);border-color:transparent;}
+  .btn-ghost:hover{background:var(--surface);color:var(--ink);}
+  .btn-danger{background:white;color:var(--red);border-color:var(--border);}
+  .btn-danger:hover{background:var(--red-pale);border-color:var(--red);}
+  .btn-green{background:var(--green);color:white;border-color:var(--green);}
+  .btn-green:hover{background:#0a6850;}
+  .btn-amber{background:var(--amber);color:white;border-color:var(--amber);}
+  .btn-amber:hover{background:#9a4608;}
+  .btn-lg{padding:10px 20px;font-size:13px;font-weight:600;border-radius:6px;}
+
+  /* TOOLBAR */
+  .toolbar{padding:8px 14px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center;background:var(--surface);flex-wrap:wrap;}
+  .toolbar-right{margin-left:auto;display:flex;gap:6px;align-items:center;}
+
+  /* TEXTAREA */
+  .textarea-wrap{flex:1;display:flex;flex-direction:column;}
+  textarea{flex:1;border:none;resize:none;padding:14px 16px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.7;color:var(--ink);background:transparent;outline:none;min-height:200px;width:100%;}
+  textarea::placeholder{color:var(--muted);font-style:italic;}
+  textarea.prompt-area{min-height:280px;font-size:11.5px;color:var(--slate);background:var(--surface);}
+
+  /* ── PROFILE BUILDER STYLES ── */
+  .profile-action-bar{display:flex;gap:10px;align-items:center;padding:16px 0;flex-wrap:wrap;}
+  .profile-action-bar .label{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;}
+
+  /* BUILDER SECTIONS (accordion) */
+  .builder-section{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden;}
+  .builder-section-hdr{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;gap:10px;}
+  .builder-section-hdr:hover{background:var(--navy-pale);}
+  .builder-section-body{padding:18px;}
+  .builder-section-body.collapsed{display:none;}
+  .section-toggle{font-size:14px;color:var(--muted);flex-shrink:0;transition:transform 0.15s;}
+
+  /* FORM FIELDS */
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .field-grid.one{grid-template-columns:1fr;}
+  .field-grid.three{grid-template-columns:1fr 1fr 1fr;}
+  .field-full{grid-column:1/-1;}
+  .field-item{display:flex;flex-direction:column;gap:4px;}
+  .field-label{font-size:11px;font-weight:600;color:var(--slate);font-family:'DM Mono',monospace;letter-spacing:0.3px;}
+  .req{color:var(--red);}
+  .opt{color:var(--muted);font-weight:400;}
+  input.field-input,textarea.field-input{width:100%;border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ink);background:var(--surface);outline:none;transition:border 0.15s;resize:vertical;line-height:1.6;}
+  input.field-input:focus,textarea.field-input:focus{border-color:var(--navy);background:var(--white);}
+  textarea.field-input{min-height:72px;}
+
+  /* DYNAMIC ENTRY CARDS */
+  .entry-card{border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:10px;background:var(--surface);}
+  .entry-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .entry-card-title{font-size:11px;font-weight:600;color:var(--navy);font-family:'DM Mono',monospace;letter-spacing:0.3px;}
+  .add-entry-row{padding-top:4px;}
+  .section-tip{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.6;padding:8px 12px;background:var(--navy-pale);border-radius:4px;}
+
+  /* IMPORT PANEL */
+  .import-panel{margin-bottom:20px;}
+  .import-panel textarea{min-height:100px;}
+
+  /* PROMPT BUILDER GRID */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .panel.flex-col{display:flex;flex-direction:column;}
+  .full-width{grid-column:1/-1;}
+
+  /* OUTPUT */
+  .output-section{display:flex;flex-direction:column;gap:16px;}
+  .output-header{display:flex;align-items:center;justify-content:space-between;padding:0 2px;}
+  .output-title{font-size:15px;font-weight:600;color:var(--ink);}
+  .output-tabs{display:flex;background:var(--white);border:1px solid var(--border);border-radius:6px;padding:3px;box-shadow:var(--shadow);}
+  .output-tab{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:6px 14px;border-radius:4px;border:none;cursor:pointer;background:transparent;color:var(--slate);transition:all 0.15s;}
+  .output-tab.active{background:var(--navy);color:white;box-shadow:0 1px 4px rgba(31,78,121,0.25);}
+  .output-tab:not(.active):hover{background:var(--navy-pale);color:var(--navy);}
+  .output-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:none;}
+  .output-panel.visible{display:flex;flex-direction:column;}
+  .output-panel-header{padding:10px 16px;border-bottom:1px solid var(--border);background:var(--navy-pale);display:flex;align-items:center;justify-content:space-between;}
+  .output-panel-title{font-size:12px;font-weight:600;color:var(--navy);font-family:'DM Mono',monospace;}
+  .output-content{padding:16px;font-family:'DM Mono',monospace;font-size:11.5px;line-height:1.75;color:var(--slate);white-space:pre-wrap;word-break:break-word;max-height:520px;overflow-y:auto;background:var(--surface);}
+  .output-empty{padding:40px 16px;text-align:center;color:var(--muted);font-size:13px;}
+  .output-empty .empty-icon{font-size:28px;margin-bottom:10px;opacity:0.5;}
+  .highlight-jd{background:rgba(13,122,95,0.12);color:var(--green);padding:0 2px;border-radius:2px;}
+  .highlight-cv{background:rgba(31,78,121,0.1);color:var(--navy);padding:0 2px;border-radius:2px;}
+
+  /* STATUS ROW */
+  .status-row{grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);font-size:11.5px;color:var(--slate);font-family:'DM Mono',monospace;box-shadow:var(--shadow);}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+  .status-dot.ready{background:var(--green);}
+  .status-dot.warn{background:var(--amber);}
+  .status-sep{color:var(--border);}
+
+  /* TOAST */
+  #toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:white;padding:10px 16px;border-radius:6px;font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all 0.2s;z-index:9999;pointer-events:none;box-shadow:var(--shadow-lg);max-width:320px;}
+  #toast.show{opacity:1;transform:translateY(0);}
+  #toast.success{background:var(--green);}
+  #toast.error{background:var(--red);}
+  #toast.info{background:var(--navy);}
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+  @media(max-width:900px){
+    .grid,.field-grid,.field-grid.three{grid-template-columns:1fr;}
+    header{padding:0 16px;}
+    .container{padding:16px 16px 48px;}
+    .main-nav{padding:0 16px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <div class="header-logo">GH</div>
+    <div>
+      <div class="header-title">GetHired — CV Prompt Builder</div>
+      <div class="header-sub">Open-source · ATS-optimised prompt assembly tool</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.08)" onclick="exportCVBank()">&#x2193; Export CV Bank</button>
+    <button class="btn" style="color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.08)" onclick="saveAll()">&#x2191; Save All</button>
+  </div>
+</header>
+
+<nav class="main-nav">
+  <button class="main-nav-tab active" id="nav-profile" onclick="switchView('profile')">&#x2460; Profile Builder</button>
+  <button class="main-nav-tab" id="nav-prompt" onclick="switchView('prompt')">&#x2461; Prompt Builder</button>
+</nav>
+
+<!-- ═══════════════════════════════ PROFILE BUILDER VIEW ═══════════════════════════════ -->
+<div id="view-profile" class="view active">
+  <div class="container">
+    <div class="page-intro">
+      <strong>Profile Builder — Step 1.</strong>
+      Fill in your details below. When complete, click <strong>Export CV Bank (.txt)</strong> to download your profile file, or click <strong>Use in Prompt Builder</strong> to go straight to Step 2.
+      Already have a CV Bank? Paste it in the import box to load and edit it.
+    </div>
+
+    <!-- Import panel -->
+    <div class="panel import-panel">
+      <div class="panel-header">
+        <div class="panel-label">
+          <div class="panel-number amber">&#x21A7;</div>
+          <div class="panel-meta">
+            <div class="panel-title">Import Existing CV Bank</div>
+            <div class="panel-desc">Paste a previously exported CV Bank to load &amp; edit it</div>
+          </div>
+        </div>
+      </div>
+      <div class="textarea-wrap">
+        <textarea id="import-text" placeholder="Paste your CV Bank .txt content here, then click Parse &amp; Import..." style="min-height:90px;"></textarea>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-outline" onclick="importCVBank()">&#x1F4C2; Parse &amp; Import</button>
+        <div class="toolbar-right">
+          <button class="btn btn-amber" onclick="exportCVBank()">&#x2193; Export CV Bank (.txt)</button>
+          <button class="btn btn-green" onclick="sendToPromptBuilder()">&#x2192; Use in Prompt Builder</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile form (rendered by JS) -->
+    <div id="profile-form"></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PROMPT BUILDER VIEW ═══════════════════════════════ -->
+<div id="view-prompt" class="view">
+  <div class="container">
+    <div class="page-intro">
+      <strong>Prompt Builder — Step 2.</strong>
+      Your CV Bank auto-fills from the Profile Builder. Paste a job description, then hit <strong>Build Prompts</strong> to inject your profile and JD into both prompt templates — ready to copy into Claude.
+    </div>
+    <div class="grid">
+
+      <!-- Panel 1: CV Content Bank -->
+      <div class="panel flex-col">
+        <div class="panel-header">
+          <div class="panel-label">
+            <div class="panel-number">1</div>
+            <div class="panel-meta">
+              <div class="panel-title">Master CV Content Bank</div>
+              <div class="panel-desc">Your compiled profile — auto-fills from Profile Builder</div>
+            </div>
+          </div>
+          <div class="panel-badges">
+            <span class="badge badge-saved">&#x1F4BE; auto-saved</span>
+            <span class="badge badge-count" id="cv-count">0 chars</span>
+          </div>
+        </div>
+        <div class="textarea-wrap">
+          <textarea id="cv-bank" placeholder="Build your profile in the Profile Builder tab, then click 'Use in Prompt Builder' — or paste your CV Bank here directly." oninput="autosave('cv-bank','cv_content_bank');updateCount('cv-bank','cv-count')"></textarea>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-outline" onclick="clearField('cv-bank','cv_content_bank','cv-count')">&#x2715; Clear</button>
+          <button class="btn btn-ghost" onclick="copyField('cv-bank')">&#x2398; Copy</button>
+          <button class="btn btn-ghost" onclick="switchView('profile')">&#x2190; Edit Profile</button>
+          <div class="toolbar-right">
+            <button class="btn btn-primary" onclick="saveField('cv-bank','cv_content_bank')">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Job Description -->
+      <div class="panel flex-col">
+        <div class="panel-header">
+          <div class="panel-label">
+            <div class="panel-number amber">4</div>
+            <div class="panel-meta">
+              <div class="panel-title">Job Description</div>
+              <div class="panel-desc">Paste the target role — not saved</div>
+            </div>
+          </div>
+          <div class="panel-badges">
+            <span class="badge badge-nosave">&#x26A1; session only</span>
+            <span class="badge badge-count" id="jd-count">0 chars</span>
+          </div>
+        </div>
+        <div class="textarea-wrap">
+          <textarea id="jd-input" placeholder="Paste the full job description here for each new application." oninput="updateCount('jd-input','jd-count');updateStatus()"></textarea>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-danger" onclick="clearJD()">&#x2715; Clear JD</button>
+          <button class="btn btn-ghost" onclick="copyField('jd-input')">&#x2398; Copy</button>
+        </div>
+      </div>
+
+      <!-- Panel 3: Cover Letter Prompt -->
+      <div class="panel flex-col">
+        <div class="panel-header">
+          <div class="panel-label">
+            <div class="panel-number">2</div>
+            <div class="panel-meta">
+              <div class="panel-title">Cover Letter Prompt</div>
+              <div class="panel-desc">Template saved · JD + CV auto-injected on build</div>
+            </div>
+          </div>
+          <div class="panel-badges">
+            <span class="badge badge-saved">&#x1F4BE; auto-saved</span>
+            <span class="badge badge-count" id="cl-count">0 chars</span>
+          </div>
+        </div>
+        <div class="textarea-wrap">
+          <textarea id="cl-prompt" class="prompt-area" placeholder="Your Cover Letter prompt template loads here from AI_Cover_Letter_Prompt.txt. Placeholders [PASTE JOB DESCRIPTION HERE] and [PASTE YOUR FULL MASTER CV CONTENT BANK HERE] are auto-replaced on build." oninput="autosave('cl-prompt','cl_prompt');updateCount('cl-prompt','cl-count')"></textarea>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-outline" onclick="clearField('cl-prompt','cl_prompt','cl-count')">&#x2715; Clear</button>
+          <button class="btn btn-ghost" onclick="copyField('cl-prompt')">&#x2398; Copy template</button>
+          <div class="toolbar-right">
+            <button class="btn btn-primary" onclick="saveField('cl-prompt','cl_prompt')">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 4: CV LaTeX Prompt -->
+      <div class="panel flex-col">
+        <div class="panel-header">
+          <div class="panel-label">
+            <div class="panel-number">3</div>
+            <div class="panel-meta">
+              <div class="panel-title">CV / LaTeX Prompt</div>
+              <div class="panel-desc">Template saved · JD + CV auto-injected on build</div>
+            </div>
+          </div>
+          <div class="panel-badges">
+            <span class="badge badge-saved">&#x1F4BE; auto-saved</span>
+            <span class="badge badge-count" id="cv-count2">0 chars</span>
+          </div>
+        </div>
+        <div class="textarea-wrap">
+          <textarea id="cv-prompt" class="prompt-area" placeholder="Your CV / LaTeX prompt template loads here from AI_CV_Prompt.txt." oninput="autosave('cv-prompt','cv_prompt');updateCount('cv-prompt','cv-count2')"></textarea>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-outline" onclick="clearField('cv-prompt','cv_prompt','cv-count2')">&#x2715; Clear</button>
+          <button class="btn btn-ghost" onclick="copyField('cv-prompt')">&#x2398; Copy template</button>
+          <div class="toolbar-right">
+            <button class="btn btn-primary" onclick="saveField('cv-prompt','cv_prompt')">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status row -->
+      <div class="status-row" id="status-row">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">Loading…</span>
+        <span class="status-sep">·</span>
+        <span id="status-detail" style="color:var(--muted)">Initialising</span>
+      </div>
+
+      <!-- Build buttons -->
+      <div class="full-width" style="display:flex;gap:12px;justify-content:center;padding:4px 0">
+        <button class="btn btn-green btn-lg" onclick="buildPrompts()">&#x25B6; Build Prompts</button>
+        <button class="btn btn-outline btn-lg" onclick="clearOutputs()">&#x21BA; Reset Output</button>
+      </div>
+
+      <!-- Output section -->
+      <div class="output-section full-width">
+        <div class="output-header">
+          <div class="output-title">Built Prompts — Ready to Copy into Claude</div>
+          <div class="output-tabs">
+            <button class="output-tab active" onclick="switchOutputTab('cl')">Cover Letter Prompt</button>
+            <button class="output-tab" onclick="switchOutputTab('cv')">CV / LaTeX Prompt</button>
+          </div>
+        </div>
+        <div class="output-panel visible" id="out-cover-letter">
+          <div class="output-panel-header">
+            <span class="output-panel-title">COVER LETTER PROMPT — CV Bank + JD injected</span>
+            <button class="btn btn-outline" onclick="copyOutput('out-cover-letter')">&#x2398; Copy</button>
+          </div>
+          <div class="output-content" id="out-cl-content">
+            <div class="output-empty"><div class="empty-icon">&#x1F4C4;</div>Hit <strong>Build Prompts</strong> to generate your cover letter prompt.</div>
+          </div>
+        </div>
+        <div class="output-panel" id="out-cv-latex">
+          <div class="output-panel-header">
+            <span class="output-panel-title">CV / LATEX PROMPT — CV Bank + JD injected</span>
+            <button class="btn btn-outline" onclick="copyOutput('out-cv-latex')">&#x2398; Copy</button>
+          </div>
+          <div class="output-content" id="out-cv-content">
+            <div class="output-empty"><div class="empty-icon">&#x1F4DD;</div>Hit <strong>Build Prompts</strong> to generate your CV / LaTeX prompt.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /grid -->
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+const PH_JD  = '[PASTE JOB DESCRIPTION HERE]';
+const PH_CV  = '[PASTE YOUR FULL MASTER CV CONTENT BANK HERE]';
+const PH_NAME  = '[YOUR_FULL_NAME]';
+const PH_PHONE = '[YOUR_PHONE]';
+const PH_EMAIL = '[YOUR_EMAIL]';
+const PH_LOC   = '[YOUR_LOCATION]';
+const PH_LI    = '[YOUR_LINKEDIN_URL]';
+const PH_PORT  = '[YOUR_PORTFOLIO_URL]';
+const PH_RTW   = '[YOUR_RIGHT_TO_WORK_URL]';
+const PH_FILE  = '[YOUR_NAME_FILE]';
+
+// ═══════════════════════════════════════════════════════════════
+// DEFAULTS — loaded from txt files via fetch
+// ═══════════════════════════════════════════════════════════════
+let DEFAULTS = { cl: '', cvp: '' };
+
+async function loadDefaults() {
+  try {
+    const [cl, cvp] = await Promise.all([
+      fetch('AI_Cover_Letter_Prompt.txt').then(r => r.ok ? r.text() : ''),
+      fetch('AI_CV_Prompt.txt').then(r => r.ok ? r.text() : '')
+    ]);
+    DEFAULTS = { cl, cvp };
+  } catch (e) {
+    console.warn('Could not fetch prompt templates — using localStorage if available.');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PROFILE DATA
+// ═══════════════════════════════════════════════════════════════
+function defaultP() {
+  return {
+    personal: {
+      fullName:'', dob:'', address:'', location:'', phone:'', phone2:'',
+      email:'', linkedin:'', portfolio:'', rtwUrl:'',
+      rightToWork:'', locationNote:'', languages:'',
+      nic:'', sex:'', civilStatus:'', ethnicGroup:''
+    },
+    summary: { headline:'', tagline:'', paragraphs:'' },
+    skills:       [{ category:'', items:'' }],
+    workHistory:  [{ title:'', employer:'', period:'', nature:'', bullets:'' }],
+    education:    [{ degree:'', institution:'', period:'', gpa:'', thesis:'', notes:'' }],
+    certifications: [{ category:'', items:'' }],
+    publications: { academic:'', awards:'' },
+    storyBank:    [{ title:'', usedFor:'', text:'' }],
+    projects:     [{ name:'', description:'' }],
+    achievements: [{ category:'', items:'' }],
+    referees:     [{ name:'', title:'', email:'', phone:'' }],
+    usageNotes:   ''
+  };
+}
+
+let P = defaultP();
+const openSections = new Set(['personal', 'summary']);
+
+// ─── helpers ───
+const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function getPath(obj, path) {
+  try {
+    return path.split('.').reduce((cur,k) => cur?.[isNaN(k)?k:+k] ?? '', obj);
+  } catch { return ''; }
+}
+
+function setPath(obj, path, val) {
+  const parts = path.split('.');
+  let cur = obj;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const k = isNaN(parts[i]) ? parts[i] : +parts[i];
+    cur = cur[k];
+  }
+  const last = parts[parts.length - 1];
+  cur[isNaN(last) ? last : +last] = val;
+}
+
+function saveProfileData() {
+  try {
+    localStorage.setItem('gethired_profile_v1', JSON.stringify(P));
+  } catch(e) {
+    toast('Storage quota exceeded — export your CV Bank to save changes.', 'error');
+  }
+}
+
+function loadProfileData() {
+  const saved = localStorage.getItem('gethired_profile_v1');
+  return saved ? JSON.parse(saved) : defaultP();
+}
+
+let saveTimer;
+function debouncedSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveProfileData, 700);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PROFILE FORM — RENDERING
+// ═══════════════════════════════════════════════════════════════
+function renderProfileForm() {
+  const sections = [
+    { id:'personal',       num:1,  title:'Personal Information' },
+    { id:'summary',        num:2,  title:'Professional Summary' },
+    { id:'skills',         num:3,  title:'Skills & Proficiencies' },
+    { id:'workHistory',    num:4,  title:'Work History' },
+    { id:'education',      num:5,  title:'Education' },
+    { id:'certifications', num:6,  title:'Certifications & Publications' },
+    { id:'storyBank',      num:7,  title:'Story Bank' },
+    { id:'projects',       num:8,  title:'Personal Projects & Side Ventures' },
+    { id:'achievements',   num:9,  title:'Achievements & Extracurricular' },
+    { id:'referees',       num:10, title:'Referees' },
+    { id:'usageNotes',     num:11, title:'Usage Notes' },
+  ];
+  document.getElementById('profile-form').innerHTML =
+    sections.map(s => buildSectionShell(s.id, s.num, s.title)).join('');
+  sections.forEach(s => renderSectionBody(s.id));
+}
+
+function buildSectionShell(id, num, title) {
+  const open = openSections.has(id);
+  return `
+    <div class="builder-section" id="bs-${id}">
+      <div class="builder-section-hdr" onclick="toggleBuilderSection('${id}')">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="panel-number" style="width:22px;height:22px;font-size:11px">${num}</div>
+          <div>
+            <div class="panel-title">${title}</div>
+          </div>
+        </div>
+        <span class="section-toggle" id="st-${id}">${open ? '&#x25BE;' : '&#x25B8;'}</span>
+      </div>
+      <div class="builder-section-body${open ? '' : ' collapsed'}" id="bsb-${id}"></div>
+    </div>`;
+}
+
+function toggleBuilderSection(id) {
+  const body = document.getElementById('bsb-' + id);
+  const icon = document.getElementById('st-' + id);
+  const collapsed = body.classList.toggle('collapsed');
+  if (collapsed) { openSections.delete(id); icon.innerHTML = '&#x25B8;'; }
+  else           { openSections.add(id);    icon.innerHTML = '&#x25BE;'; }
+}
+
+function renderSectionBody(id) {
+  const el = document.getElementById('bsb-' + id);
+  if (!el) return;
+  const map = {
+    personal: personalBodyHTML, summary: summaryBodyHTML,
+    skills: skillsBodyHTML, workHistory: workHistoryBodyHTML,
+    education: educationBodyHTML, certifications: certificationsBodyHTML,
+    storyBank: storyBankBodyHTML, projects: projectsBodyHTML,
+    achievements: achievementsBodyHTML, referees: refereesBodyHTML,
+    usageNotes: usageNotesBodyHTML
+  };
+  if (map[id]) el.innerHTML = map[id]();
+}
+
+// ─── field helpers ───
+function inp(path, placeholder='') {
+  return `<input class="field-input" type="text" data-path="${path}" value="${esc(getPath(P,path))}" placeholder="${esc(placeholder)}">`;
+}
+function ta(path, placeholder='', rows=3) {
+  return `<textarea class="field-input" data-path="${path}" rows="${rows}" placeholder="${esc(placeholder)}">${esc(getPath(P,path))}</textarea>`;
+}
+function fi(label, inner, opts='') {
+  return `<div class="field-item${opts ? ' '+opts : ''}">\n<label class="field-label">${label}</label>\n${inner}\n</div>`;
+}
+function fg(cols, ...items) {
+  return `<div class="field-grid${cols===1?' one':cols===3?' three':''}">${items.join('\n')}</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION BODY RENDERERS
+// ═══════════════════════════════════════════════════════════════
+
+function personalBodyHTML() {
+  const p = 'personal';
+  return `
+    <div class="section-tip">Fields marked <span class="req">*</span> are used to personalise the Cover Letter LaTeX output. Others appear in the CV Bank for Claude to reference.</div>
+    ${fg(2,
+      fi('Full Name <span class="req">*</span>', inp(`${p}.fullName`, 'e.g. Jane Smith')),
+      fi('Date of Birth <span class="opt">optional</span>', inp(`${p}.dob`, 'e.g. 15th March 1990'))
+    )}
+    ${fg(1, fi('Full Address', inp(`${p}.address`, 'e.g. 12 Oak Street, Melbourne, VIC 3000, Australia')))}
+    ${fg(2,
+      fi('Location for Letterhead <span class="req">*</span>', inp(`${p}.location`, 'e.g. Melbourne, VIC 3000')),
+      fi('Primary Phone <span class="req">*</span>', inp(`${p}.phone`, 'e.g. +61 400 000 000'))
+    )}
+    ${fg(2,
+      fi('Secondary Phone <span class="opt">optional</span>', inp(`${p}.phone2`, 'e.g. +94 11 000 0000')),
+      fi('Email <span class="req">*</span>', inp(`${p}.email`, 'e.g. jane@email.com'))
+    )}
+    ${fg(2,
+      fi('LinkedIn URL <span class="req">*</span>', inp(`${p}.linkedin`, 'e.g. https://linkedin.com/in/yourname')),
+      fi('Portfolio / GitHub URL <span class="req">*</span>', inp(`${p}.portfolio`, 'e.g. https://yourname.github.io'))
+    )}
+    ${fg(2,
+      fi('Right to Work URL <span class="opt">optional</span>', inp(`${p}.rtwUrl`, 'e.g. https://yourname.github.io/rtw — leave blank if none')),
+      fi('Right to Work Statement', inp(`${p}.rightToWork`, 'e.g. Unrestricted — Subclass 485 visa, valid until 2029'))
+    )}
+    ${fg(1, fi('Location Note', inp(`${p}.locationNote`, 'e.g. Based in Melbourne — 5 min from CBD')))}
+    ${fg(2,
+      fi('Languages', inp(`${p}.languages`, 'e.g. English (fluent), Mandarin (competent)')),
+      fi('National ID / NIC <span class="opt">optional</span>', inp(`${p}.nic`, ''))
+    )}
+    ${fg(3,
+      fi('Sex <span class="opt">optional</span>', inp(`${p}.sex`, '')),
+      fi('Civil Status <span class="opt">optional</span>', inp(`${p}.civilStatus`, '')),
+      fi('Ethnic Group <span class="opt">optional</span>', inp(`${p}.ethnicGroup`, ''))
+    )}`;
+}
+
+function summaryBodyHTML() {
+  return `
+    ${fg(1, fi('LinkedIn Headline', inp('summary.headline', 'e.g. Project Manager | AI Integrationist | ESG')))}
+    ${fg(1, fi('Professional Summary (multiple paragraphs OK)', ta('summary.paragraphs', 'Write your professional summary here — 2 to 4 paragraphs. Be specific. Mention industries, years of experience, mission, strengths.', 6)))}
+    ${fg(1, fi('Personal Tagline <span class="opt">optional</span>', ta('summary.tagline', 'e.g. As someone from an engineering family background, I value sincerity, teamwork, and perseverance...', 2)))}`;
+}
+
+function skillsBodyHTML() {
+  const cards = P.skills.map((s, i) => `
+    <div class="entry-card">
+      <div class="entry-card-hdr">
+        <span class="entry-card-title">SKILL CATEGORY ${i+1}</span>
+        <button class="btn btn-danger" onclick="removeItem('skills',${i})">&#x2715; Remove</button>
+      </div>
+      ${fg(1, fi('Category Name', inp(`skills.${i}.category`, 'e.g. Project & Programme Management')))}
+      ${fg(1, fi('Skills (one per line)', ta(`skills.${i}.items`, 'End-to-end project management\nStakeholder management\nRisk mitigation\n...', 5)))}
+    </div>`).join('');
+  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('skills',{category:'',items:''})">+ Add Skill Category</button></div>`;
+}
+
+function workHistoryBodyHTML() {
+  const cards = P.workHistory.map((j, i) => `
+    <div class="entry-card">
+      <div class="entry-card-hdr">
+        <span class="entry-card-title">ROLE ${i+1}</span>
+        <button class="btn btn-danger" onclick="removeItem('workHistory',${i})">&#x2715; Remove</button>
+      </div>
+      ${fg(2,
+        fi('Job Title', inp(`workHistory.${i}.title`, 'e.g. Delivery Lead — Sustainable Finance')),
+        fi('Employer', inp(`workHistory.${i}.employer`, 'e.g. Acuity Knowledge Partners'))
+      )}
+      ${fg(2,
+        fi('Period', inp(`workHistory.${i}.period`, 'e.g. April 2025 – Present')),
+        fi('Project / Nature Summary <span class="opt">optional</span>', inp(`workHistory.${i}.nature`, 'e.g. Led delivery of Climate Transition Tool for 2,000+ clients'))
+      )}
+      ${fg(1, fi('Bullet Points (one per line)', ta(`workHistory.${i}.bullets`, 'Led delivery of...\nCoordinated a 30-member team...\nBuilt automated dashboards...\n...', 6)))}
+    </div>`).join('');
+  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('workHistory',{title:'',employer:'',period:'',nature:'',bullets:''})">+ Add Role</button></div>`;
+}
+
+function educationBodyHTML() {
+  const cards = P.education.map((e, i) => `
+    <div class="entry-card">
+      <div class="entry-card-hdr">
+        <span class="entry-card-title">EDUCATION ${i+1}</span>
+        <button class="btn btn-danger" onclick="removeItem('education',${i})">&#x2715; Remove</button>
+      </div>
+      ${fg(1, fi('Degree / Qualification', inp(`education.${i}.degree`, 'e.g. Master of Business Administration (MBA) — Marketing')))}
+      ${fg(2,
+        fi('Institution', inp(`education.${i}.institution`, 'e.g. Cardiff Metropolitan University, UK')),
+        fi('Period / Year', inp(`education.${i}.period`, 'e.g. 2020–2022'))
+      )}
+      ${fg(2,
+        fi('Grade / GPA <span class="opt">optional</span>', inp(`education.${i}.gpa`, 'e.g. Merit / 3.2 GPA')),
+        fi('Thesis / Dissertation <span class="opt">optional</span>', inp(`education.${i}.thesis`, 'e.g. The Relationship Between Training and Job Satisfaction'))
+      )}
+      ${fg(1, fi('Additional Notes <span class="opt">optional</span>', inp(`education.${i}.notes`, 'e.g. Full Tuition Scholarship Holder')))}
+    </div>`).join('');
+  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('education',{degree:'',institution:'',period:'',gpa:'',thesis:'',notes:''})">+ Add Education</button></div>`;
+}
+
+function certificationsBodyHTML() {
+  const cards = P.certifications.map((c, i) => `
+    <div class="entry-card">
+      <div class="entry-card-hdr">
+        <span class="entry-card-title">CERT CATEGORY ${i+1}</span>
+        <button class="btn btn-danger" onclick="removeItem('certifications',${i})">&#x2715; Remove</button>
+      </div>
+      ${fg(1, fi('Category Heading', inp(`certifications.${i}.category`, 'e.g. Sustainable Finance / Climate')))}
+      ${fg(1, fi('Certifications (one per line)', ta(`certifications.${i}.items`, 'Climate-Related Financial Disclosures\nIntroduction to ESG\n...', 4)))}
+    </div>`).join('');
+  return cards +
+    `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('certifications',{category:'',items:''})">+ Add Category</button></div>` +
+    `<div style="margin-top:16px">` +
+    fg(1, fi('Academic Publications (one per line)', ta('publications.academic', 'The Relationship Between Training and Job Satisfaction — Cardiff Metropolitan University (MBA)\n...', 4))) +
+    fg(1, fi('Awards (one per line)', ta('publications.awards', 'Most Valuable Team Award — ESG.X (Acuity Knowledge Partners)\nBest Results Achiever — Ananda College (2015)\n...', 4))) +
+    `</div>`;
+}
+
+function storyBankBodyHTML() {
+  const tip = `<div class="section-tip">Each story is a detailed narrative Claude can use in cover letters. Include context, challenge, action, and outcome. Give each a title and list the roles it's best for.</div>`;
+  const cards = P.storyBank.map((s, i) => `
+    <div class="entry-card">
+      <div class="entry-card-hdr">
+        <span class="entry-card-title">STORY ${i+1}</span>
+        <button class="btn btn-danger" onclick="removeItem('storyBank',${i})">&#x2715; Remove</button>
+      </div>
+      ${fg(1, fi('Story Title', inp(`storyBank.${i}.title`, 'e.g. The ESG Evidence Library — Automation & Problem Solving')))}
+      ${fg(1, fi('Best Used For', inp(`storyBank.${i}.usedFor`, 'e.g. Project management, data/analytics, automation, admin, operations roles')))}
+      ${fg(1, fi('Story Text', ta(`storyBank.${i}.text`, 'Write the full story here. Include the challenge, what you did, and the measurable outcome. Multiple paragraphs are fine.', 7)))}
+    </div>`).join('');
+  return tip + cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('storyBank',{title:'',usedFor:'',text:''})">+ Add Story</button></div>`;
+}
+
+function projectsBodyHTML() {
+  const cards = P.projects.map((p, i) => `
+    <div class="entry-card">
+      <div class="entry-card-hdr">
+        <span class="entry-card-title">PROJECT ${i+1}</span>
+        <button class="btn btn-danger" onclick="removeItem('projects',${i})">&#x2715; Remove</button>
+      </div>
+      ${fg(2,
+        fi('Project Name', inp(`projects.${i}.name`, 'e.g. Gaia Symbiosis (Non-Profit)')),
+        fi('Description', inp(`projects.${i}.description`, 'e.g. AI-human hybrid solutions for local sustainability issues'))
+      )}
+    </div>`).join('');
+  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('projects',{name:'',description:''})">+ Add Project</button></div>`;
+}
+
+function achievementsBodyHTML() {
+  const cards = P.achievements.map((a, i) => `
+    <div class="entry-card">
+      <div class="entry-card-hdr">
+        <span class="entry-card-title">ACHIEVEMENT CATEGORY ${i+1}</span>
+        <button class="btn btn-danger" onclick="removeItem('achievements',${i})">&#x2715; Remove</button>
+      </div>
+      ${fg(1, fi('Category', inp(`achievements.${i}.category`, 'e.g. Music Competitions')))}
+      ${fg(1, fi('Items (one per line)', ta(`achievements.${i}.items`, '2009: All-island 2nd place — harmonium solo\n2008: Negombo Zone 1st place\n...', 4)))}
+    </div>`).join('');
+  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('achievements',{category:'',items:''})">+ Add Category</button></div>`;
+}
+
+function refereesBodyHTML() {
+  const cards = P.referees.map((r, i) => `
+    <div class="entry-card">
+      <div class="entry-card-hdr">
+        <span class="entry-card-title">REFEREE ${i+1}</span>
+        <button class="btn btn-danger" onclick="removeItem('referees',${i})">&#x2715; Remove</button>
+      </div>
+      ${fg(2,
+        fi('Full Name', inp(`referees.${i}.name`, 'e.g. Mrs. Jane Doe')),
+        fi('Title', inp(`referees.${i}.title`, 'e.g. Associate Director, Acuity Analytics'))
+      )}
+      ${fg(2,
+        fi('Email', inp(`referees.${i}.email`, 'e.g. jane.doe@email.com')),
+        fi('Phone', inp(`referees.${i}.phone`, 'e.g. +61 400 000 000'))
+      )}
+    </div>`).join('');
+  return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('referees',{name:'',title:'',email:'',phone:''})">+ Add Referee</button></div>`;
+}
+
+function usageNotesBodyHTML() {
+  return `
+    <div class="section-tip">Optional but powerful: tell Claude which stories to use for which role types. Claude reads this when tailoring your CV and cover letter.</div>
+    ${fg(1, fi('Usage Notes', ta('usageNotes', 'AI / Tech roles: Stories 1, 3 + AI integration skills\nESG / Sustainability: Stories 2, 4 + PCAF/TNFD certifications\nProject Management: Stories 1, 2, 4 + KPI compliance, team size\n...', 8)))}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADD / REMOVE DYNAMIC ITEMS
+// ═══════════════════════════════════════════════════════════════
+function addItem(section, template) {
+  P[section].push(JSON.parse(JSON.stringify(template)));
+  renderSectionBody(section);
+  debouncedSave();
+}
+
+function removeItem(section, idx) {
+  if (P[section].length <= 1) {
+    // reset to one blank rather than empty
+    P[section] = [JSON.parse(JSON.stringify(Object.fromEntries(Object.keys(P[section][0]).map(k=>([k,''])))))];
+  } else {
+    P[section].splice(idx, 1);
+  }
+  renderSectionBody(section);
+  debouncedSave();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CV BANK GENERATOR
+// ═══════════════════════════════════════════════════════════════
+function generateCVBankText() {
+  const name = P.personal.fullName || 'YOUR NAME';
+  const monthYear = new Date().toLocaleString('en-AU', { month:'long', year:'numeric' });
+  const lines = [];
+
+  const push = (...args) => args.forEach(l => lines.push(l));
+  const nl = () => lines.push('');
+  const section = title => { nl(); push(title); nl(); };
+
+  push(`${name} \u2014 MASTER CV CONTENT BANK`);
+  push(`(Merged: PDF CV + LinkedIn + All Cover Letters \u2014 ${monthYear})`);
+  nl();
+
+  // PERSONAL INFORMATION
+  section('PERSONAL INFORMATION');
+  const p = P.personal;
+  if (p.fullName)      push(`Full Name: ${p.fullName}`);
+  if (p.dob)           push(`Date of Birth: ${p.dob}`);
+  if (p.address)       push(`Address: ${p.address}`);
+  if (p.phone)         push(`Mobile: ${p.phone}`);
+  if (p.phone2)        push(`Secondary Phone: ${p.phone2}`);
+  if (p.email)         push(`Email: ${p.email}`);
+  if (p.linkedin)      push(`LinkedIn: ${p.linkedin}`);
+  if (p.portfolio)     push(`GitHub / Portfolio: ${p.portfolio}`);
+  if (p.rtwUrl)        push(`Right to Work URL: ${p.rtwUrl}`);
+  if (p.sex)           push(`Sex: ${p.sex}`);
+  if (p.civilStatus)   push(`Civil Status: ${p.civilStatus}`);
+  if (p.ethnicGroup)   push(`Ethnic Group: ${p.ethnicGroup}`);
+  if (p.nic)           push(`NIC: ${p.nic}`);
+  if (p.rightToWork)   push(`Right to Work (Australia): ${p.rightToWork}`);
+  if (p.locationNote)  push(`Location note: ${p.locationNote}`);
+  if (p.languages)     push(`Languages: ${p.languages}`);
+  nl();
+
+  // PROFESSIONAL SUMMARY
+  section('PROFESSIONAL SUMMARY / ABOUT ME');
+  if (P.summary.paragraphs) push(P.summary.paragraphs);
+  if (P.summary.headline)   push(`LinkedIn Headline: ${P.summary.headline}`);
+  if (P.summary.tagline)    push(`Personal tagline used across applications: "${P.summary.tagline}"`);
+  nl();
+
+  // SKILLS
+  const hasSkills = P.skills.some(s => s.category || s.items);
+  if (hasSkills) {
+    section('SKILLS & PROFICIENCIES');
+    P.skills.forEach(s => {
+      if (!s.category && !s.items) return;
+      push(s.category || 'Skills');
+      nl();
+      (s.items || '').split('\n').filter(Boolean).forEach(i => push(i));
+      nl();
+    });
+    nl();
+  }
+
+  // WORK HISTORY
+  const hasJobs = P.workHistory.some(j => j.title || j.employer);
+  if (hasJobs) {
+    section('WORK HISTORY');
+    P.workHistory.forEach(j => {
+      if (!j.title && !j.employer) return;
+      push(j.title || 'Role');
+      if (j.employer) push(`Employer: ${j.employer}`);
+      if (j.period)   push(`Period: ${j.period}`);
+      if (j.nature)   push(`Nature: ${j.nature}`);
+      nl();
+      (j.bullets || '').split('\n').filter(Boolean).forEach(b => push(b));
+      nl(); nl();
+    });
+  }
+
+  // EDUCATION
+  const hasEdu = P.education.some(e => e.degree || e.institution);
+  if (hasEdu) {
+    section('EDUCATION');
+    P.education.forEach(e => {
+      if (!e.degree && !e.institution) return;
+      push(e.degree || 'Degree');
+      nl();
+      let instLine = e.institution || '';
+      if (e.period) instLine += ` (${e.period})`;
+      if (instLine) push(instLine);
+      if (e.gpa)    push(`Grade/GPA: ${e.gpa}`);
+      if (e.thesis) push(`Dissertation/Thesis: ${e.thesis}`);
+      if (e.notes)  push(e.notes);
+      nl();
+    });
+    nl();
+  }
+
+  // CERTIFICATIONS & PUBLICATIONS
+  const hasCerts = P.certifications.some(c => c.category || c.items) ||
+                   P.publications.academic || P.publications.awards;
+  if (hasCerts) {
+    section('CERTIFICATIONS & PUBLICATIONS');
+    P.certifications.forEach(c => {
+      if (!c.category && !c.items) return;
+      push(c.category || 'Certifications');
+      nl();
+      (c.items || '').split('\n').filter(Boolean).forEach(i => push(i));
+      nl();
+    });
+    if (P.publications.academic) {
+      push('Academic Publications');
+      nl();
+      P.publications.academic.split('\n').filter(Boolean).forEach(p2 => push(p2));
+      nl();
+    }
+    if (P.publications.awards) {
+      push('Awards');
+      nl();
+      P.publications.awards.split('\n').filter(Boolean).forEach(a => push(a));
+      nl();
+    }
+    nl();
+  }
+
+  // STORY BANK
+  const hasStories = P.storyBank.some(s => s.title || s.text);
+  if (hasStories) {
+    section('STORY BANK \u2014 KEY NARRATIVES FOR COVER LETTERS');
+    push('These are proven storylines extracted from your cover letters. Use them as evidence when writing tailored applications.');
+    nl();
+    P.storyBank.forEach((s, i) => {
+      if (!s.title && !s.text) return;
+      push(`STORY ${i+1}: ${s.title || 'Story'}`);
+      if (s.usedFor) push(`Best used for: ${s.usedFor}`);
+      if (s.text)    push(s.text);
+      nl();
+    });
+    nl();
+  }
+
+  // PERSONAL PROJECTS
+  const hasProjects = P.projects.some(p2 => p2.name || p2.description);
+  if (hasProjects) {
+    section('PERSONAL PROJECTS & SIDE VENTURES');
+    P.projects.forEach(p2 => {
+      if (!p2.name && !p2.description) return;
+      push(p2.description ? `${p2.name}: ${p2.description}` : p2.name);
+    });
+    nl(); nl();
+  }
+
+  // ACHIEVEMENTS
+  const hasAch = P.achievements.some(a => a.category || a.items);
+  if (hasAch) {
+    section('ACHIEVEMENTS & EXTRACURRICULAR');
+    P.achievements.forEach(a => {
+      if (!a.category && !a.items) return;
+      push(a.category || 'Achievements');
+      nl();
+      (a.items || '').split('\n').filter(Boolean).forEach(i => push(i));
+      nl();
+    });
+    nl();
+  }
+
+  // REFEREES
+  const hasRefs = P.referees.some(r => r.name);
+  if (hasRefs) {
+    section('REFEREES');
+    P.referees.forEach(r => {
+      if (!r.name) return;
+      push(r.name);
+      nl();
+      if (r.title) push(`Title: ${r.title}`);
+      if (r.email) push(`Email: ${r.email}`);
+      if (r.phone) push(`Phone: ${r.phone}`);
+      nl();
+    });
+    nl();
+  }
+
+  // USAGE NOTES
+  if (P.usageNotes) {
+    section('USAGE NOTES \u2014 WHICH STORIES TO USE FOR WHICH ROLES');
+    push(P.usageNotes);
+    nl();
+  }
+
+  return lines.join('\n').replace(/\n{4,}/g, '\n\n\n').trim();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CV BANK PARSER (import)
+// ═══════════════════════════════════════════════════════════════
+function parseCVBankText(text) {
+  const result = defaultP();
+
+  // Split into named sections by known headers
+  const HEADERS = [
+    'PERSONAL INFORMATION',
+    'PROFESSIONAL SUMMARY',
+    'SKILLS & PROFICIENCIES',
+    'WORK HISTORY',
+    'EDUCATION',
+    'CERTIFICATIONS & PUBLICATIONS',
+    'STORY BANK',
+    'PERSONAL PROJECTS',
+    'ACHIEVEMENTS & EXTRACURRICULAR',
+    'REFEREES',
+    'USAGE NOTES'
+  ];
+
+  const sections = {};
+  const allLines = text.split('\n');
+  let curSection = null;
+  let curLines = [];
+
+  for (const line of allLines) {
+    const upper = line.trim().toUpperCase();
+    const matched = HEADERS.find(h => upper.startsWith(h));
+    if (matched) {
+      if (curSection) sections[curSection] = curLines.join('\n');
+      curSection = matched;
+      curLines = [];
+    } else if (curSection) {
+      curLines.push(line);
+    }
+  }
+  if (curSection) sections[curSection] = curLines.join('\n');
+
+  // ── PERSONAL ──
+  const parseField = (body, label) => {
+    const m = body.match(new RegExp(`^${label}:\\s*(.+)$`, 'm'));
+    return m ? m[1].trim() : '';
+  };
+
+  if (sections['PERSONAL INFORMATION']) {
+    const b = sections['PERSONAL INFORMATION'];
+    result.personal.fullName    = parseField(b, 'Full Name');
+    result.personal.dob         = parseField(b, 'Date of Birth');
+    result.personal.address     = parseField(b, 'Address');
+    result.personal.phone       = parseField(b, 'Mobile') || parseField(b, 'Phone');
+    result.personal.phone2      = parseField(b, 'Secondary Phone') || parseField(b, 'Sri Lanka Phone');
+    result.personal.email       = parseField(b, 'Email');
+    result.personal.linkedin    = parseField(b, 'LinkedIn');
+    result.personal.portfolio   = parseField(b, 'GitHub / Portfolio') || parseField(b, 'Portfolio');
+    result.personal.rtwUrl      = parseField(b, 'Right to Work URL') || parseField(b, 'RTW URL');
+    result.personal.rightToWork = parseField(b, 'Right to Work \\(Australia\\)') || parseField(b, 'Right to Work');
+    result.personal.locationNote= parseField(b, 'Location note');
+    result.personal.languages   = parseField(b, 'Languages');
+    result.personal.nic         = parseField(b, 'NIC');
+    result.personal.sex         = parseField(b, 'Sex');
+    result.personal.civilStatus = parseField(b, 'Civil Status');
+    result.personal.ethnicGroup = parseField(b, 'Ethnic Group');
+    // derive short location from address if not explicitly stored
+    if (!result.personal.location) {
+      const addr = result.personal.address;
+      const m2 = addr.match(/([A-Za-z][A-Za-z\s]+,\s*[A-Z]{2,3}\s*\d{3,4})/);
+      result.personal.location = m2 ? m2[1].trim() : '';
+    }
+  }
+
+  // ── SUMMARY ──
+  if (sections['PROFESSIONAL SUMMARY']) {
+    let b = sections['PROFESSIONAL SUMMARY'].trim();
+    const headlineM = b.match(/^LinkedIn Headline:\s*(.+)$/m);
+    const taglineM  = b.match(/^Personal tagline[^:]*:\s*"?(.+?)"?\s*$/m);
+    result.summary.headline = headlineM ? headlineM[1].trim() : '';
+    result.summary.tagline  = taglineM  ? taglineM[1].trim()  : '';
+    b = b.replace(/^LinkedIn Headline:.*$/m, '').replace(/^Personal tagline[^:]*:.*$/m, '').trim();
+    result.summary.paragraphs = b;
+  }
+
+  // ── SKILLS ──
+  if (sections['SKILLS & PROFICIENCIES']) {
+    const blocks = sections['SKILLS & PROFICIENCIES'].split(/\n\n+/);
+    const cats = [];
+    let curCat = null;
+    let curItems = [];
+    for (const block of blocks) {
+      const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
+      if (!blines.length) continue;
+      if (blines.length === 1) {
+        if (curCat !== null) cats.push({ category: curCat, items: curItems.join('\n') });
+        curCat = blines[0]; curItems = [];
+      } else {
+        if (curCat !== null) cats.push({ category: curCat, items: curItems.join('\n') });
+        curCat = blines[0]; curItems = blines.slice(1);
+      }
+    }
+    if (curCat !== null) cats.push({ category: curCat, items: curItems.join('\n') });
+    if (cats.length) result.skills = cats;
+  }
+
+  // ── WORK HISTORY ──
+  if (sections['WORK HISTORY']) {
+    const jobs = [];
+    const blocks = sections['WORK HISTORY'].split(/\n{3,}/);
+    for (const block of blocks) {
+      const trimmed = block.trim();
+      if (!trimmed) continue;
+      const blines = trimmed.split('\n');
+      const job = { title:'', employer:'', period:'', nature:'', bullets:'' };
+      const bullets = [];
+      let headerDone = false;
+      for (const line of blines) {
+        const t = line.trim();
+        if (!t) { headerDone = true; continue; }
+        const emp = t.match(/^Employer:\s*(.+)/);
+        const per = t.match(/^Period:\s*(.+)/);
+        const nat = t.match(/^Nature:\s*(.+)/);
+        if (emp) { job.employer = emp[1]; continue; }
+        if (per) { job.period = per[1]; continue; }
+        if (nat) { job.nature = nat[1]; continue; }
+        if (!job.title) { job.title = t; continue; }
+        if (headerDone || (!emp && !per && !nat)) bullets.push(t);
+      }
+      job.bullets = bullets.join('\n');
+      if (job.title || job.employer) jobs.push(job);
+    }
+    if (jobs.length) result.workHistory = jobs;
+  }
+
+  // ── EDUCATION ──
+  if (sections['EDUCATION']) {
+    const edus = [];
+    const blocks = sections['EDUCATION'].split(/\n\n+/);
+    let curEdu = null;
+    for (const block of blocks) {
+      const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
+      if (!blines.length) continue;
+      const firstLine = blines[0];
+      const isLabel = /^(Employer|Period|Grade|Dissertation|Thesis|GPA):/i.test(firstLine);
+      if (!isLabel && !curEdu) {
+        curEdu = { degree: firstLine, institution:'', period:'', gpa:'', thesis:'', notes:'' };
+        edus.push(curEdu);
+        continue;
+      }
+      if (!curEdu) continue;
+      for (const line of blines) {
+        const gpa = line.match(/^Grade\/GPA:\s*(.+)/);
+        const the = line.match(/^(?:Dissertation|Thesis):\s*(.+)/i);
+        if (gpa) { curEdu.gpa = gpa[1]; continue; }
+        if (the) { curEdu.thesis = the[1]; continue; }
+        if (!curEdu.institution) { curEdu.institution = line; continue; }
+        curEdu.notes = (curEdu.notes ? curEdu.notes + '\n' : '') + line;
+      }
+    }
+    if (edus.length) result.education = edus;
+  }
+
+  // ── STORY BANK ──
+  if (sections['STORY BANK']) {
+    const stories = [];
+    const storyBlocks = sections['STORY BANK'].split(/(?=^STORY \d+:)/m);
+    for (const block of storyBlocks) {
+      const trimmed = block.trim();
+      if (!trimmed || trimmed.startsWith('These are proven')) continue;
+      const titleM = trimmed.match(/^STORY \d+:\s*(.+)$/m);
+      const usedM  = trimmed.match(/^Best used for:\s*(.+)$/m);
+      let text = trimmed;
+      if (titleM) text = text.replace(titleM[0], '').trim();
+      if (usedM)  text = text.replace(usedM[0], '').trim();
+      stories.push({
+        title:   titleM ? titleM[1].trim() : '',
+        usedFor: usedM  ? usedM[1].trim()  : '',
+        text:    text
+      });
+    }
+    if (stories.length) result.storyBank = stories;
+  }
+
+  // ── PERSONAL PROJECTS ──
+  if (sections['PERSONAL PROJECTS']) {
+    const projs = sections['PERSONAL PROJECTS'].trim().split('\n')
+      .filter(Boolean)
+      .map(line => {
+        const m = line.match(/^([^:]+):\s*(.+)$/);
+        return m ? { name: m[1].trim(), description: m[2].trim() }
+                 : { name: line.trim(), description: '' };
+      });
+    if (projs.length) result.projects = projs;
+  }
+
+  // ── ACHIEVEMENTS ──
+  if (sections['ACHIEVEMENTS & EXTRACURRICULAR']) {
+    const blocks = sections['ACHIEVEMENTS & EXTRACURRICULAR'].split(/\n\n+/);
+    const achs = [];
+    let curAch = null;
+    let curItems = [];
+    for (const block of blocks) {
+      const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
+      if (!blines.length) continue;
+      if (blines.length === 1) {
+        if (curAch !== null) achs.push({ category: curAch, items: curItems.join('\n') });
+        curAch = blines[0]; curItems = [];
+      } else {
+        if (curAch !== null) achs.push({ category: curAch, items: curItems.join('\n') });
+        curAch = blines[0]; curItems = blines.slice(1);
+      }
+    }
+    if (curAch !== null) achs.push({ category: curAch, items: curItems.join('\n') });
+    if (achs.length) result.achievements = achs;
+  }
+
+  // ── REFEREES ──
+  if (sections['REFEREES']) {
+    const refs = [];
+    const blocks = sections['REFEREES'].split(/\n\n+/);
+    let curRef = null;
+    for (const block of blocks) {
+      const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
+      if (!blines.length) continue;
+      if (!blines[0].match(/^(Title|Email|Phone):/)) {
+        if (curRef) refs.push(curRef);
+        curRef = { name: blines[0], title:'', email:'', phone:'' };
+        blines.slice(1).forEach(l => {
+          const tm = l.match(/^Title:\s*(.+)/);
+          const em = l.match(/^Email:\s*(.+)/);
+          const ph = l.match(/^Phone:\s*(.+)/);
+          if (tm) curRef.title = tm[1];
+          if (em) curRef.email = em[1];
+          if (ph) curRef.phone = ph[1];
+        });
+      }
+    }
+    if (curRef) refs.push(curRef);
+    if (refs.length) result.referees = refs;
+  }
+
+  // ── USAGE NOTES ──
+  if (sections['USAGE NOTES']) {
+    result.usageNotes = sections['USAGE NOTES'].trim();
+  }
+
+  return result;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// IMPORT / EXPORT / SEND
+// ═══════════════════════════════════════════════════════════════
+function importCVBank() {
+  const text = document.getElementById('import-text').value.trim();
+  if (!text) { toast('Paste a CV Bank text above first.', 'error'); return; }
+  try {
+    P = parseCVBankText(text);
+    saveProfileData();
+    renderProfileForm();
+    // open all sections so user can see what was imported
+    document.querySelectorAll('.builder-section-body').forEach(el => {
+      el.classList.remove('collapsed');
+    });
+    document.querySelectorAll('.section-toggle').forEach(el => {
+      el.innerHTML = '&#x25BE;';
+    });
+    document.getElementById('import-text').value = '';
+    toast('CV Bank imported successfully \u2714', 'success');
+  } catch(e) {
+    console.error(e);
+    toast('Parse error \u2014 check the console for details.', 'error');
+  }
+}
+
+function exportCVBank() {
+  const text = generateCVBankText();
+  if (!text || text.length < 20) { toast('Fill in some profile details first.', 'error'); return; }
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const name = (P.personal.fullName || 'My').trim().replace(/\s+/g,'_');
+  a.href = url;
+  a.download = `${name}_CV_Content_Bank.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CV Bank downloaded \u2714', 'success');
+}
+
+function sendToPromptBuilder() {
+  const text = generateCVBankText();
+  if (!text || text.length < 20) { toast('Fill in some profile details first.', 'error'); return; }
+  document.getElementById('cv-bank').value = text;
+  localStorage.setItem('cv_content_bank', text);
+  updateCount('cv-bank','cv-count');
+  updateStatus();
+  switchView('prompt');
+  toast('CV Bank loaded into Prompt Builder \u2714', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PERSONAL INFO EXTRACTION (for prompt placeholder injection)
+// ═══════════════════════════════════════════════════════════════
+function extractPersonalFromCVBank(cvBankText) {
+  const get = label => {
+    const m = cvBankText.match(new RegExp(`^${label}:\\s*(.+)$`, 'm'));
+    return m ? m[1].trim() : '';
+  };
+
+  // Full name — handle "Long Name (Short Name)" format
+  let fullName = get('Full Name');
+  const parenM = fullName.match(/\(([^)]+)\)/);
+  if (parenM) fullName = parenM[1].trim();
+
+  const phone     = get('Mobile') || get('Phone');
+  const email     = get('Email');
+  const linkedin  = get('LinkedIn');
+  const portfolio = get('GitHub / Portfolio') || get('Portfolio');
+  const rtwUrl    = get('Right to Work URL') || get('RTW URL');
+
+  // Location: extract city/state/postcode from address
+  const address  = get('Address');
+  const locMatch = address.match(/([A-Za-z][A-Za-z\s]+,\s*[A-Z]{2,3}\s*\d{3,4})/);
+  const location = locMatch ? locMatch[1].trim() : get('Location note').split('.')[0].trim() || address;
+
+  // Safe filename prefix
+  const nameFile = fullName.trim().split(/\s+/).join('_').replace(/[^A-Za-z0-9_]/g,'') || 'YourName';
+
+  return { fullName, phone, email, linkedin, portfolio, rtwUrl, location, nameFile };
+}
+
+function injectPersonalInfo(template, info) {
+  let result = template
+    .replaceAll(PH_NAME,  info.fullName  || PH_NAME)
+    .replaceAll(PH_PHONE, info.phone     || PH_PHONE)
+    .replaceAll(PH_EMAIL, info.email     || PH_EMAIL)
+    .replaceAll(PH_LOC,   info.location  || PH_LOC)
+    .replaceAll(PH_LI,    info.linkedin  || PH_LI)
+    .replaceAll(PH_PORT,  info.portfolio || PH_PORT)
+    .replaceAll(PH_FILE,  info.nameFile  || PH_FILE);
+
+  // RTW link: remove the entire \textbar{} \href{...}{Right to Work} clause if no URL
+  if (!info.rtwUrl) {
+    result = result.replace(/\\textbar\{\}\s*\\href\{\[YOUR_RIGHT_TO_WORK_URL\]\}\{Right to Work\}/g, '');
+    result = result.replaceAll(PH_RTW, '');
+  } else {
+    result = result.replaceAll(PH_RTW, info.rtwUrl);
+  }
+  return result;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PROMPT BUILDER — CORE LOGIC
+// ═══════════════════════════════════════════════════════════════
+function loadPromptBuilder() {
+  document.getElementById('cv-bank').value   = localStorage.getItem('cv_content_bank') || '';
+  document.getElementById('cl-prompt').value = localStorage.getItem('cl_prompt')        || DEFAULTS.cl;
+  document.getElementById('cv-prompt').value = localStorage.getItem('cv_prompt')        || DEFAULTS.cvp;
+  updateCount('cv-bank','cv-count');
+  updateCount('cl-prompt','cl-count');
+  updateCount('cv-prompt','cv-count2');
+  updateCount('jd-input','jd-count');
+  updateStatus();
+}
+
+function buildPrompts() {
+  const cvBank  = document.getElementById('cv-bank').value.trim();
+  const jd      = document.getElementById('jd-input').value.trim();
+  const clTmpl  = document.getElementById('cl-prompt').value;
+  const cvTmpl  = document.getElementById('cv-prompt').value;
+
+  const errs = [];
+  if (!cvBank)              errs.push('CV Content Bank (field 1)');
+  if (!jd)                  errs.push('Job Description (field 4)');
+  if (!clTmpl && !cvTmpl)  errs.push('at least one prompt template (fields 2 or 3)');
+  if (errs.length) { toast(`Missing: ${errs.join(', ')}`, 'error'); return; }
+
+  // Extract personal info for placeholder injection
+  const personal = extractPersonalFromCVBank(cvBank);
+
+  // Build cover letter prompt
+  let clBuilt = clTmpl;
+  if (clTmpl) {
+    const hadJD  = clTmpl.includes(PH_JD);
+    const hadCV  = clTmpl.includes(PH_CV);
+    clBuilt = injectPersonalInfo(clTmpl, personal)
+                .replaceAll(PH_JD, jd)
+                .replaceAll(PH_CV, cvBank);
+    const warn = [];
+    if (!hadJD) warn.push('"[PASTE JOB DESCRIPTION HERE]"');
+    if (!hadCV) warn.push('"[PASTE YOUR FULL MASTER CV CONTENT BANK HERE]"');
+    if (warn.length) toast(`\u26A0 CL prompt missing placeholder: ${warn.join(' and ')}`, 'error');
+  }
+
+  // Build CV/LaTeX prompt
+  let cvBuilt = cvTmpl;
+  if (cvTmpl) {
+    const hadJD  = cvTmpl.includes(PH_JD);
+    const hadCV  = cvTmpl.includes(PH_CV);
+    cvBuilt = injectPersonalInfo(cvTmpl, personal)
+                .replaceAll(PH_JD, jd)
+                .replaceAll(PH_CV, cvBank);
+    const warn = [];
+    if (!hadJD) warn.push('"[PASTE JOB DESCRIPTION HERE]"');
+    if (!hadCV) warn.push('"[PASTE YOUR FULL MASTER CV CONTENT BANK HERE]"');
+    if (warn.length) toast(`\u26A0 CV prompt missing placeholder: ${warn.join(' and ')}`, 'error');
+  }
+
+  renderOutput('out-cl-content', clBuilt, cvBank, jd);
+  renderOutput('out-cv-content', cvBuilt, cvBank, jd);
+  toast('Prompts built \u2014 ready to copy \u2714', 'success');
+  updateStatus();
+  document.querySelector('.output-section').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function renderOutput(elId, text, cvBank, jd) {
+  const el = document.getElementById(elId);
+  if (!text || !text.trim()) {
+    el.innerHTML = '<div class="output-empty"><div class="empty-icon">\u2014</div>No template provided for this prompt.</div>';
+    return;
+  }
+  let safe = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Highlight first 80 chars of each injected section
+  const jdPrev = jd.substring(0,80).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const cvPrev = cvBank.substring(0,80).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if (jdPrev) safe = safe.replace(jdPrev, `<span class="highlight-jd">${jdPrev}</span>`);
+  if (cvPrev) safe = safe.replace(cvPrev, `<span class="highlight-cv">${cvPrev}</span>`);
+  el.innerHTML = safe;
+}
+
+function clearOutputs() {
+  const msg = '<div class="output-empty"><div class="empty-icon">&#x1F4C4;</div>Hit <strong>Build Prompts</strong> to generate your prompt.</div>';
+  document.getElementById('out-cl-content').innerHTML = msg;
+  document.getElementById('out-cv-content').innerHTML = msg;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PROMPT BUILDER — UTILITIES
+// ═══════════════════════════════════════════════════════════════
+const _debounceMap = {};
+function autosave(fieldId, storageKey) {
+  clearTimeout(_debounceMap[fieldId]);
+  _debounceMap[fieldId] = setTimeout(() => {
+    localStorage.setItem(storageKey, document.getElementById(fieldId).value);
+    updateStatus();
+  }, 800);
+}
+
+function saveField(fieldId, storageKey) {
+  localStorage.setItem(storageKey, document.getElementById(fieldId).value);
+  toast('Saved \u2714', 'success');
+  updateStatus();
+}
+
+function saveAll() {
+  localStorage.setItem('cv_content_bank', document.getElementById('cv-bank').value);
+  localStorage.setItem('cl_prompt',       document.getElementById('cl-prompt').value);
+  localStorage.setItem('cv_prompt',       document.getElementById('cv-prompt').value);
+  saveProfileData();
+  toast('All fields saved \u2714', 'success');
+  updateStatus();
+}
+
+function clearField(fieldId, storageKey, countId) {
+  if (!confirm('Clear this field and remove it from saved storage?')) return;
+  document.getElementById(fieldId).value = '';
+  localStorage.removeItem(storageKey);
+  updateCount(fieldId, countId);
+  updateStatus();
+  toast('Cleared', 'info');
+}
+
+function clearJD() {
+  document.getElementById('jd-input').value = '';
+  updateCount('jd-input','jd-count');
+  updateStatus();
+}
+
+function clearAll() {
+  if (!confirm('Clear ALL fields and saved data? This cannot be undone.')) return;
+  ['cv-bank','cl-prompt','cv-prompt','jd-input'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  ['cv_content_bank','cl_prompt','cv_prompt'].forEach(k => localStorage.removeItem(k));
+  updateCount('cv-bank','cv-count');
+  updateCount('cl-prompt','cl-count');
+  updateCount('cv-prompt','cv-count2');
+  updateCount('jd-input','jd-count');
+  clearOutputs();
+  updateStatus();
+  toast('All cleared', 'info');
+}
+
+function copyField(fieldId) {
+  const val = document.getElementById(fieldId).value;
+  if (!val.trim()) { toast('Nothing to copy', 'error'); return; }
+  navigator.clipboard.writeText(val).then(() => toast('Copied \u2714', 'success'));
+}
+
+function copyOutput(panelId) {
+  const content = document.querySelector(`#${panelId} .output-content`);
+  const text = content.innerText || content.textContent;
+  if (!text.trim() || text.includes('Hit \u25B6')) { toast('Build prompts first', 'error'); return; }
+  navigator.clipboard.writeText(text).then(() => toast('Prompt copied \u2714', 'success'));
+}
+
+function updateCount(fieldId, countId) {
+  const val = document.getElementById(fieldId).value;
+  const len = val.length;
+  const words = val.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById(countId).textContent = len > 0 ? `${len.toLocaleString()} chars \u00B7 ${words.toLocaleString()} words` : '0 chars';
+}
+
+function updateStatus() {
+  const dot    = document.getElementById('status-dot');
+  const text   = document.getElementById('status-text');
+  const detail = document.getElementById('status-detail');
+  const hasCv  = !!document.getElementById('cv-bank').value.trim();
+  const hasCl  = !!document.getElementById('cl-prompt').value.trim();
+  const hasCvp = !!document.getElementById('cv-prompt').value.trim();
+  const hasJD  = !!document.getElementById('jd-input').value.trim();
+  if (hasCv && hasCl && hasCvp && hasJD) {
+    dot.className = 'status-dot ready';
+    text.textContent = 'Ready to build \u2014 all fields populated';
+    detail.textContent = 'CV Bank + prompts saved \u00B7 JD pasted';
+  } else if (hasCv && (hasCl || hasCvp)) {
+    dot.className = 'status-dot warn';
+    text.textContent = hasJD ? 'Missing prompt template' : 'Paste a job description to build';
+    detail.textContent = hasCl && hasCvp ? 'Both templates loaded' : hasCl ? 'CL template only' : 'CV template only';
+  } else {
+    dot.className = 'status-dot';
+    text.textContent = 'Fill in your profile in the Profile Builder tab to get started';
+    detail.textContent = 'CV Bank empty';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// OUTPUT TABS
+// ═══════════════════════════════════════════════════════════════
+function switchOutputTab(tab) {
+  const clPanel = document.getElementById('out-cover-letter');
+  const cvPanel = document.getElementById('out-cv-latex');
+  const tabs = document.querySelectorAll('.output-tab');
+  if (tab === 'cl') {
+    clPanel.classList.add('visible');    cvPanel.classList.remove('visible');
+    tabs[0].classList.add('active');    tabs[1].classList.remove('active');
+  } else {
+    cvPanel.classList.add('visible');   clPanel.classList.remove('visible');
+    tabs[1].classList.add('active');    tabs[0].classList.remove('active');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN VIEW SWITCHER
+// ═══════════════════════════════════════════════════════════════
+function switchView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.main-nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`view-${view}`).classList.add('active');
+  document.getElementById(`nav-${view}`).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+let _toastTimer;
+function toast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { el.className = ''; }, 3200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  // Load prompt templates from files
+  await loadDefaults();
+
+  // Load saved profile
+  P = loadProfileData();
+  renderProfileForm();
+
+  // Load prompt builder fields
+  loadPromptBuilder();
+
+  // Event delegation: profile form input changes
+  document.getElementById('profile-form').addEventListener('input', e => {
+    const path = e.target.dataset.path;
+    if (!path) return;
+    setPath(P, path, e.target.value);
+    debouncedSave();
+  });
+
+  // JD field status updates
+  document.getElementById('jd-input').addEventListener('input', updateStatus);
+});
+</script>
+</body>
+</html>
