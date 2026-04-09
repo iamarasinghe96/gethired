@@ -885,7 +885,7 @@ function generateCVBankText() {
       if (ePeriod) instLine += ` (${ePeriod})`;
       if (instLine) push(instLine);
       if (e.gpa)    push(`Grade/GPA: ${e.gpa}`);
-      if (e.thesis) push(`Dissertation/Thesis: ${e.thesis}`);
+      if (e.thesis) push(`Thesis: ${e.thesis}`);
       if (e.notes)  push(e.notes);
       nl();
     });
