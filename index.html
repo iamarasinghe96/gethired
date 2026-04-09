@@ -1133,7 +1133,8 @@ function parseCVBankText(text) {
       if (!blines.length) continue;
       const firstLine = blines[0];
       const isLabel = /^(Employer|Period|Grade|Dissertation|Thesis|GPA):/i.test(firstLine);
-      if (!isLabel && !curEdu) {
+      // Single-line non-label block = a new degree name (even if a previous entry exists)
+      if (!isLabel && blines.length === 1 && (!curEdu || curEdu.institution)) {
         curEdu = { degree: firstLine, institution:'', startYear:'', endYear:'', gpa:'', thesis:'', notes:'' };
         edus.push(curEdu);
         continue;
@@ -1160,6 +1161,36 @@ function parseCVBankText(text) {
       }
     }
     if (edus.length) result.education = edus;
+  }
+
+  // ── CERTIFICATIONS & PUBLICATIONS ──
+  if (sections['CERTIFICATIONS & PUBLICATIONS']) {
+    const blocks = sections['CERTIFICATIONS & PUBLICATIONS'].split(/\n\n+/);
+    const certs = [];
+    let mode = 'cert';
+    let curCert = null;
+    const acLines = [], awLines = [];
+    for (const block of blocks) {
+      const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
+      if (!blines.length) continue;
+      if (blines.length === 1) {
+        const lc = blines[0].toLowerCase();
+        if (lc === 'academic publications') { mode = 'academic'; continue; }
+        if (lc === 'awards') { mode = 'awards'; continue; }
+        mode = 'cert';
+        if (curCert) certs.push(curCert);
+        curCert = { category: blines[0], items: '' };
+      } else {
+        if (mode === 'academic') { acLines.push(...blines); continue; }
+        if (mode === 'awards')   { awLines.push(...blines); continue; }
+        if (!curCert) curCert = { category: '', items: '' };
+        curCert.items = (curCert.items ? curCert.items + '\n' : '') + blines.join('\n');
+      }
+    }
+    if (curCert) certs.push(curCert);
+    if (certs.length) result.certifications = certs;
+    if (acLines.length) result.publications.academic = acLines.join('\n');
+    if (awLines.length) result.publications.awards   = awLines.join('\n');
   }
 
   // ── STORY BANK ──
