@@ -962,7 +962,6 @@ function generateCVBankText() {
     P.referees.forEach(r => {
       if (!r.name) return;
       push(r.name);
-      nl();
       if (r.title) push(`Title: ${r.title}`);
       if (r.email) push(`Email: ${r.email}`);
       if (r.phone) push(`Phone: ${r.phone}`);
