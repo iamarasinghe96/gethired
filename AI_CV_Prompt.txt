@@ -82,6 +82,30 @@ No tables for layout — use minipage or tabular only where genuinely needed
 The entire document must compile on Overleaf without errors using standard packages only
 At the bottom of the LaTeX code, add a commented-out section % ATS NOTE listing the top 10 keywords from the JD that are embedded in this CV
 
+PAGE BREAK AND SPACING RULES — apply every one of these without exception:
+
+Add \usepackage{needspace} to the preamble.
+
+Before every work history role block (the company/title/dates line plus its bullet points): insert \needspace{8\baselineskip} immediately before it. If fewer than 8 lines remain on the current page, LaTeX will force a page break so the role title and its opening bullets are never split across pages.
+
+Before every section heading (Professional Experience, Education, Skills, Certifications, Referees): insert \needspace{4\baselineskip} so a heading is never left stranded at the bottom of a page without content following it.
+
+If a page ends with more than 3cm of empty space before the next section begins, insert \vfill\pagebreak immediately before that section heading. This distributes the remaining space and starts the new section cleanly at the top of the next page. Do not use \clearpage — use \pagebreak[4] or \vfill\pagebreak only.
+
+Never allow a role's job title line to appear alone at the bottom of a page with its bullet points continuing on the next page. If \needspace does not prevent this, wrap the role block in a minipage or use \samepage.
+
+After applying all spacing: review the rendered page count mentally. If the last page contains only 2–3 lines (orphaned sign-off or section), reduce \baselinestretch by 0.05 or tighten \itemsep to pull content back.
+
+At the very bottom of the LaTeX code, include this comment block exactly as written:
+% OVERLEAF INSTRUCTIONS
+% 1. Go to overleaf.com -> New Project -> Blank Project
+% 2. Delete all default content in main.tex
+% 3. Paste this entire code block into main.tex
+% 4. Click Recompile
+% 5. Download PDF: File -> Download as PDF
+% 6. Save as: YourName_CV_RoleTitle_Organisation.pdf
+% NOTE: This CV does not use a signature image. No file upload needed.
+
 STEP 6 — AFTER THE LaTeX CODE, PROVIDE:
 A. Keyword match report — list the top 15 ATS keywords from the JD and confirm whether each one appears in the CV (yes/no/partially)
 B. What was left out and why — briefly note any experience from my content bank that was deliberately excluded for this application and the reason
