@@ -34,15 +34,12 @@ Rules:
 PART 2 — ABOUT ME
 A short factual paragraph about who I am and how I work, written the way I'd explain myself to someone I just met professionally. It should sound like I'm describing myself, not marketing myself.
 
-This is NOT a warmup paragraph. It is not a "human layer before the proof layer." It is a direct, honest description of my background, working style, and values — told plainly.
+This warms the reader before the evidence table — it is the human layer before the proof layer. Write it as a direct, honest description of my background, working style, and values — told plainly.
 
 The test: if someone read this paragraph without knowing it was a cover letter, would it sound like a normal person talking about their background? If it sounds like a pitch, rewrite it.
 
-Bad (LinkedIn bio register): "A results-oriented finance professional with a passion for process improvement and a proven track record of delivering outcomes."
-Good (actual human register): "My background is finance and systems, mostly in local government and health. I come from an engineering family so I default to building things rather than talking about them. I work better when the problem is messy. That is usually where the actual fix lives."
-
 Rules:
-- 4-5 sentences. Target 7-8 rendered lines on the page (roughly 90-110 words total). Do not exceed 8 rendered lines — if it runs over, cut the least specific sentence.
+- 4-6 sentences.
 - Draw from my professional summary and personal values
 - Include the engineering family background line if it fits naturally — it is authentic and memorable
 - No bullet points — prose only
@@ -56,14 +53,8 @@ Rules:
 - Left column: use the JD's exact language where possible — mirrors ATS keywords
 - Right column: specific proof every single time — a real project, a real number, a real outcome, or a named story from the Story Bank
 - No generic right-column responses ("I have experience in this area" is not acceptable)
-- Each right-column cell: 3-5 rendered lines on the page (roughly 45-70 words). This is a hard ceiling. If a cell exceeds 5 rendered lines, cut a sentence. Cells that run to 6-7 lines are the single biggest cause of the letter overrunning to 3 pages.
-- Each left-column cell: 1-2 rendered lines only. Use the JD's exact phrase — do not pad it.
-- Total table budget: the entire table (all rows combined) must not exceed 42 rendered lines including the header row. Count before finalising.
+- Each right-column cell: 2-4 sentences maximum — punchy, not exhaustive.
 - The right column should feel like evidence in a case, not a sales pitch
-
-PRE-TABLE TRANSITION LINE — required, always included, placed as a standalone sentence immediately before the table begins. Use this exact wording (do not paraphrase, do not add to it, do not make it more formal):
-"While I wanted to be professional and preserve the ordinary cover letter format, I thought of cloning the job description and laying out exactly how I can meet them, for your convenience."
-This line is deliberate and self-aware. It signals a real person, not a template. Do not smooth it out or make it sound more polished — its slightly informal, direct tone is the point.
 
 PART 4 — MOTIVATION & CLOSING
 Why THIS role at THIS organisation — not swappable to any other application.
@@ -75,8 +66,6 @@ Must include:
 - Portfolio link: [YOUR_PORTFOLIO_URL]
 
 Sign-off block — included automatically inside the LaTeX code output. See FINAL OUTPUT FORMAT below.
-
-LINE BUDGET: The closing section (Part 4 prose, excluding sign-off) must fit within 14 rendered lines total. This typically means 2 short paragraphs. If it runs over 14 lines, cut the least specific sentence. The sign-off block (Kind regards + 1.5cm signature + bold name) takes approximately 4 rendered lines and is fixed — do not budget it as part of the prose.
 
 PART B — MY VOICE & PERSONALITY
 This is who I am on paper. Write like this person, not like a polished corporate applicant.
@@ -128,8 +117,8 @@ Vague attributions — remove or make specific:
 Replace: "experts argue," "industry observers note," "studies show," "research suggests"
 With: a named source, a specific outcome, or just your own direct claim
 
-Em dash — this is a hard failure condition, not a style preference:
-The em dash (—) must not appear anywhere in the cover letter prose. If the output contains even one em dash, the letter has failed this rule and must be revised before delivery.
+Em dash — maximum one per letter:
+Limit em dash use to a maximum of one per letter. If the output contains more than one, cut or replace the excess.
 
 Every em dash must be replaced based on what the clause is actually doing:
 - Parenthetical aside: use a comma
@@ -145,10 +134,10 @@ Right: "I do my best work when operations are complex and the compliance margin 
 Wrong: "The deadline did not move — so I made sure we hit it."
 Right: "The deadline did not move. We hit it anyway."
 
-This rule applies to every section without exception, including table cells. Before delivering the letter, search the entire output for the — character. If it appears anywhere, fix it before responding.
+Apply this to every section without exception, including table cells.
 
 LaTeX-specific em dash fix:
-In LaTeX, the character sequence --- renders as an em dash in the compiled PDF. This is the same violation as a — character in the prose. Before delivering the LaTeX code, search the entire code block for every instance of ---. Replace each one using the same logic as above: comma, colon, full stop, or parentheses depending on what the clause is doing. If the surrounding sentence needs rewriting to make the substitution clean, rewrite it. A --- anywhere in the LaTeX code is a hard failure, the same as — in the prose. Do not leave a single instance.
+In LaTeX, the character sequence --- renders as an em dash in the compiled PDF. Minimise --- in LaTeX code; prefer comma, colon, or full stop instead.
 
 Excessive hedging — cut:
 Replace: "could potentially possibly," "it might be argued that," "there may be some evidence"
@@ -255,8 +244,8 @@ Common surviving tells to check for:
 - Does the About Me paragraph read like a LinkedIn bio? Make it human.
 - Is the table right column full of general claims? Replace with proof points.
 - Does the closing line feel like a generic template? Rewrite it.
-- Does the letter contain any em dash (—) character anywhere? Search the entire output for — before responding. If it appears even once, that is a hard failure. Fix every instance before delivering.
-- Does the LaTeX code contain any --- sequence anywhere? Search the entire code block before responding. If it appears even once, that is a hard failure. Fix every instance before delivering.
+- Does the letter contain more than one em dash (—)? If so, cut the excess.
+- Does the LaTeX code contain multiple --- sequences? If so, reduce to at most one.
 - Does the introduction contain a rule-of-three list? If yes, break it or cut two of the three items.
 - Does the introduction end with a summary sentence? If yes, cut it.
 - Does any phrase in the introduction sound constructed rather than said? If yes, replace it with a plain fact.
@@ -266,7 +255,7 @@ Final test: read the introduction and About Me paragraphs out loud. If you pause
 PART D — COVER LETTER BEST PRACTICE (AUSTRALIAN MARKET)
 Apply these silently. Only flag a conflict with my structure if one genuinely exists:
 
-One to two pages is acceptable. If the table causes a natural page break, that is fine — the longtable handles it cleanly. What is not acceptable is a third page that contains only the sign-off. If that happens, apply the compression strategy in the LaTeX spacing instructions.
+One page maximum. Fit everything on a single page.
 
 Address by name if known. "Dear Hiring Manager" is acceptable; a name is always better.
 
@@ -290,45 +279,7 @@ FINAL OUTPUT FORMAT
 Deliver in this exact order:
 
 TAILORING NOTE
-Write this as a short, plain note — the way you would explain your thinking to a colleague. Three sentences maximum. No bullet points. No headers within the note. No phrases like "I strategically selected" or "the centrepiece narrative."
-
-Pick one opening line from the approved list below and fill in the bracketed placeholders with specifics from the job description and content bank. State which angle you led with and name the proof point or story you built the table around. That is all this note needs to be.
-
-Approved opening lines (pick the one that fits best, fill in the brackets, do not modify the sentence structure):
-
-1. "My experience in [relevant field] is the main reason I am applying for this role. I have spent [X years] doing work close to what this position involves. The [Job Title] at [Org] is a natural place to continue that."
-
-2. "I have been working in [relevant field] for [X years], mostly in [context]. The [Job Title] at [Org] caught my attention because the work description matches what I have actually been doing. I wanted to put my hand up."
-
-3. "Most of my hands-on experience is in [relevant area]. When I read the description for the [Job Title] at [Org], it read like a summary of the work I have been doing. That is why I am applying."
-
-4. "I am applying because of the work I did on [specific project], which gave me direct experience in [key area]. The [Job Title] at [Org] sits in the same space. I wanted to apply that experience somewhere it would be useful."
-
-5. "Through [specific project or role], I spent [X months/years] working on [key function]. The [Job Title] at [Org] involves the same kind of work. That is what brought me to this application."
-
-6. "My hands-on experience with [specific tool/system/skill] is what drew me to this role. I have used it in [context] and understand what it takes to do it properly. The [Job Title] at [Org] is where I can keep doing that work."
-
-7. "I am applying because my day-to-day work in [relevant area] maps closely to what this role involves. The skills I have built in [key area] are directly relevant. I thought it was worth applying."
-
-8. "I am based in [location] and have been working in this area for [X years]. The [Job Title] at [Org] is close to home and close to the work I do. Both things made applying an easy call."
-
-9. "Living and working in [location] for [X years] means I understand this area well. The [Job Title] at [Org] is a role I can show up to fully, practically and professionally."
-
-10. "My interest in [specific area] is what brought me to this application. I have been working in [related field] and this role takes that in a direction I want to go. The [Job Title] at [Org] felt like the right fit to apply for."
-
-11. "I am interested in this role because of its focus on [specific function]. It is work I have done before and want to continue doing. The [Job Title] at [Org] gives me that opportunity."
-
-12. "My background is in [relevant field], but the skills I built there transfer directly to this role. I am applying for the [Job Title] at [Org] because the work is different in name but not in practice."
-
-13. "The [Job Title] at [Org] is a step across from my current field, not a step up from scratch. My experience in [relevant area] covers most of what this role requires, just under a different label."
-
-14. "I am coming from [relevant field], and while the industry is different, the work is not. My hands-on experience in [key skill] translates directly to what the [Job Title] at [Org] involves."
-
-15. "My experience is in [field], but I have spent most of it doing [specific function] which is exactly what this role requires. I am applying for the [Job Title] at [Org] because the skills are there, even if the sector is new to me."
-
-16. "The core of this role is [key function], and that is something I have been doing in [different context] for [X years]. The [Job Title] at [Org] is a shift in setting, not a shift in capability."
-
-17. "I have built my skills in [relevant area] through work in [context]. Those skills apply directly to the [Job Title] at [Org], even though my background sits in a slightly different space."
+Write this as a short, plain note in 3-4 sentences — the way you would explain your thinking to a colleague. State which angle you led with, name the proof point or story you built the table around, and note why this role specifically. No bullet points. No headers within the note.
 
 THE COVER LETTER
 Produce two things:
@@ -344,7 +295,7 @@ PREAMBLE — include all of these packages:
 \usepackage{lmodern}
 \usepackage[margin=2cm]{geometry}
 \usepackage{xcolor}
-\usepackage{longtable}
+\usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{setspace}
@@ -374,32 +325,24 @@ Document class: article, 11pt
 Page style: \pagestyle{empty} — no page numbers, no headers, no footers
 Paragraph indent: \setlength{\parindent}{0pt}
 
-The responsibility matching table: use the longtable package, two columns — left p{0.42\textwidth}, right p{0.50\textwidth} — bold accentblue headers — a horizontal rule above and below the header row — include \endhead after the header row so it repeats on continuation pages, and \endlastfoot after the final row — do NOT add \rowcolor{} to the header row or any table row, as this causes the colour name to render as visible text in the output.
+The responsibility matching table: use the tabularx package, two columns — left p{0.42\textwidth}, right X (fills remaining width) — bold accentblue headers — a horizontal rule above and below the header row — do NOT add \rowcolor{} to any row, as this causes the colour name to render as visible text in the output.
 
 SIGNATURE SIZE — define this command near the top of the document body so it is easy to find and adjust:
-\newcommand{\sigwidth}{1.5cm}   % adjust signature width here. 1.5cm is the calibrated default that fits the 2-page layout. Increase to 2.5cm for a more prominent signature, but recheck page fit after doing so.
+\newcommand{\sigwidth}{4cm}   % adjust signature width here
 Then use \includegraphics[width=\sigwidth]{signature.png} in the sign-off block.
 
-SPACING STRATEGY — apply these settings unconditionally every time. Do not try to estimate page count — just apply all of the following as hard defaults and they will produce a well-fitted 2-page letter:
+SPACING — apply these settings:
 
-\renewcommand{\baselinestretch}{1.0}   % main compression dial: raise to 1.1 to expand, lower to 0.95 to compress further
-\setlength{\parskip}{4pt}
-\renewcommand{\arraystretch}{0.92}     % tightens longtable row height
+\renewcommand{\baselinestretch}{1.0}
+\setlength{\parskip}{6pt}
+\renewcommand{\arraystretch}{0.92}
 
 Between prose sections (after paragraphs, before/after table): use \vspace{4pt} only — no larger gaps.
 
-Sign-off spacing: use \vspace{0.5cm} before "Kind regards," and \vspace{0.3cm} before the signature image and name.
-
-% SPACING TUNING
-% \baselinestretch = 1.0  ->  default tight fit (use this first)
-% \baselinestretch = 1.1  ->  expand slightly if letter looks sparse
-% \baselinestretch = 0.95 ->  compress further if sign-off still orphans to page 3
-% Change ONLY \baselinestretch to tune — do not touch \parskip or \arraystretch
-
-CRITICAL — sign-off orphan rule: if after applying the above the sign-off block (Kind regards + signature + name) would fall alone on page 3 with fewer than 6 lines of content above it on that page, then additionally reduce \baselinestretch to 0.95 and \parskip to 3pt. This is the final fallback and must be applied — never allow the sign-off to sit alone on a third page.
+Sign-off spacing: use \vspace{1cm} before "Kind regards," and \vspace{0.3cm} before the signature image and name.
 
 Sign-off block — include exactly this after the final closing paragraph, no exceptions:
-\vspace{0.5cm}
+\vspace{1cm}
 Kind regards,
 
 \vspace{0.3cm}
@@ -409,13 +352,16 @@ Kind regards,
 \textbf{[YOUR_FULL_NAME]}
 
 At the very bottom of the LaTeX code, include this comment block exactly as written:
+% ─────────────────────────────────────────────
 % OVERLEAF INSTRUCTIONS
-% 1. Go to overleaf.com -> New Project -> Blank Project
-% 2. Delete all default content in main.tex
-% 3. Paste this entire code block into main.tex
-% 4. Upload your signature: click Upload (top-left panel) -> select signature.png
-% 5. Click Recompile
-% 6. Download as PDF
+% ─────────────────────────────────────────────
+% 1. → Go to overleaf.com → New Project → Blank Project
+% 2. → Delete all default content in main.tex
+% 3. → Paste this entire code block into main.tex
+% 4. → Upload your signature: click Upload (top-left panel) → select signature.png
+% 5. → Click Recompile
+% 6. → Download as PDF
+% ─────────────────────────────────────────────
 
 ANTI-AI AUDIT RESULT
 What surviving AI tells (if any) were found after the draft, and how you fixed them. Keep this brief — 3-5 bullets maximum.
