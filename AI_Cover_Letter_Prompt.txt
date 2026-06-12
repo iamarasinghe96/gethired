@@ -295,7 +295,7 @@ PREAMBLE — include all of these packages:
 \usepackage{lmodern}
 \usepackage[margin=2cm]{geometry}
 \usepackage{xcolor}
-\usepackage{tabularx}
+\usepackage{longtable}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{setspace}
@@ -325,7 +325,7 @@ Document class: article, 11pt
 Page style: \pagestyle{empty} — no page numbers, no headers, no footers
 Paragraph indent: \setlength{\parindent}{0pt}
 
-The responsibility matching table: use the tabularx package, two columns — left p{0.42\textwidth}, right X (fills remaining width) — bold accentblue headers — a horizontal rule above and below the header row — do NOT add \rowcolor{} to any row, as this causes the colour name to render as visible text in the output.
+The responsibility matching table: use the longtable package, two columns — left p{0.42\textwidth}, right p{0.50\textwidth} — bold accentblue headers — a horizontal rule above and below the header row — include \endhead after the header row so it repeats on continuation pages, and \endlastfoot after the final row — do NOT add \rowcolor{} to any row, as this causes the colour name to render as visible text in the output.
 
 SIGNATURE SIZE — define this command near the top of the document body so it is easy to find and adjust:
 \newcommand{\sigwidth}{4cm}   % adjust signature width here
