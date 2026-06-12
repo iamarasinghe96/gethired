@@ -60,6 +60,9 @@
   .badge-saved{background:var(--green-pale);color:var(--green);border:1px solid rgba(13,122,95,0.2);}
   .badge-nosave{background:var(--amber-pale);color:var(--amber);border:1px solid rgba(180,83,9,0.2);}
   .badge-count{background:var(--navy-pale);color:var(--navy);border:1px solid rgba(31,78,121,0.2);}
+  .badge-muted{background:var(--surface);color:var(--muted);border:1px solid var(--border);}
+  .badge-custom{background:var(--amber-pale);color:var(--amber);border:1px solid rgba(180,83,9,0.2);}
+  .prompt-edit-note{padding:8px 16px;background:var(--amber-pale);border-bottom:1px solid rgba(180,83,9,0.15);font-size:11px;color:var(--amber);font-family:'DM Mono',monospace;}
 
   /* BUTTONS */
   .btn{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;white-space:nowrap;}
@@ -289,56 +292,60 @@
         </div>
       </div>
 
-      <!-- Panel 3: Cover Letter Prompt (hidden — template loaded from repo txt file) -->
-      <div class="panel flex-col" style="display:none">
-        <div class="panel-header">
+      <!-- Panel 3: Cover Letter Prompt (collapsible, editable, saved to localStorage) -->
+      <div class="panel flex-col">
+        <div class="panel-header" style="cursor:pointer;user-select:none" onclick="togglePromptPanel('cl')">
           <div class="panel-label">
             <div class="panel-number">2</div>
             <div class="panel-meta">
               <div class="panel-title">Cover Letter Prompt</div>
-              <div class="panel-desc">Template saved · JD + CV auto-injected on build</div>
+              <div class="panel-desc">Template · JD + CV auto-injected on build · click to edit</div>
             </div>
           </div>
           <div class="panel-badges">
-            <span class="badge badge-saved">&#x1F4BE; auto-saved</span>
+            <span class="badge badge-muted" id="cl-prompt-badge">default</span>
             <span class="badge badge-count" id="cl-count">0 chars</span>
+            <span id="cl-panel-toggle" style="font-size:11px;color:var(--navy);margin-left:4px;font-family:'DM Mono',monospace">&#x25B8; edit</span>
           </div>
         </div>
-        <div class="textarea-wrap">
-          <textarea id="cl-prompt" class="prompt-area" placeholder="Your Cover Letter prompt template loads here from AI_Cover_Letter_Prompt.txt. Placeholders [PASTE JOB DESCRIPTION HERE] and [PASTE YOUR FULL MASTER CV CONTENT BANK HERE] are auto-replaced on build." oninput="autosave('cl-prompt','cl_prompt');updateCount('cl-prompt','cl-count')"></textarea>
-        </div>
-        <div class="toolbar">
-          <button class="btn btn-outline" onclick="clearField('cl-prompt','cl_prompt','cl-count')">&#x2715; Clear</button>
-          <button class="btn btn-ghost" onclick="copyField('cl-prompt')">&#x2398; Copy template</button>
-          <div class="toolbar-right">
-            <button class="btn btn-primary" onclick="saveField('cl-prompt','cl_prompt')">Save</button>
+        <div id="cl-prompt-body" style="display:none">
+          <div class="prompt-edit-note">&#x270F; Edits auto-save locally in your browser. The built-in default reloads if browser data is cleared — download your custom version to restore it.</div>
+          <div class="textarea-wrap">
+            <textarea id="cl-prompt" class="prompt-area" placeholder="Cover Letter prompt template loads here from AI_Cover_Letter_Prompt.txt." oninput="autosave('cl-prompt','cl_prompt');updateCount('cl-prompt','cl-count');updatePromptBadge('cl')"></textarea>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-outline" onclick="resetPromptToDefault('cl');event.stopPropagation()">&#x21BA; Reset to default</button>
+            <button class="btn btn-ghost" onclick="downloadPrompt('cl');event.stopPropagation()">&#x2B07; Download .txt</button>
+            <label class="btn btn-ghost" style="cursor:pointer" onclick="event.stopPropagation()">&#x1F4E4; Import .txt<input type="file" accept=".txt" style="display:none" onchange="importPrompt('cl',this)"></label>
           </div>
         </div>
       </div>
 
-      <!-- Panel 4: CV LaTeX Prompt (hidden — template loaded from repo txt file) -->
-      <div class="panel flex-col" style="display:none">
-        <div class="panel-header">
+      <!-- Panel 4: CV LaTeX Prompt (collapsible, editable, saved to localStorage) -->
+      <div class="panel flex-col">
+        <div class="panel-header" style="cursor:pointer;user-select:none" onclick="togglePromptPanel('cv')">
           <div class="panel-label">
             <div class="panel-number">3</div>
             <div class="panel-meta">
               <div class="panel-title">CV / LaTeX Prompt</div>
-              <div class="panel-desc">Template saved · JD + CV auto-injected on build</div>
+              <div class="panel-desc">Template · JD + CV auto-injected on build · click to edit</div>
             </div>
           </div>
           <div class="panel-badges">
-            <span class="badge badge-saved">&#x1F4BE; auto-saved</span>
+            <span class="badge badge-muted" id="cv-prompt-badge">default</span>
             <span class="badge badge-count" id="cv-count2">0 chars</span>
+            <span id="cv-panel-toggle" style="font-size:11px;color:var(--navy);margin-left:4px;font-family:'DM Mono',monospace">&#x25B8; edit</span>
           </div>
         </div>
-        <div class="textarea-wrap">
-          <textarea id="cv-prompt" class="prompt-area" placeholder="Your CV / LaTeX prompt template loads here from AI_CV_Prompt.txt." oninput="autosave('cv-prompt','cv_prompt');updateCount('cv-prompt','cv-count2')"></textarea>
-        </div>
-        <div class="toolbar">
-          <button class="btn btn-outline" onclick="clearField('cv-prompt','cv_prompt','cv-count2')">&#x2715; Clear</button>
-          <button class="btn btn-ghost" onclick="copyField('cv-prompt')">&#x2398; Copy template</button>
-          <div class="toolbar-right">
-            <button class="btn btn-primary" onclick="saveField('cv-prompt','cv_prompt')">Save</button>
+        <div id="cv-prompt-body" style="display:none">
+          <div class="prompt-edit-note">&#x270F; Edits auto-save locally in your browser. The built-in default reloads if browser data is cleared — download your custom version to restore it.</div>
+          <div class="textarea-wrap">
+            <textarea id="cv-prompt" class="prompt-area" placeholder="CV / LaTeX prompt template loads here from AI_CV_Prompt.txt." oninput="autosave('cv-prompt','cv_prompt');updateCount('cv-prompt','cv-count2');updatePromptBadge('cv')"></textarea>
+          </div>
+          <div class="toolbar">
+            <button class="btn btn-outline" onclick="resetPromptToDefault('cv');event.stopPropagation()">&#x21BA; Reset to default</button>
+            <button class="btn btn-ghost" onclick="downloadPrompt('cv');event.stopPropagation()">&#x2B07; Download .txt</button>
+            <label class="btn btn-ghost" style="cursor:pointer" onclick="event.stopPropagation()">&#x1F4E4; Import .txt<input type="file" accept=".txt" style="display:none" onchange="importPrompt('cv',this)"></label>
           </div>
         </div>
       </div>
@@ -364,10 +371,21 @@
           <li>Fill in your profile in <strong>Profile Builder</strong>, then switch here.</li>
           <li>Paste the job description in the <strong>Job Description</strong> panel.</li>
           <li>Click <strong>&#x25B6; Build Prompts</strong> — your CV Bank + JD are injected automatically.</li>
-          <li>Click <strong>&#x2398; Copy</strong> on the prompt you want, then paste it into <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--primary)">Claude</a>.</li>
-          <li><strong>Cover Letter:</strong> Claude outputs a Tailoring Note + review copy + full LaTeX code. Paste the LaTeX into <a href="https://overleaf.com" target="_blank" rel="noopener" style="color:var(--primary)">Overleaf</a> → upload <code>signature.png</code> → Recompile → Download PDF.</li>
+          <li>Click <strong>&#x2398; Copy</strong> on the built prompt, then paste it into <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--navy)">Claude</a>.</li>
+          <li><strong>Cover Letter:</strong> Claude outputs a Tailoring Note + review copy + full LaTeX code. Paste the LaTeX into <a href="https://overleaf.com" target="_blank" rel="noopener" style="color:var(--navy)">Overleaf</a> → upload <code>signature.png</code> → Recompile → Download PDF.</li>
           <li><strong>CV / LaTeX:</strong> Claude outputs a tailored CV in LaTeX. Paste into Overleaf → Recompile → Download PDF. No signature upload needed.</li>
         </ol>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <strong style="color:var(--text);font-size:0.83rem">&#x270F; Customising the prompt templates</strong>
+          <ul style="margin:6px 0 0 16px;padding:0">
+            <li>Click the header of the <strong>Cover Letter Prompt</strong> or <strong>CV / LaTeX Prompt</strong> panel to expand and edit it.</li>
+            <li>Edits <strong>auto-save locally in your browser</strong> — they persist across sessions and the badge switches to <em>customised</em>.</li>
+            <li>The built-in default prompt (from the repo) is <strong>never overwritten</strong> — it reloads automatically if browser data is cleared.</li>
+            <li><strong>To back up your custom prompt:</strong> click <strong>&#x2B07; Download .txt</strong> inside the panel to save it as a file.</li>
+            <li><strong>To restore after clearing browser data:</strong> click <strong>&#x1F4E4; Import .txt</strong> and select your downloaded file.</li>
+            <li><strong>To revert to the original:</strong> click <strong>&#x21BA; Reset to default</strong> inside the panel.</li>
+          </ul>
+        </div>
       </div>
 
       <!-- Output section -->
@@ -1384,13 +1402,83 @@ function loadPromptBuilder() {
   const cvBankText = generateCVBankText();
   document.getElementById('cv-bank').value = cvBankText;
   if (cvBankText.length > 20) localStorage.setItem('cv_content_bank', cvBankText);
-  document.getElementById('cl-prompt').value = localStorage.getItem('cl_prompt')        || DEFAULTS.cl;
-  document.getElementById('cv-prompt').value = localStorage.getItem('cv_prompt')        || DEFAULTS.cvp;
+  document.getElementById('cl-prompt').value = localStorage.getItem('cl_prompt') || DEFAULTS.cl;
+  document.getElementById('cv-prompt').value = localStorage.getItem('cv_prompt') || DEFAULTS.cvp;
   updateCount('cv-bank','cv-count');
   updateCount('cl-prompt','cl-count');
   updateCount('cv-prompt','cv-count2');
   updateCount('jd-input','jd-count');
+  updatePromptBadges();
   updateStatus();
+}
+
+function togglePromptPanel(which) {
+  const body   = document.getElementById(`${which}-prompt-body`);
+  const toggle = document.getElementById(`${which}-panel-toggle`);
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  toggle.innerHTML   = isOpen ? '&#x25B8; edit' : '&#x25BE; edit';
+}
+
+function updatePromptBadge(which) {
+  const key   = which === 'cl' ? 'cl_prompt' : 'cv_prompt';
+  const badge = document.getElementById(`${which}-prompt-badge`);
+  if (!badge) return;
+  const isCustom = !!localStorage.getItem(key);
+  badge.textContent = isCustom ? '✏ customised' : 'default';
+  badge.className   = 'badge ' + (isCustom ? 'badge-custom' : 'badge-muted');
+}
+
+function updatePromptBadges() {
+  updatePromptBadge('cl');
+  updatePromptBadge('cv');
+}
+
+function resetPromptToDefault(which) {
+  const label = which === 'cl' ? 'Cover Letter' : 'CV / LaTeX';
+  if (!confirm(`Reset the ${label} prompt to the built-in default? Your custom edits will be lost.`)) return;
+  const key     = which === 'cl' ? 'cl_prompt'  : 'cv_prompt';
+  const taId    = which === 'cl' ? 'cl-prompt'  : 'cv-prompt';
+  const countId = which === 'cl' ? 'cl-count'   : 'cv-count2';
+  localStorage.removeItem(key);
+  document.getElementById(taId).value = which === 'cl' ? DEFAULTS.cl : DEFAULTS.cvp;
+  updateCount(taId, countId);
+  updatePromptBadge(which);
+  updateStatus();
+  toast('Prompt reset to default ✔', 'success');
+}
+
+function downloadPrompt(which) {
+  const taId     = which === 'cl' ? 'cl-prompt' : 'cv-prompt';
+  const filename = which === 'cl' ? 'Cover_Letter_Prompt.txt' : 'CV_LaTeX_Prompt.txt';
+  const text     = document.getElementById(taId).value;
+  if (!text.trim()) { toast('Prompt is empty', 'error'); return; }
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), { href: url, download: filename });
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`Downloaded ${filename} ✔`, 'success');
+}
+
+function importPrompt(which, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text    = e.target.result;
+    const key     = which === 'cl' ? 'cl_prompt'  : 'cv_prompt';
+    const taId    = which === 'cl' ? 'cl-prompt'  : 'cv-prompt';
+    const countId = which === 'cl' ? 'cl-count'   : 'cv-count2';
+    document.getElementById(taId).value = text;
+    localStorage.setItem(key, text);
+    updateCount(taId, countId);
+    updatePromptBadge(which);
+    updateStatus();
+    toast('Prompt imported ✔', 'success');
+  };
+  reader.readAsText(file);
+  input.value = '';
 }
 
 function buildPrompts() {
