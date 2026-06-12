@@ -19,40 +19,16 @@ MY PROFILE & EXPERIENCE CONTENT BANK
 PART A — MY COVER LETTER STRUCTURE
 This is non-negotiable. Do not change it unless it genuinely violates a cover letter best practice — and if it does, flag it explicitly rather than silently changing it.
 
-MASTER PAGE BUDGET — read this before writing anything:
-The letter must fit exactly 2 pages at 11pt, lmodern font, 2cm margins, \baselinestretch 1.0. At those settings, each page holds approximately 46 rendered lines. Total budget across both pages: ~92 lines. The fixed structural elements (letterhead, date, salutation, pre-table sentence, table header, sign-off) consume approximately 12 lines. That leaves ~80 lines for the four content sections. The calibrated allocation from a confirmed 2-page output is:
-  Part 1 (Introduction):         3 lines   (55–65 words)
-  Part 2 (About Me):             8 lines   (90–110 words)
-  Part 3 (Table, all rows):     42 lines   (6–7 rows, right-column cells 3–5 lines each)
-  Part 4 (Closing prose only):  14 lines   (2 paragraphs, sign-off is additional ~4 lines)
-  Sign-off block:                4 lines   (fixed — Kind regards + 1.5cm sig + name)
-  TOTAL:                        ~83 lines
-Before finalising the letter, mentally count the rendered lines for each section against this budget. If any section exceeds its allocation, cut the least specific sentence in that section — do not borrow lines from another section.
-
 PART 1 — INTRODUCTION
 The introduction should read like the first sentence of a message from someone who knows what they're doing and doesn't need to prove it. State the specific connection to the role first, then the job title, then one line on what I bring. That's it.
 
 The test: if you read it out loud and it sounds like someone clearing their throat before the real thing starts, cut it. The first sentence IS the real thing.
 
-Calibration examples — these are the register to aim for. Study the rhythm and plainness, not just the content:
-- "Seven years cleaning up finance systems that other people built badly. The [Job Title] role at [Org] is exactly the kind of problem I look for."
-- "Most of my career has been fixing processes that technically work but cost more than they should. That's what drew me to this role."
-- "Five minutes from the office, two years watching this part of the border grow. When the [Job Title] role at [Org] came up, it was an easy decision. Six years building systems that keep operations running cleanly. That is what this role needs."
-- "I have spent six years in project delivery and administration. The [Job Title] at [Org] is the right next step and the location makes it straightforward."
-
-What these examples have in common: they are short, they state a fact, they do not try to impress. There is no warm-up sentence. There is no phrase that exists only to sound good. Every word is load-bearing.
-
-What to avoid in the introduction — these are signs it has gone wrong:
-- Any phrase that sounds constructed rather than said: "the kind of work I have been looking for," "on this side of the border," "genuinely matters"
-- A rule-of-three list: "Organising X, keeping Y tight, and supporting Z" — break it or cut two of the three
-- A paragraph-ending summary sentence: "that is where I do my best work," "this is what I bring," "that is the standard I hold myself to" — these add nothing, cut them
-- Any sentence that could appear in a different person's cover letter unchanged
-
 Rules:
 - Never open with "I am writing to apply..."
 - Never open with "I" as the first word
 - Job title must appear naturally for ATS
-- 2-3 sentences MAXIMUM. Target 3 rendered lines (55-65 words total)
+- 3-4 sentences maximum
 - If it sounds like it's trying to impress someone, it's wrong. Cut until it just states things.
 
 PART 2 — ABOUT ME
