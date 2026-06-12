@@ -364,30 +364,6 @@
         <button class="btn btn-outline btn-lg" onclick="clearOutputs()">&#x21BA; Reset Output</button>
       </div>
 
-      <!-- How to use -->
-      <div class="full-width" style="background:var(--surface-2,#f8f9fb);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-size:0.82rem;color:var(--muted);line-height:1.6">
-        <strong style="color:var(--text);font-size:0.85rem">&#x2139;&#xFE0F; How to use</strong>
-        <ol style="margin:6px 0 0 16px;padding:0">
-          <li>Fill in your profile in <strong>Profile Builder</strong>, then switch here.</li>
-          <li>Paste the job description in the <strong>Job Description</strong> panel.</li>
-          <li>Click <strong>&#x25B6; Build Prompts</strong> — your CV Bank + JD are injected automatically.</li>
-          <li>Click <strong>&#x2398; Copy</strong> on the built prompt, then paste it into <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--navy)">Claude</a>.</li>
-          <li><strong>Cover Letter:</strong> Claude outputs a Tailoring Note + review copy + full LaTeX code. Paste the LaTeX into <a href="https://overleaf.com" target="_blank" rel="noopener" style="color:var(--navy)">Overleaf</a> → upload <code>signature.png</code> → Recompile → Download PDF.</li>
-          <li><strong>CV / LaTeX:</strong> Claude outputs a tailored CV in LaTeX. Paste into Overleaf → Recompile → Download PDF. No signature upload needed.</li>
-        </ol>
-        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
-          <strong style="color:var(--text);font-size:0.83rem">&#x270F; Customising the prompt templates</strong>
-          <ul style="margin:6px 0 0 16px;padding:0">
-            <li>Click the header of the <strong>Cover Letter Prompt</strong> or <strong>CV / LaTeX Prompt</strong> panel to expand and edit it.</li>
-            <li>Edits <strong>auto-save locally in your browser</strong> — they persist across sessions and the badge switches to <em>customised</em>.</li>
-            <li>The built-in default prompt (from the repo) is <strong>never overwritten</strong> — it reloads automatically if browser data is cleared.</li>
-            <li><strong>To back up your custom prompt:</strong> click <strong>&#x2B07; Download .txt</strong> inside the panel to save it as a file.</li>
-            <li><strong>To restore after clearing browser data:</strong> click <strong>&#x1F4E4; Import .txt</strong> and select your downloaded file.</li>
-            <li><strong>To revert to the original:</strong> click <strong>&#x21BA; Reset to default</strong> inside the panel.</li>
-          </ul>
-        </div>
-      </div>
-
       <!-- Output section -->
       <div class="output-section full-width">
         <div class="output-header">
@@ -414,6 +390,30 @@
           <div class="output-content" id="out-cv-content" style="display:none">
             <div class="output-empty"><div class="empty-icon">&#x1F4DD;</div>Hit <strong>Build Prompts</strong> to generate your CV / LaTeX prompt.</div>
           </div>
+        </div>
+      </div>
+
+      <!-- How to use -->
+      <div class="full-width" style="background:var(--surface-2,#f8f9fb);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-size:0.82rem;color:var(--muted);line-height:1.6">
+        <strong style="color:var(--text);font-size:0.85rem">&#x2139;&#xFE0F; How to use</strong>
+        <ol style="margin:6px 0 0 16px;padding:0">
+          <li>Fill in your profile in <strong>Profile Builder</strong>, then switch here.</li>
+          <li>Paste the job description in the <strong>Job Description</strong> panel.</li>
+          <li>Click <strong>&#x25B6; Build Prompts</strong> — your CV Bank + JD are injected automatically.</li>
+          <li>Click <strong>&#x2398; Copy</strong> on the built prompt, then paste it into <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--navy)">Claude</a>.</li>
+          <li><strong>Cover Letter:</strong> Claude outputs a Tailoring Note + review copy + full LaTeX code. Paste the LaTeX into <a href="https://overleaf.com" target="_blank" rel="noopener" style="color:var(--navy)">Overleaf</a> → upload <code>signature.png</code> → Recompile → Download PDF.</li>
+          <li><strong>CV / LaTeX:</strong> Claude outputs a tailored CV in LaTeX. Paste into Overleaf → Recompile → Download PDF. No signature upload needed.</li>
+        </ol>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <strong style="color:var(--text);font-size:0.83rem">&#x270F; Customising the prompt templates</strong>
+          <ul style="margin:6px 0 0 16px;padding:0">
+            <li>Click the header of the <strong>Cover Letter Prompt</strong> or <strong>CV / LaTeX Prompt</strong> panel to expand and edit it.</li>
+            <li>Edits <strong>auto-save locally in your browser</strong> — they persist across sessions and the badge switches to <em>customised</em>.</li>
+            <li>The built-in default prompt (from the repo) is <strong>never overwritten</strong> — it reloads automatically if browser data is cleared.</li>
+            <li><strong>To back up your custom prompt:</strong> click <strong>&#x2B07; Download .txt</strong> inside the panel to save it as a file.</li>
+            <li><strong>To restore after clearing browser data:</strong> click <strong>&#x1F4E4; Import .txt</strong> and select your downloaded file.</li>
+            <li><strong>To revert to the original:</strong> click <strong>&#x21BA; Reset to default</strong> inside the panel.</li>
+          </ul>
         </div>
       </div>
 
