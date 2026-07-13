@@ -290,7 +290,7 @@ Clean prose ready to read and review. No part labels. Reads as a continuous, nat
 B. COMPLETE LaTeX CODE — PASTE INTO OVERLEAF
 Produce fully compilable LaTeX code for the cover letter using these exact specifications:
 
-PREAMBLE — include all of these packages:
+PREAMBLE — include ALL of these packages, in this order, exactly as written. Do not omit any package, do not add options that are not shown here:
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage[margin=2cm]{geometry}
@@ -302,7 +302,12 @@ PREAMBLE — include all of these packages:
 \definecolor{accentblue}{RGB}{31, 78, 121}
 \hypersetup{colorlinks=true, urlcolor=accentblue, linkcolor=accentblue}
 
-LETTERHEAD BLOCK — place this at the very top of the document body, before the date and salutation. Produce it exactly as follows — do not reformat or split across extra lines:
+CRITICAL PREAMBLE RULES — violations here cause layout failures:
+(1) Use \usepackage{longtable} — NEVER \usepackage{tabularx}. tabularx cannot break across pages; it causes the entire table to be pushed to a new page with a large blank gap before it.
+(2) Use \usepackage{hyperref} with \hypersetup{colorlinks=true, urlcolor=accentblue, linkcolor=accentblue} — NEVER \usepackage[hidelinks]{hyperref}. The [hidelinks] option removes the accentblue link colour from the letterhead and body links.
+(3) Include \usepackage{setspace} — do not omit it even if you do not explicitly call a setspace command.
+
+LETTERHEAD BLOCK — CRITICAL: produce this block exactly as specified below. Do not simplify it. Do not replace the hyperlinked contact line with a plain-text address line. Do not use \textbullet separators. Do not omit LinkedIn, Portfolio, or Right to Work links. The letterhead must have exactly these four elements in order:
 
 Line 1 — sender name only:
 {\Large\bfseries\color{accentblue} [YOUR_FULL_NAME]}
@@ -325,21 +330,25 @@ Document class: article, 11pt
 Page style: \pagestyle{empty} — no page numbers, no headers, no footers
 Paragraph indent: \setlength{\parindent}{0pt}
 
-The responsibility matching table: use the longtable package, two columns — left p{0.42\textwidth}, right p{0.50\textwidth} — bold accentblue headers — a horizontal rule above and below the header row — include \endhead after the header row so it repeats on continuation pages, and \endlastfoot after the final row — do NOT add \rowcolor{} to any row, as this causes the colour name to render as visible text in the output.
+The responsibility matching table: use the longtable package ONLY — NEVER \begin{tabularx}. Two columns: left p{0.42\textwidth}, right p{0.50\textwidth} — bold accentblue headers — a horizontal rule above and below the header row — include \endhead after the header row so it repeats on continuation pages, and \endlastfoot after the final row — do NOT add \rowcolor{} to any row, as this causes the colour name to render as visible text in the output.
 
 SIGNATURE SIZE — define this command near the top of the document body so it is easy to find and adjust:
 \newcommand{\sigwidth}{4cm}   % adjust signature width here
 Then use \includegraphics[width=\sigwidth]{signature.png} in the sign-off block.
 
-SPACING — apply these settings:
+SPACING — apply these settings in the preamble or immediately after \begin{document}, before any content:
 
 \renewcommand{\baselinestretch}{1.0}
 \setlength{\parskip}{6pt}
 \renewcommand{\arraystretch}{0.92}
 
+CRITICAL: do NOT override \renewcommand{\arraystretch}{...} anywhere else in the document body, especially not immediately before the table. Setting arraystretch to 1.25 or higher before the longtable makes row heights too large and pushes the entire table to a new page with blank space before it.
+
 Between prose sections (after paragraphs, before/after table): use \vspace{4pt} only — no larger gaps.
 
 Sign-off spacing: use \vspace{1cm} before "Kind regards," and \vspace{0.3cm} before the signature image and name.
+
+URL rule for body text: any portfolio, LinkedIn, or external URL mentioned in the letter prose must use \href{URL}{display text} — NEVER \url{URL}. \url{} renders the raw URL in monospace font and breaks the visual design. Example: \href{https://yourname.github.io}{yourname.github.io} not \url{https://yourname.github.io}.
 
 Sign-off block — include exactly this after the final closing paragraph, no exceptions:
 \vspace{1cm}
