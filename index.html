@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GetHired — CV Prompt Builder</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root {
     --navy:#1F4E79; --navy-light:#2563a8; --navy-pale:#e8f0f9;
@@ -196,6 +197,7 @@
 <nav class="main-nav">
   <button class="main-nav-tab active" id="nav-profile" onclick="switchView('profile')">&#x2460; Profile Builder</button>
   <button class="main-nav-tab" id="nav-prompt" onclick="switchView('prompt')">&#x2461; Prompt Builder</button>
+  <button class="main-nav-tab" id="nav-export" onclick="switchView('export')">&#x2462; Export to Word</button>
 </nav>
 
 <!-- ═══════════════════════════════ PROFILE BUILDER VIEW ═══════════════════════════════ -->
@@ -418,6 +420,86 @@
       </div>
 
     </div><!-- /grid -->
+  </div>
+</div>
+
+<!-- ══════════════════ VIEW: EXPORT TO WORD ══════════════════ -->
+<div id="view-export" class="view">
+  <div class="container">
+    <div class="page-intro">
+      <strong>Export to Word — Step 3.</strong>
+      Paste the AI's reply into Claude, copy the whole response, then click <strong>Read from clipboard</strong>. The tool fills a formatted Word (.docx) template with your content and downloads it — ready to fine-tune in Word. No Overleaf, no LaTeX.
+    </div>
+
+    <div class="panel" style="padding:0">
+      <div class="panel-header">
+        <div class="panel-label">
+          <div class="panel-number">1</div>
+          <div class="panel-meta">
+            <div class="panel-title">Choose document type</div>
+            <div class="panel-desc">Match this to whichever prompt you ran</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:14px 16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-outline" id="exp-type-cl" onclick="setExportType('cl')" style="flex:1;min-width:160px">&#x2709; Cover Letter</button>
+        <button class="btn btn-outline" id="exp-type-cv" onclick="setExportType('cv')" style="flex:1;min-width:160px">&#x1F4C4; CV / Resume</button>
+      </div>
+    </div>
+
+    <div class="panel" style="padding:0">
+      <div class="panel-header">
+        <div class="panel-label">
+          <div class="panel-number">2</div>
+          <div class="panel-meta">
+            <div class="panel-title">Bring in the AI content</div>
+            <div class="panel-desc">Copy Claude's full reply, then read it from your clipboard</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-green btn-lg" onclick="readClipboardForExport()">&#x1F4CB; Read from clipboard</button>
+          <button class="btn btn-ghost" onclick="toggleExportPaste()">or paste manually</button>
+          <span id="exp-parse-status" class="panel-desc" style="margin-left:auto"></span>
+        </div>
+        <div id="exp-paste-wrap" style="display:none;margin-top:12px">
+          <textarea id="exp-paste" class="prompt-area" placeholder="Paste the AI's full reply here (including the [SALUTATION]/[SUMMARY] tags), then click Parse pasted text." style="min-height:160px;border:1px solid var(--border);border-radius:6px"></textarea>
+          <div style="margin-top:8px"><button class="btn btn-primary" onclick="parseExportFromPaste()">Parse pasted text</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="padding:0">
+      <div class="panel-header">
+        <div class="panel-label">
+          <div class="panel-number">3</div>
+          <div class="panel-meta">
+            <div class="panel-title">Download</div>
+            <div class="panel-desc">Header (name &amp; contact) is filled from your Profile Builder</div>
+          </div>
+        </div>
+        <div class="panel-badges">
+          <label class="panel-desc" style="display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="checkbox" id="exp-autofit" checked> auto-fit spacing
+          </label>
+        </div>
+      </div>
+      <div style="padding:14px 16px">
+        <button class="btn btn-primary btn-lg" id="exp-download-btn" onclick="downloadExportDocx()" disabled>&#x2B07; Download .docx</button>
+        <div id="exp-preview" style="margin-top:14px;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;white-space:pre-wrap;border:1px dashed var(--border);border-radius:6px;padding:12px;max-height:320px;overflow:auto;display:none"></div>
+      </div>
+    </div>
+
+    <div class="full-width" style="background:var(--surface-2,#f8f9fb);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-size:0.82rem;color:var(--muted);line-height:1.6">
+      <strong style="color:var(--text);font-size:0.85rem">&#x2139;&#xFE0F; How it works</strong>
+      <ol style="margin:6px 0 0 16px;padding:0">
+        <li>In <strong>Prompt Builder</strong>, build and copy the Cover Letter or CV prompt and run it in <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--navy)">Claude</a>.</li>
+        <li>Copy Claude's <strong>entire reply</strong> (it contains tagged sections like <code>[SALUTATION]</code> or <code>[SUMMARY]</code>).</li>
+        <li>Pick the matching <strong>document type</strong> above, then click <strong>Read from clipboard</strong>. If your browser blocks clipboard access, use <strong>paste manually</strong>.</li>
+        <li>Click <strong>Download .docx</strong> and edit the file in Word. Your name, contact and links come from the Profile Builder.</li>
+      </ol>
+    </div>
   </div>
 </div>
 
@@ -1677,6 +1759,7 @@ function switchView(view) {
   document.getElementById(`view-${view}`).classList.add('active');
   document.getElementById(`nav-${view}`).classList.add('active');
   if (view === 'prompt') loadPromptBuilder();
+  if (view === 'export') initExport();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1716,6 +1799,289 @@ document.addEventListener('DOMContentLoaded', async () => {
   // JD field status updates
   document.getElementById('jd-input').addEventListener('input', updateStatus);
 });
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT TO WORD (.docx)  — fills the repo templates via JSZip
+// ═══════════════════════════════════════════════════════════════
+let exportType = 'cl';
+let exportData = null;
+const _tplCache = {};
+
+function initExport(){ setExportType(exportType); }
+
+function setExportType(t){
+  exportType = t;
+  document.getElementById('exp-type-cl').className = 'btn btn-lg ' + (t==='cl'?'btn-primary':'btn-outline');
+  document.getElementById('exp-type-cv').className = 'btn btn-lg ' + (t==='cv'?'btn-primary':'btn-outline');
+  exportData = null;
+  document.getElementById('exp-download-btn').disabled = true;
+  document.getElementById('exp-parse-status').textContent = '';
+  document.getElementById('exp-preview').style.display = 'none';
+}
+
+function toggleExportPaste(){
+  const w = document.getElementById('exp-paste-wrap');
+  w.style.display = w.style.display==='none' ? 'block' : 'none';
+}
+
+async function readClipboardForExport(){
+  try {
+    const text = await navigator.clipboard.readText();
+    if (!text || !text.trim()) { toast('Clipboard is empty', 'error'); return; }
+    handleExportText(text);
+  } catch(e){
+    toast('Clipboard blocked — use "paste manually"', 'error');
+    document.getElementById('exp-paste-wrap').style.display = 'block';
+  }
+}
+function parseExportFromPaste(){
+  const text = document.getElementById('exp-paste').value;
+  if (!text.trim()) { toast('Paste the AI reply first', 'error'); return; }
+  handleExportText(text);
+}
+function handleExportText(text){
+  try {
+    exportData = exportType==='cl' ? parseCL(text) : parseCV(text);
+    const ok = exportType==='cl'
+      ? (exportData.table.length>0 || !!exportData.intro)
+      : (!!exportData.summary || exportData.experience.length>0);
+    if (!ok) toast('Could not find the tagged sections — did you copy the whole reply?', 'error');
+    else toast('Content parsed ✔', 'success');
+    renderExportPreview();
+    document.getElementById('exp-download-btn').disabled = !ok;
+  } catch(e){ console.error(e); toast('Parse error: '+e.message, 'error'); }
+}
+
+// ---- parsing helpers ----
+function _sectionMap(text, tags){
+  const idx = tags.map(t=>({t, i:text.indexOf('['+t+']')})).filter(o=>o.i>=0).sort((a,b)=>a.i-b.i);
+  const map = {};
+  for (let k=0;k<idx.length;k++){
+    const start = idx[k].i + ('['+idx[k].t+']').length;
+    const end = k+1<idx.length ? idx[k+1].i : text.length;
+    map[idx[k].t] = text.slice(start, end).trim();
+  }
+  return map;
+}
+const _flat = s => (s||'').replace(/\s*\n\s*/g,' ').trim();
+const _paras = block => (block||'').split(/\n\s*\n/).map(_flat).filter(Boolean);
+const _bullets = block => (block||'').split('\n').map(l=>l.trim()).filter(l=>/^[-•*]/.test(l)).map(l=>l.replace(/^[-•*]\s*/,'').trim()).filter(Boolean);
+function _blocks(block){
+  const out = [];
+  (block||'').split(/\n(?=###\s)/).forEach(p=>{
+    p = p.trim(); if (!p.startsWith('###')) return;
+    const lines = p.split('\n');
+    out.push({ head: lines[0].replace(/^###\s*/,'').trim(), lines: lines.slice(1).map(l=>l.trim()).filter(Boolean) });
+  });
+  return out;
+}
+
+function parseCL(text){
+  const m = _sectionMap(text, ['SALUTATION','INTRO','ABOUT','TABLE','CLOSING','SIGNOFF']);
+  const table = (m.TABLE||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
+    const p = l.split('::');
+    return { req:(p[0]||'').trim(), con:(p.slice(1).join('::')||'').trim() };
+  }).filter(r=>r.req||r.con);
+  const stop = /^(ANTI-?AI|KEYWORD|THE ONE THING|TAILORING|SUGGESTED)/i;
+  const sign = [];
+  for (const l of (m.SIGNOFF||'').split('\n').map(x=>x.trim()).filter(Boolean)){ if (stop.test(l)) break; sign.push(l); }
+  const signName = sign.find(l=>!/^kind regards/i.test(l)) || (P.personal.fullName||'');
+  return {
+    salutation: (_flat(m.SALUTATION)||'Dear Hiring Manager,').split('\n')[0].trim(),
+    intro: _flat(m.INTRO), about: _flat(m.ABOUT), table,
+    closing: _paras(m.CLOSING), signName
+  };
+}
+
+function parseCV(text){
+  const m = _sectionMap(text, ['SUMMARY','COMPETENCIES','EXPERIENCE','EDUCATION','CERTIFICATIONS','ACHIEVEMENTS','REFEREES']);
+  const comp = _bullets(m.COMPETENCIES).length ? _bullets(m.COMPETENCIES)
+             : (m.COMPETENCIES||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  const experience = _blocks(m.EXPERIENCE).map(b=>{
+    const h = b.head.split('|');
+    const org = b.lines.find(l=>!/^[-•*]/.test(l)) || '';
+    const bl  = b.lines.filter(l=>/^[-•*]/.test(l)).map(l=>l.replace(/^[-•*]\s*/,'').trim());
+    return { title:(h[0]||'').trim(), dates:(h[1]||'').trim(), org, bullets:bl };
+  });
+  const education = _blocks(m.EDUCATION).map(b=>{
+    const h = b.head.split('|');
+    return { degree:(h[0]||'').trim(), years:(h[1]||'').trim(), inst:(b.lines[0]||'').trim() };
+  });
+  let referees;
+  const rb = _blocks(m.REFEREES);
+  if (rb.length) referees = rb.map(b=>({ name:b.head.trim(), title:(b.lines[0]||'').trim(), contact:(b.lines[1]||'').trim() }));
+  else referees = [{ available: _flat(m.REFEREES) || 'Available upon request.' }];
+  return {
+    summary: _flat(m.SUMMARY), competencies: comp, experience, education,
+    certifications: _bullets(m.CERTIFICATIONS), achievements: _bullets(m.ACHIEVEMENTS), referees
+  };
+}
+
+// ---- OOXML builders ----
+const xesc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const XF = '<w:rFonts w:asciiTheme="majorBidi" w:hAnsiTheme="majorBidi" w:cstheme="majorBidi"/>';
+function xrpr(o){ o=o||{}; let p=XF;
+  if(o.b)p+='<w:b/><w:bCs/>'; if(o.i)p+='<w:i/><w:iCs/>';
+  if(o.c)p+='<w:color w:val="'+o.c+'"/>'; if(o.sz)p+='<w:sz w:val="'+o.sz+'"/><w:szCs w:val="'+o.sz+'"/>';
+  return '<w:rPr>'+p+'</w:rPr>'; }
+function xrun(t,o){ const parts=xesc(t).split('\n');
+  return '<w:r>'+xrpr(o)+parts.map(p=>'<w:t xml:space="preserve">'+p+'</w:t>').join('<w:br/>')+'</w:r>'; }
+function xpara(t,o){ o=o||{}; let ppr='<w:pPr>';
+  if(o.after!=null||o.line!=null){ ppr+='<w:spacing'; if(o.after!=null)ppr+=' w:after="'+o.after+'"'; if(o.line!=null)ppr+=' w:line="'+o.line+'" w:lineRule="auto"'; ppr+='/>'; }
+  if(o.align)ppr+='<w:jc w:val="'+o.align+'"/>';
+  ppr+='<w:rPr>'+XF+'</w:rPr></w:pPr>';
+  const body = o.runs!=null ? o.runs : (t?xrun(t,o):'');
+  return '<w:p>'+ppr+body+'</w:p>'; }
+function xheading(t){ return xpara(t,{after:40,b:true,c:'156082',sz:24}); }
+function xrule(){ return '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="156082"/></w:pBdr><w:rPr>'+XF+'</w:rPr></w:pPr></w:p>'; }
+function xbullet(t,line){ return '<w:p><w:pPr><w:pStyle w:val="ListParagraph"/><w:numPr><w:ilvl w:val="0"/><w:numId w:val="6"/></w:numPr><w:spacing w:after="0" w:line="'+(line||259)+'" w:lineRule="auto"/><w:rPr>'+XF+'</w:rPr></w:pPr>'+xrun(t,{sz:21})+'</w:p>'; }
+function xcell(w,content,span){ const tcpr='<w:tcPr><w:tcW w:w="'+w+'" w:type="dxa"/>'+(span?'<w:gridSpan w:val="'+span+'"/>':'')+'</w:tcPr>'; return '<w:tc>'+tcpr+content+'</w:tc>'; }
+const XNOBORD='<w:tblBorders><w:top w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:left w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:bottom w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:right w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:insideH w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:insideV w:val="none" w:sz="0" w:space="0" w:color="auto"/></w:tblBorders>';
+function xtbl(grid,rows,bordered){
+  const g = grid.map(w=>'<w:gridCol w:w="'+w+'"/>').join('');
+  const bord = bordered ? '' : XNOBORD;
+  const wtot = grid.reduce((a,b)=>a+b,0);
+  return '<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="'+(bordered?wtot:0)+'" w:type="'+(bordered?'dxa':'auto')+'"/>'+bord+'<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/></w:tblPr><w:tblGrid>'+g+'</w:tblGrid>'+rows+'</w:tbl>';
+}
+function xtwoColBullets(items,line){
+  const half=Math.ceil(items.length/2);
+  const L=items.slice(0,half).map(x=>xbullet(x,line)).join('') || xpara('');
+  const R=items.slice(half).map(x=>xbullet(x,line)).join('') || xpara('');
+  return xtbl([5395,5395],'<w:tr>'+xcell(5395,L)+xcell(5395,R)+'</w:tr>',false);
+}
+function _fit(type,chars){
+  if(!document.getElementById('exp-autofit').checked) return {after:120,line:259};
+  if(type==='cl'){ if(chars>3200)return{after:60,line:240}; if(chars>2400)return{after:100,line:259}; return{after:140,line:276}; }
+  if(chars>3600)return{after:40,line:240}; if(chars>2600)return{after:80,line:259}; return{after:120,line:276};
+}
+
+function buildCLBody(d){
+  const chars=(d.intro+d.about+d.closing.join(' ')+d.table.map(r=>r.req+r.con).join(' ')).length;
+  const sp=_fit('cl',chars);
+  let b=xpara(d.salutation||'Dear Hiring Manager,',{after:sp.after,line:sp.line});
+  if(d.intro) b+=xpara(d.intro,{after:sp.after,line:sp.line});
+  if(d.about) b+=xpara(d.about,{after:sp.after,line:sp.line});
+  if(d.table.length){
+    const hdr='<w:tr>'+xcell(3505,xpara('What the Role Requires',{align:'center',b:true,c:'215E99',sz:21}))+xcell(7285,xpara('How I Can Contribute',{align:'center',b:true,c:'215E99',sz:21}))+'</w:tr>';
+    let rows=''; for(const r of d.table){ rows+='<w:tr>'+xcell(3505,xpara(r.req,{sz:21,line:sp.line}))+xcell(7285,xpara(r.con,{align:'both',sz:21,line:sp.line}))+'</w:tr>'; }
+    b+=xtbl([3505,7285],hdr+rows,true);
+    b+=xpara('',{after:60});
+  }
+  for(const c of d.closing) b+=xpara(c,{after:sp.after,line:sp.line});
+  b+=xpara('Kind regards,',{after:40,line:sp.line});
+  b+=xpara(d.signName||P.personal.fullName||'',{b:true});
+  return b;
+}
+
+function buildCVBody(d){
+  const chars=(d.summary+d.competencies.join(' ')+d.experience.map(e=>e.title+e.org+e.bullets.join(' ')).join(' ')+d.certifications.join(' ')+d.achievements.join(' ')).length;
+  const sp=_fit('cv',chars);
+  let b=xrule();
+  b+=xheading('PROFESSIONAL SUMMARY');
+  b+=xpara(d.summary,{after:sp.after,line:sp.line,sz:21});
+  if(d.competencies.length){ b+=xheading('CORE COMPETENCIES'); b+=xtwoColBullets(d.competencies,sp.line); b+=xpara('',{after:40}); }
+  if(d.experience.length){
+    b+=xheading('PROFESSIONAL EXPERIENCE');
+    for(const e of d.experience){
+      const hdr='<w:tr>'+xcell(8455,xpara(e.title,{b:true}))+xcell(2335,xpara(e.dates,{align:'right',b:true,i:true}))+'</w:tr>';
+      let content=e.org?xpara(e.org,{i:true,after:0}):'';
+      for(const bl of e.bullets) content+=xbullet(bl,sp.line);
+      b+=xtbl([8455,2335],hdr+'<w:tr>'+xcell(10790,content,2)+'</w:tr>',false);
+      b+=xpara('',{after:60});
+    }
+  }
+  if(d.education.length){
+    b+=xheading('EDUCATION');
+    for(const e of d.education){
+      b+=xtbl([8455,2335],'<w:tr>'+xcell(8455,xpara(e.degree,{b:true}))+xcell(2335,xpara(e.years,{align:'right',b:true}))+'</w:tr>',false);
+      b+=xpara(e.inst,{i:true,after:80});
+    }
+  }
+  if(d.certifications.length){ b+=xheading('CERTIFICATIONS'); b+=xtwoColBullets(d.certifications,sp.line); b+=xpara('',{after:40}); }
+  if(d.achievements.length){ b+=xheading('KEY ACHIEVEMENTS'); for(const a of d.achievements) b+=xbullet(a,sp.line); b+=xpara('',{after:40}); }
+  if(d.referees && d.referees.length){
+    b+=xheading('REFEREES');
+    if(d.referees[0].available){ b+=xpara(d.referees[0].available,{sz:21}); }
+    else {
+      const cellFor=r=>xpara('',{runs:xrun(r.name,{b:true})})+xpara(r.title,{after:0,sz:21})+xpara(r.contact,{after:0,sz:21});
+      for(let i=0;i<d.referees.length;i+=2){
+        const left=cellFor(d.referees[i]);
+        const right=d.referees[i+1]?cellFor(d.referees[i+1]):'';
+        b+=xtbl([5395,5395],'<w:tr>'+xcell(5395,left)+xcell(5395,right)+'</w:tr>',false);
+        b+=xpara('',{after:40});
+      }
+    }
+  }
+  return b;
+}
+
+async function _fetchTemplate(type){
+  const file = type==='cl' ? 'templates/CL_template.docx' : 'templates/CV_template.docx';
+  if(_tplCache[type]) return _tplCache[type].slice(0);
+  const res = await fetch(file);
+  if(!res.ok) throw new Error('template not found: '+file);
+  const buf = await res.arrayBuffer();
+  _tplCache[type] = buf;
+  return buf.slice(0);
+}
+
+async function downloadExportDocx(){
+  if(!exportData){ toast('Read or paste content first','error'); return; }
+  try {
+    toast('Building .docx…','info');
+    const zip = await JSZip.loadAsync(await _fetchTemplate(exportType));
+    let docXml = await zip.file('word/document.xml').async('string');
+    const bs = docXml.indexOf('<w:body>');
+    const docOpen = docXml.slice(0, bs);
+    const sect = (docXml.match(/<w:sectPr[\s\S]*?<\/w:sectPr>/)||[''])[0];
+    const body = exportType==='cl' ? buildCLBody(exportData) : buildCVBody(exportData);
+    zip.file('word/document.xml', docOpen+'<w:body>'+body+sect+'</w:body></w:document>');
+
+    const p = P.personal||{};
+    const htext = { '[YOUR_FULL_NAME]': p.fullName||'Your Name', '[YOUR_PHONE]': p.phone||'', '[YOUR_EMAIL]': p.email||'', '[YOUR_LOCATION]': p.location||'' };
+    let hdr = await zip.file('word/header2.xml').async('string');
+    for(const k in htext) hdr = hdr.split(k).join(xesc(htext[k]));
+    zip.file('word/header2.xml', hdr);
+
+    const relf = zip.file('word/_rels/header2.xml.rels');
+    if(relf){
+      let rel = await relf.async('string');
+      const hurl = { '[YOUR_LINKEDIN_URL]': p.linkedin||'#', '[YOUR_PORTFOLIO_URL]': p.portfolio||'#', '[YOUR_RIGHT_TO_WORK_URL]': p.rtwUrl||'#', '[YOUR_SEEK_URL]': p.portfolio||'#' };
+      for(const k in hurl) rel = rel.split(k).join(xesc(hurl[k]));
+      zip.file('word/_rels/header2.xml.rels', rel);
+    }
+
+    const blob = await zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    const nameFile = (p.fullName||'Document').trim().split(/\s+/).join('_').replace(/[^A-Za-z0-9_]/g,'') || 'Document';
+    const fn = nameFile+'_'+(exportType==='cl'?'CoverLetter':'CV')+'.docx';
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement('a'), {href:url, download:fn});
+    a.click(); URL.revokeObjectURL(url);
+    toast('Downloaded '+fn+' ✔','success');
+  } catch(e){ console.error(e); toast('Export failed: '+e.message,'error'); }
+}
+
+function renderExportPreview(){
+  const el = document.getElementById('exp-preview'); el.style.display='block';
+  const d = exportData; let s='';
+  if(exportType==='cl'){
+    s+='SALUTATION: '+d.salutation+'\n';
+    s+='INTRO: '+(d.intro?d.intro.slice(0,140)+'…':'(none)')+'\n';
+    s+='ABOUT: '+(d.about?d.about.slice(0,140)+'…':'(none)')+'\n';
+    s+='TABLE ROWS: '+d.table.length+'\n';
+    d.table.forEach((r,i)=>{ s+='  '+(i+1)+'. '+r.req.slice(0,42)+'  |  '+r.con.slice(0,42)+'\n'; });
+    s+='CLOSING PARAGRAPHS: '+d.closing.length+'\nSIGN-OFF NAME: '+d.signName;
+  } else {
+    s+='SUMMARY: '+(d.summary?d.summary.slice(0,140)+'…':'(none)')+'\n';
+    s+='COMPETENCIES: '+d.competencies.length+'\n';
+    s+='EXPERIENCE: '+d.experience.length+' role(s)\n';
+    d.experience.forEach(e=>{ s+='  • '+e.title+'  |  '+e.dates+'  ('+e.bullets.length+' bullets)\n'; });
+    s+='EDUCATION: '+d.education.length+'\nCERTIFICATIONS: '+d.certifications.length+'\nACHIEVEMENTS: '+d.achievements.length+'\n';
+    s+='REFEREES: '+((d.referees[0]&&d.referees[0].available)?'available upon request':d.referees.length);
+  }
+  document.getElementById('exp-parse-status').textContent = 'parsed ✔';
+  el.textContent = s;
+}
 </script>
 </body>
 </html>

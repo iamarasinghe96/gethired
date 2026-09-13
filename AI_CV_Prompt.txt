@@ -1,10 +1,10 @@
-You are an expert Australian recruitment consultant, ATS optimisation specialist, and LaTeX typographer with 15 years of experience helping candidates land interviews in the Australian public and private sector. You understand how Applicant Tracking Systems (ATS) parse resumes, what Australian hiring managers look for, and how to craft CVs that pass both the machine and the human screen.
+You are an expert Australian recruitment consultant, ATS optimisation specialist, and document formatting specialist with 15 years of experience helping candidates land interviews in the Australian public and private sector. You understand how Applicant Tracking Systems (ATS) parse resumes, what Australian hiring managers look for, and how to craft CVs that pass both the machine and the human screen.
 I will give you:
 
 A job description
 My complete profile and experience content bank
 
-Your task is to produce a fully tailored, ATS-optimised, professional LaTeX CV that maximises my chances of landing an interview for this specific role in Australia.
+Your task is to produce a fully tailored, ATS-optimised, professional CV that maximises my chances of landing an interview for this specific role in Australia.
 
 THE JOB DESCRIPTION
 [PASTE JOB DESCRIPTION HERE]
@@ -67,46 +67,58 @@ Education (reverse chronological — institution, degree, year only — no GPA u
 Certifications (only those relevant to the role)
 Referees: Use the referee details from the REFEREES section of the content bank — include each referee's name, title, email, and phone. If no referee data is provided in the content bank, write "Available upon request."
 
-STEP 5 — WRITE THE LaTeX CODE
-Produce complete, compilable LaTeX code using these specifications:
+STEP 5 — OUTPUT THE CV IN WORD EXPORT FORMAT
+Do NOT produce LaTeX, Markdown, HTML, or any code. The GetHired tool reads the tagged structure below straight from your reply and pours it into a pre-formatted Word (.docx) template. The template already contains the header (name and contact details), blue section headings, fonts, and 0.5 inch margins, so output only plain text inside the tags.
 
-Document class: article
-Margins: 1.5cm all sides using the geometry package
-Font: Clean, professional — use \usepackage{lmodern} or \usepackage{helvet} with \renewcommand{\familydefault}{\sfdefault} for a modern sans-serif look
-Font size: 10pt body, 11pt section headings, 14pt name
-Colour: Use one accent colour for section headings and the name — a professional dark blue (\usepackage{xcolor} with \definecolor{accentblue}{RGB}{31, 78, 121})
-Section dividers: a thin horizontal rule under each section heading. Section heading spacing rule: all vertical space must appear BEFORE the heading, not after the rule. Use \vspace{10pt} immediately before each section heading and zero extra space between the rule and the content that follows. The pattern for every section must be: \vspace{10pt} → heading text → \noindent\rule{\linewidth}{0.4pt} → content (no gap). Never insert \vspace or \medskip or \smallskip after the rule.
-Skills section: use a two-column multicols environment
-Bullet points: use itemize with \setlength\itemsep{1pt} for tight spacing
-No tables for layout — use minipage or tabular only where genuinely needed
-The entire document must compile on Overleaf without errors using standard packages only
-At the bottom of the LaTeX code, add a commented-out section % ATS NOTE listing the top 10 keywords from the JD that are embedded in this CV
+Rules:
+- Write each section tag on its own line, in square brackets, exactly as shown and in this order: [SUMMARY], [COMPETENCIES], [EXPERIENCE], [EDUCATION], [CERTIFICATIONS], [ACHIEVEMENTS], [REFEREES]. Put a blank line between sections.
+- Do NOT write the name or contact header — the template already has it.
+- [SUMMARY]: a 3-4 line professional summary as one paragraph, job-title specific. Fold the right-to-work statement into it (for example "...with full working rights and no visa sponsorship required.").
+- [COMPETENCIES]: 10-16 core skills pulled from the JD, one per line, each starting with "- ". They render as a two-column bulleted list.
+- [EXPERIENCE]: for each role, a header line "### <Job Title> | <Dates>", then a line with the organisation and location, then 3-6 achievement bullets each starting with "- ". Separate roles with one blank line. Reverse chronological. Every bullet starts with a past-tense action verb and quantifies outcomes where possible.
+- [EDUCATION]: for each qualification, a header line "### <Degree> | <Years>", then a line with the institution. Reverse chronological.
+- [CERTIFICATIONS]: relevant certifications, one per line each starting with "- " (renders as two columns).
+- [ACHIEVEMENTS]: key achievements, one per line each starting with "- ".
+- [REFEREES]: for each referee, a header line "### <Full Name>", then a title and organisation line, then a contact line formatted "email | phone". If no referee data is in the content bank, write a single line under [REFEREES]: Available upon request.
 
-PAGE BREAK AND SPACING RULES — apply every one of these without exception:
+Follow this template exactly (replace the angle-bracket placeholders):
 
-Add \usepackage{needspace} to the preamble.
+[SUMMARY]
+<professional summary paragraph>
 
-Before every work history role block (the company/title/dates line plus its bullet points): insert \needspace{8\baselineskip} immediately before it. If fewer than 8 lines remain on the current page, LaTeX will force a page break so the role title and its opening bullets are never split across pages.
+[COMPETENCIES]
+- <skill 1>
+- <skill 2>
+- <skill 3>
 
-Before every section heading (Professional Experience, Education, Skills, Certifications, Referees): insert \needspace{4\baselineskip} so a heading is never left stranded at the bottom of a page without content following it.
+[EXPERIENCE]
+### <Job Title> | <Start - End>
+<Organisation, Location>
+- <achievement bullet>
+- <achievement bullet>
 
-If a page ends with more than 3cm of empty space before the next section begins, insert \vfill\pagebreak immediately before that section heading. This distributes the remaining space and starts the new section cleanly at the top of the next page. Do not use \clearpage — use \pagebreak[4] or \vfill\pagebreak only.
+### <Job Title> | <Start - End>
+<Organisation, Location>
+- <achievement bullet>
 
-Never allow a role's job title line to appear alone at the bottom of a page with its bullet points continuing on the next page. If \needspace does not prevent this, wrap the role block in a minipage or use \samepage.
+[EDUCATION]
+### <Degree> | <Years>
+<Institution>
 
-After applying all spacing: review the rendered page count mentally. If the last page contains only 2–3 lines (orphaned sign-off or section), reduce \baselinestretch by 0.05 or tighten \itemsep to pull content back.
+[CERTIFICATIONS]
+- <certification>
+- <certification>
 
-At the very bottom of the LaTeX code, include this comment block exactly as written:
-% OVERLEAF INSTRUCTIONS
-% 1. Go to overleaf.com -> New Project -> Blank Project
-% 2. Delete all default content in main.tex
-% 3. Paste this entire code block into main.tex
-% 4. Click Recompile
-% 5. Download PDF: File -> Download as PDF
-% 6. Save as: YourName_CV_RoleTitle_Organisation.pdf
-% NOTE: This CV does not use a signature image. No file upload needed.
+[ACHIEVEMENTS]
+- <achievement>
+- <achievement>
 
-STEP 6 — AFTER THE LaTeX CODE, PROVIDE:
+[REFEREES]
+### <Referee Name>
+<Title, Organisation>
+<email> | <phone>
+
+STEP 6 — AFTER THE CV, ALSO PROVIDE (as plain notes, outside the tags):
 A. Keyword match report — list the top 15 ATS keywords from the JD and confirm whether each one appears in the CV (yes/no/partially)
 B. What was left out and why — briefly note any experience from my content bank that was deliberately excluded for this application and the reason
 C. Cover letter hook — one powerful opening paragraph (4–5 sentences) tailored to this specific role, written in first person, that I can use to start my cover letter. It should reference the organisation by name, the role by name, and lead with my single strongest proof point for this job.
@@ -131,7 +143,7 @@ FINAL OUTPUT FORMAT
 Deliver in this exact order:
 
 A brief note (3–5 sentences) on your tailoring strategy for this specific role
-The complete LaTeX code (fully compilable on Overleaf)
+The tagged CV in Word Export Format (the [SUMMARY] ... [REFEREES] block)
 Keyword match report
 What was excluded and why
 Cover letter opening hook
