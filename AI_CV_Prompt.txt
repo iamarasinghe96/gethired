@@ -70,7 +70,12 @@ Referees: Use the referee details from the REFEREES section of the content bank 
 STEP 5 — OUTPUT THE CV IN WORD EXPORT FORMAT
 Do NOT produce LaTeX, HTML, or any code. The GetHired tool reads the tagged structure below straight from your reply and pours it into a pre-formatted Word (.docx) template. The template already contains the header (name and contact details), blue section headings, fonts, and 0.5 inch margins, so output plain text inside the tags, with ONE exception: the inline-link syntax below.
 
-Inline links: you MAY hyperlink a few key phrases to real URLs using the syntax [visible text](https://the-url). Use it only for named projects, tools, or the portfolio when the content bank gives a real URL for them (for example, a waste or landfill tool linking to its GitHub or portfolio page). Maximum 3-4 links across the whole CV. Only use URLs that actually appear in the content bank — never invent one. Do not link generic words, job titles, or employer names. Wrap only the exact words that should be clickable. Links may appear inside the summary, experience bullets, achievements, or certifications.
+Inline links — LINK GENEROUSLY: use the syntax [visible text](https://the-url) to hyperlink every item that has a real URL in the content bank. This is important; a strong CV carries many working links. Specifically:
+- Every named project or tool mentioned in the summary, experience bullets, or achievements links to its own page (for example a landfill or waste tool to its GitHub/portfolio URL).
+- Each referee's name links to their LinkedIn profile: write the referee header as "### [Full Name](https://linkedin-url)".
+- Each certification links to its credential/verification URL when the content bank has one.
+- The portfolio is linked wherever it is named.
+There is no maximum — a rich CV commonly has 8-15 links. NEVER show a raw URL as plain visible text; always wrap it as [label](url). Only use URLs that actually appear in the content bank — never invent one. Do not link generic words, job titles, or employer names. Wrap only the exact words that should be clickable.
 
 Rules:
 - Write each section tag on its own line, in square brackets, exactly as shown and in this order: [SUMMARY], [COMPETENCIES], [EXPERIENCE], [EDUCATION], [CERTIFICATIONS], [ACHIEVEMENTS], [REFEREES]. Put a blank line between sections.
@@ -81,7 +86,7 @@ Rules:
 - [EDUCATION]: for each qualification, a header line "### <Degree> | <Years>", then a line with the institution. Reverse chronological.
 - [CERTIFICATIONS]: relevant certifications, one per line each starting with "- " (renders as two columns).
 - [ACHIEVEMENTS]: key achievements, one per line each starting with "- ".
-- [REFEREES]: for each referee, a header line "### <Full Name>", then a title and organisation line, then a contact line formatted "email | phone". If no referee data is in the content bank, write a single line under [REFEREES]: Available upon request.
+- [REFEREES]: for each referee, a header line "### <Full Name>" (link the name to their LinkedIn when the content bank has it: "### [Full Name](https://linkedin-url)"), then a title and organisation line, then a contact line formatted "email | phone". If no referee data is in the content bank, write a single line under [REFEREES]: Available upon request.
 
 Follow this template exactly (replace the angle-bracket placeholders):
 
@@ -116,7 +121,7 @@ Follow this template exactly (replace the angle-bracket placeholders):
 - <achievement>
 
 [REFEREES]
-### <Referee Name>
+### [<Referee Name>](<LinkedIn URL if available>)
 <Title, Organisation>
 <email> | <phone>
 

@@ -1995,12 +1995,13 @@ function _renderText(t,o){
   return out;
 }
 function xpara(t,o){ o=o||{}; let ppr='<w:pPr>';
-  if(o.after!=null||o.line!=null){ ppr+='<w:spacing'; if(o.after!=null)ppr+=' w:after="'+o.after+'"'; if(o.line!=null)ppr+=' w:line="'+o.line+'" w:lineRule="auto"'; ppr+='/>'; }
+  if(o.after!=null||o.line!=null||o.before!=null){ ppr+='<w:spacing'; if(o.before!=null)ppr+=' w:before="'+o.before+'"'; if(o.after!=null)ppr+=' w:after="'+o.after+'"'; if(o.line!=null)ppr+=' w:line="'+o.line+'" w:lineRule="auto"'; ppr+='/>'; }
   if(o.align)ppr+='<w:jc w:val="'+o.align+'"/>';
   ppr+='<w:rPr>'+XF+'</w:rPr></w:pPr>';
   const body = o.runs!=null ? o.runs : (t?_renderText(t,o):'');
   return '<w:p>'+ppr+body+'</w:p>'; }
-function xheading(t){ return xpara(t,{after:40,b:true,c:'156082',sz:24}); }
+// section heading: clear space above (separates topics) + bold blue + thin blue rule under it
+function xheading(t,first){ return '<w:p><w:pPr><w:spacing w:before="'+(first?60:240)+'" w:after="80"/><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="2" w:color="156082"/></w:pBdr><w:rPr>'+XF+'<w:b/><w:bCs/><w:color w:val="156082"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:pPr>'+xrun(t,{b:true,c:'156082',sz:24})+'</w:p>'; }
 function xrule(){ return '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="156082"/></w:pBdr><w:rPr>'+XF+'</w:rPr></w:pPr></w:p>'; }
 function xbullet(t,line){ return '<w:p><w:pPr><w:pStyle w:val="ListParagraph"/><w:numPr><w:ilvl w:val="0"/><w:numId w:val="6"/></w:numPr><w:spacing w:after="0" w:line="'+(line||259)+'" w:lineRule="auto"/><w:rPr>'+XF+'</w:rPr></w:pPr>'+_renderText(t,{sz:21})+'</w:p>'; }
 function xcell(w,content,span){ const tcpr='<w:tcPr><w:tcW w:w="'+w+'" w:type="dxa"/>'+(span?'<w:gridSpan w:val="'+span+'"/>':'')+'</w:tcPr>'; return '<w:tc>'+tcpr+content+'</w:tc>'; }
@@ -2046,9 +2047,9 @@ function buildCLBody(d, sigDrawing){
 function buildCVBody(d){
   const chars=(d.summary+d.competencies.join(' ')+d.experience.map(e=>e.title+e.org+e.bullets.join(' ')).join(' ')+d.certifications.join(' ')+d.achievements.join(' ')).length;
   const sp=_fit('cv',chars);
-  let b=xrule();
-  b+=xheading('PROFESSIONAL SUMMARY');
+  let b=xheading('PROFESSIONAL SUMMARY', true);
   b+=xpara(d.summary,{align:'both',after:sp.after,line:sp.line,sz:21});
+  // (letterhead already sits above via the template header)
   if(d.competencies.length){ b+=xheading('CORE COMPETENCIES'); b+=xtwoColBullets(d.competencies,sp.line); b+=xpara('',{after:40}); }
   if(d.experience.length){
     b+=xheading('PROFESSIONAL EXPERIENCE');
@@ -2073,7 +2074,7 @@ function buildCVBody(d){
     b+=xheading('REFEREES');
     if(d.referees[0].available){ b+=xpara(d.referees[0].available,{sz:21}); }
     else {
-      const cellFor=r=>xpara('',{runs:xrun(r.name,{b:true})})+xpara(r.title,{after:0,sz:21})+xpara(r.contact,{after:0,sz:21});
+      const cellFor=r=>xpara(r.name,{b:true,after:0})+xpara(r.title,{after:0,sz:21})+xpara(r.contact,{after:0,sz:21});
       for(let i=0;i<d.referees.length;i+=2){
         const left=cellFor(d.referees[i]);
         const right=d.referees[i+1]?cellFor(d.referees[i+1]):'';
