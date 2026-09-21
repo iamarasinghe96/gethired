@@ -2008,15 +2008,15 @@ function buildCLBody(d, sigDrawing){
   const sp=_fit('cl',chars);
   let b=xrule();  // blue horizontal rule under the letterhead
   b+=xpara(d.salutation||'Dear Hiring Manager,',{after:sp.after,line:sp.line});
-  if(d.intro) b+=xpara(d.intro,{after:sp.after,line:sp.line});
-  if(d.about) b+=xpara(d.about,{after:sp.after,line:sp.line});
+  if(d.intro) b+=xpara(d.intro,{align:'both',after:sp.after,line:sp.line});
+  if(d.about) b+=xpara(d.about,{align:'both',after:sp.after,line:sp.line});
   if(d.table.length){
     const hdr='<w:tr>'+xcell(3505,xpara('What the Role Requires',{align:'center',b:true,c:'215E99',sz:21}))+xcell(7285,xpara('How I Can Contribute',{align:'center',b:true,c:'215E99',sz:21}))+'</w:tr>';
     let rows=''; for(const r of d.table){ rows+='<w:tr>'+xcell(3505,xpara(r.req,{sz:21,line:sp.line}))+xcell(7285,xpara(r.con,{align:'both',sz:21,line:sp.line}))+'</w:tr>'; }
     b+=xtbl([3505,7285],hdr+rows,true);
     b+=xpara('',{after:60});
   }
-  for(const c of d.closing) b+=xpara(c,{after:sp.after,line:sp.line});
+  for(const c of d.closing) b+=xpara(c,{align:'both',after:sp.after,line:sp.line});
   b+=xpara('Kind regards,',{after:sigDrawing?20:40,line:sp.line});
   if(sigDrawing) b+=sigDrawing;
   b+=xpara(d.signName||_shortName(P.personal.fullName)||'',{b:true});
