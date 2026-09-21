@@ -68,7 +68,9 @@ Certifications (only those relevant to the role)
 Referees: Use the referee details from the REFEREES section of the content bank — include each referee's name, title, email, and phone. If no referee data is provided in the content bank, write "Available upon request."
 
 STEP 5 — OUTPUT THE CV IN WORD EXPORT FORMAT
-Do NOT produce LaTeX, Markdown, HTML, or any code. The GetHired tool reads the tagged structure below straight from your reply and pours it into a pre-formatted Word (.docx) template. The template already contains the header (name and contact details), blue section headings, fonts, and 0.5 inch margins, so output only plain text inside the tags.
+Do NOT produce LaTeX, HTML, or any code. The GetHired tool reads the tagged structure below straight from your reply and pours it into a pre-formatted Word (.docx) template. The template already contains the header (name and contact details), blue section headings, fonts, and 0.5 inch margins, so output plain text inside the tags, with ONE exception: the inline-link syntax below.
+
+Inline links: you MAY hyperlink a few key phrases to real URLs using the syntax [visible text](https://the-url). Use it only for named projects, tools, or the portfolio when the content bank gives a real URL for them (for example, a waste or landfill tool linking to its GitHub or portfolio page). Maximum 3-4 links across the whole CV. Only use URLs that actually appear in the content bank — never invent one. Do not link generic words, job titles, or employer names. Wrap only the exact words that should be clickable. Links may appear inside the summary, experience bullets, achievements, or certifications.
 
 Rules:
 - Write each section tag on its own line, in square brackets, exactly as shown and in this order: [SUMMARY], [COMPETENCIES], [EXPERIENCE], [EDUCATION], [CERTIFICATIONS], [ACHIEVEMENTS], [REFEREES]. Put a blank line between sections.

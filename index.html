@@ -1974,15 +1974,35 @@ function xrpr(o){ o=o||{}; let p=XF;
   return '<w:rPr>'+p+'</w:rPr>'; }
 function xrun(t,o){ const parts=xesc(t).split('\n');
   return '<w:r>'+xrpr(o)+parts.map(p=>'<w:t xml:space="preserve">'+p+'</w:t>').join('<w:br/>')+'</w:r>'; }
+// inline links: markdown [label](https://url) -> Word hyperlink run (resolved to rIds at export time)
+let _linkReg = [];
+function _linkRpr(o){ o=o||{}; let p='<w:rStyle w:val="Hyperlink"/>'+XF;
+  if(o.b)p+='<w:b/><w:bCs/>'; if(o.i)p+='<w:i/><w:iCs/>';
+  if(o.sz)p+='<w:sz w:val="'+o.sz+'"/><w:szCs w:val="'+o.sz+'"/>'; return '<w:rPr>'+p+'</w:rPr>'; }
+function _renderText(t,o){
+  o=o||{};
+  if((t||'').indexOf('](')<0) return xrun(t,o);
+  const re=/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+  let out='', last=0, m;
+  while((m=re.exec(t))){
+    if(m.index>last) out+=xrun(t.slice(last,m.index),o);
+    const idx=_linkReg.push(m[2])-1;
+    const inner=xesc(m[1]).split('\n').map(x=>'<w:t xml:space="preserve">'+x+'</w:t>').join('<w:br/>');
+    out+='<w:hyperlink r:id="__LNK'+idx+'__" w:history="1"><w:r>'+_linkRpr(o)+inner+'</w:r></w:hyperlink>';
+    last=m.index+m[0].length;
+  }
+  if(last<t.length) out+=xrun(t.slice(last),o);
+  return out;
+}
 function xpara(t,o){ o=o||{}; let ppr='<w:pPr>';
   if(o.after!=null||o.line!=null){ ppr+='<w:spacing'; if(o.after!=null)ppr+=' w:after="'+o.after+'"'; if(o.line!=null)ppr+=' w:line="'+o.line+'" w:lineRule="auto"'; ppr+='/>'; }
   if(o.align)ppr+='<w:jc w:val="'+o.align+'"/>';
   ppr+='<w:rPr>'+XF+'</w:rPr></w:pPr>';
-  const body = o.runs!=null ? o.runs : (t?xrun(t,o):'');
+  const body = o.runs!=null ? o.runs : (t?_renderText(t,o):'');
   return '<w:p>'+ppr+body+'</w:p>'; }
 function xheading(t){ return xpara(t,{after:40,b:true,c:'156082',sz:24}); }
 function xrule(){ return '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="156082"/></w:pBdr><w:rPr>'+XF+'</w:rPr></w:pPr></w:p>'; }
-function xbullet(t,line){ return '<w:p><w:pPr><w:pStyle w:val="ListParagraph"/><w:numPr><w:ilvl w:val="0"/><w:numId w:val="6"/></w:numPr><w:spacing w:after="0" w:line="'+(line||259)+'" w:lineRule="auto"/><w:rPr>'+XF+'</w:rPr></w:pPr>'+xrun(t,{sz:21})+'</w:p>'; }
+function xbullet(t,line){ return '<w:p><w:pPr><w:pStyle w:val="ListParagraph"/><w:numPr><w:ilvl w:val="0"/><w:numId w:val="6"/></w:numPr><w:spacing w:after="0" w:line="'+(line||259)+'" w:lineRule="auto"/><w:rPr>'+XF+'</w:rPr></w:pPr>'+_renderText(t,{sz:21})+'</w:p>'; }
 function xcell(w,content,span){ const tcpr='<w:tcPr><w:tcW w:w="'+w+'" w:type="dxa"/>'+(span?'<w:gridSpan w:val="'+span+'"/>':'')+'</w:tcPr>'; return '<w:tc>'+tcpr+content+'</w:tc>'; }
 const XNOBORD='<w:tblBorders><w:top w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:left w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:bottom w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:right w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:insideH w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:insideV w:val="none" w:sz="0" w:space="0" w:color="auto"/></w:tblBorders>';
 function xtbl(grid,rows,bordered){
@@ -2102,6 +2122,7 @@ async function downloadExportDocx(){
   if(!exportData){ toast('Read or paste content first','error'); return; }
   try {
     toast('Building .docx…','info');
+    _linkReg = [];
     const zip = await JSZip.loadAsync(await _fetchTemplate(exportType));
     let docXml = await zip.file('word/document.xml').async('string');
     const bs = docXml.indexOf('<w:body>');
@@ -2109,7 +2130,19 @@ async function downloadExportDocx(){
     const sect = (docXml.match(/<w:sectPr[\s\S]*?<\/w:sectPr>/)||[''])[0];
     let sigDrawing = null;
     if(exportType==='cl') sigDrawing = await _embedSignature(zip);
-    const body = exportType==='cl' ? buildCLBody(exportData, sigDrawing) : buildCVBody(exportData);
+    let body = exportType==='cl' ? buildCLBody(exportData, sigDrawing) : buildCVBody(exportData);
+    // resolve inline hyperlinks: register external relationships, swap __LNK<i>__ tokens for rIds
+    if(_linkReg.length){
+      let rels = await zip.file('word/_rels/document.xml.rels').async('string');
+      let max=0; (rels.match(/Id="rId(\d+)"/g)||[]).forEach(x=>{const n=+x.match(/\d+/)[0]; if(n>max)max=n;});
+      let adds='';
+      _linkReg.forEach((url,i)=>{ const rid='rId'+(max+1+i);
+        adds+='<Relationship Id="'+rid+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="'+xesc(url)+'" TargetMode="External"/>';
+        body = body.split('__LNK'+i+'__').join(rid);
+      });
+      rels = rels.replace('</Relationships>', adds+'</Relationships>');
+      zip.file('word/_rels/document.xml.rels', rels);
+    }
     zip.file('word/document.xml', docOpen+'<w:body>'+body+sect+'</w:body></w:document>');
 
     const p = P.personal||{};
