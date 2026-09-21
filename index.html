@@ -1919,8 +1919,12 @@ function _shortName(full){ full = full||''; const m = full.match(/\(([^)]+)\)/);
 // cut off trailing report sections (KEYWORD MATCH REPORT, A./B./C./D., etc.) that follow the last tag
 function _cutTail(s){
   if(!s) return '';
-  const m = s.match(/(?:\n\s*|\s)(?:[A-D]\.\s+[A-Z]{2,}|KEYWORD MATCH|KEYWORD CHECK|ANTI-?AI AUDIT|WHAT WAS (?:LEFT|EXCLUDED)|COVER LETTER (?:HOOK|OPENING)|INTERVIEW QUESTION|THE ONE THING|SUGGESTED FILE)/);
-  return m ? s.slice(0, m.index).trim() : s.trim();
+  // stop at the trailing report block: a markdown rule (---), or a heading like
+  // "**A. Keyword match report**", "A. Keyword", "KEYWORD CHECK", "What was left out", etc.
+  const stop = /^\s*(?:[-_*]{3,}\s*$|\*{0,2}\s*[A-D][\.\)]\s|\*{0,2}\s*(?:KEYWORD\b|ANTI[- ]?AI\b|WHAT WAS\b|WHAT WAS LEFT\b|COVER LETTER\b|INTERVIEW\b|THE ONE THING\b|SUGGESTED FILE\b|TAILORING\b))/i;
+  const out = [];
+  for (const line of s.split('\n')){ if (stop.test(line)) break; out.push(line); }
+  return out.join('\n').trim();
 }
 
 function parseCL(text){
@@ -2001,7 +2005,7 @@ function xpara(t,o){ o=o||{}; let ppr='<w:pPr>';
   const body = o.runs!=null ? o.runs : (t?_renderText(t,o):'');
   return '<w:p>'+ppr+body+'</w:p>'; }
 // section heading: clear space above (separates topics) + bold blue + thin blue rule under it
-function xheading(t,first){ return '<w:p><w:pPr><w:spacing w:before="'+(first?60:240)+'" w:after="80"/><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="2" w:color="156082"/></w:pBdr><w:rPr>'+XF+'<w:b/><w:bCs/><w:color w:val="156082"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:pPr>'+xrun(t,{b:true,c:'156082',sz:24})+'</w:p>'; }
+function xheading(t,first){ return '<w:p><w:pPr><w:spacing w:before="'+(first?140:240)+'" w:after="80"/><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="2" w:color="156082"/></w:pBdr><w:rPr>'+XF+'<w:b/><w:bCs/><w:color w:val="156082"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:pPr>'+xrun(t,{b:true,c:'156082',sz:24})+'</w:p>'; }
 function xrule(){ return '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="156082"/></w:pBdr><w:rPr>'+XF+'</w:rPr></w:pPr></w:p>'; }
 function xbullet(t,line){ return '<w:p><w:pPr><w:pStyle w:val="ListParagraph"/><w:numPr><w:ilvl w:val="0"/><w:numId w:val="6"/></w:numPr><w:spacing w:after="0" w:line="'+(line||259)+'" w:lineRule="auto"/><w:rPr>'+XF+'</w:rPr></w:pPr>'+_renderText(t,{sz:21})+'</w:p>'; }
 function xcell(w,content,span){ const tcpr='<w:tcPr><w:tcW w:w="'+w+'" w:type="dxa"/>'+(span?'<w:gridSpan w:val="'+span+'"/>':'')+'</w:tcPr>'; return '<w:tc>'+tcpr+content+'</w:tc>'; }
@@ -2047,9 +2051,9 @@ function buildCLBody(d, sigDrawing){
 function buildCVBody(d){
   const chars=(d.summary+d.competencies.join(' ')+d.experience.map(e=>e.title+e.org+e.bullets.join(' ')).join(' ')+d.certifications.join(' ')+d.achievements.join(' ')).length;
   const sp=_fit('cv',chars);
-  let b=xheading('PROFESSIONAL SUMMARY', true);
+  let b=xrule();  // headline bar: blue rule directly under the letterhead
+  b+=xheading('PROFESSIONAL SUMMARY', true);
   b+=xpara(d.summary,{align:'both',after:sp.after,line:sp.line,sz:21});
-  // (letterhead already sits above via the template header)
   if(d.competencies.length){ b+=xheading('CORE COMPETENCIES'); b+=xtwoColBullets(d.competencies,sp.line); b+=xpara('',{after:40}); }
   if(d.experience.length){
     b+=xheading('PROFESSIONAL EXPERIENCE');
