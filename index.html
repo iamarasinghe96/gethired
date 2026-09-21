@@ -486,6 +486,13 @@
         </div>
       </div>
       <div style="padding:14px 16px">
+        <div id="exp-sig-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px">
+          <span class="panel-desc">&#x270D; Signature <em>(cover letter only)</em>:</span>
+          <label class="btn btn-outline" style="cursor:pointer">Upload PNG/JPG<input type="file" accept="image/png,image/jpeg,image/gif" style="display:none" onchange="handleSignatureUpload(this)"></label>
+          <img id="exp-sig-preview" alt="signature" style="display:none;height:34px;background:#fff;border:1px solid var(--border);border-radius:4px;padding:2px">
+          <button class="btn btn-danger" id="exp-sig-remove" style="display:none" onclick="removeSignature()">&#x2715; Remove</button>
+          <span class="panel-desc" style="margin-left:auto">saved in your browser</span>
+        </div>
         <button class="btn btn-primary btn-lg" id="exp-download-btn" onclick="downloadExportDocx()" disabled>&#x2B07; Download .docx</button>
         <div id="exp-preview" style="margin-top:14px;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;white-space:pre-wrap;border:1px dashed var(--border);border-radius:6px;padding:12px;max-height:320px;overflow:auto;display:none"></div>
       </div>
@@ -1807,7 +1814,37 @@ let exportType = 'cl';
 let exportData = null;
 const _tplCache = {};
 
-function initExport(){ setExportType(exportType); }
+function initExport(){ setExportType(exportType); renderSignatureState(); }
+
+function handleSignatureUpload(input){
+  const file = input.files[0]; if(!file) return;
+  if(!/image\/(png|jpe?g|gif)/.test(file.type)){ toast('Use a PNG or JPG image','error'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    const img = new Image();
+    img.onload = () => {
+      const ext = file.type==='image/png' ? 'png' : (file.type==='image/gif' ? 'gif' : 'jpg');
+      try { localStorage.setItem('gethired_signature', JSON.stringify({ dataUrl, w:img.naturalWidth, h:img.naturalHeight, ext })); }
+      catch(err){ toast('Image too large to save — use a smaller file','error'); return; }
+      renderSignatureState();
+      toast('Signature saved locally ✔','success');
+    };
+    img.onerror = () => toast('Could not read that image','error');
+    img.src = dataUrl;
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+function removeSignature(){ localStorage.removeItem('gethired_signature'); renderSignatureState(); toast('Signature removed','info'); }
+function renderSignatureState(){
+  const sig = _loadSignature();
+  const prev = document.getElementById('exp-sig-preview');
+  const rm = document.getElementById('exp-sig-remove');
+  if(!prev) return;
+  if(sig && sig.dataUrl){ prev.src = sig.dataUrl; prev.style.display='inline-block'; rm.style.display='inline-flex'; }
+  else { prev.style.display='none'; rm.style.display='none'; }
+}
 
 function setExportType(t){
   exportType = t;
@@ -1817,6 +1854,8 @@ function setExportType(t){
   document.getElementById('exp-download-btn').disabled = true;
   document.getElementById('exp-parse-status').textContent = '';
   document.getElementById('exp-preview').style.display = 'none';
+  const sigRow = document.getElementById('exp-sig-row');
+  if(sigRow) sigRow.style.display = (t==='cl') ? 'flex' : 'none';
 }
 
 function toggleExportPaste(){
@@ -1875,6 +1914,14 @@ function _blocks(block){
   });
   return out;
 }
+// short display name: "L.I.D. Amarasinghe (Indika Amarasinghe)" -> "Indika Amarasinghe"
+function _shortName(full){ full = full||''; const m = full.match(/\(([^)]+)\)/); return (m ? m[1] : full).trim(); }
+// cut off trailing report sections (KEYWORD MATCH REPORT, A./B./C./D., etc.) that follow the last tag
+function _cutTail(s){
+  if(!s) return '';
+  const m = s.match(/(?:\n\s*|\s)(?:[A-D]\.\s+[A-Z]{2,}|KEYWORD MATCH|KEYWORD CHECK|ANTI-?AI AUDIT|WHAT WAS (?:LEFT|EXCLUDED)|COVER LETTER (?:HOOK|OPENING)|INTERVIEW QUESTION|THE ONE THING|SUGGESTED FILE)/);
+  return m ? s.slice(0, m.index).trim() : s.trim();
+}
 
 function parseCL(text){
   const m = _sectionMap(text, ['SALUTATION','INTRO','ABOUT','TABLE','CLOSING','SIGNOFF']);
@@ -1882,10 +1929,10 @@ function parseCL(text){
     const p = l.split('::');
     return { req:(p[0]||'').trim(), con:(p.slice(1).join('::')||'').trim() };
   }).filter(r=>r.req||r.con);
-  const stop = /^(ANTI-?AI|KEYWORD|THE ONE THING|TAILORING|SUGGESTED)/i;
+  const stop = /^(?:[A-D]\.\s|ANTI-?AI|KEYWORD|THE ONE THING|TAILORING|SUGGESTED|WHAT WAS|COVER LETTER|INTERVIEW)/i;
   const sign = [];
-  for (const l of (m.SIGNOFF||'').split('\n').map(x=>x.trim()).filter(Boolean)){ if (stop.test(l)) break; sign.push(l); }
-  const signName = sign.find(l=>!/^kind regards/i.test(l)) || (P.personal.fullName||'');
+  for (const l of _cutTail(m.SIGNOFF||'').split('\n').map(x=>x.trim()).filter(Boolean)){ if (stop.test(l)) break; sign.push(l); }
+  const signName = sign.find(l=>!/^kind regards/i.test(l)) || _shortName(P.personal.fullName);
   return {
     salutation: (_flat(m.SALUTATION)||'Dear Hiring Manager,').split('\n')[0].trim(),
     intro: _flat(m.INTRO), about: _flat(m.ABOUT), table,
@@ -1908,9 +1955,10 @@ function parseCV(text){
     return { degree:(h[0]||'').trim(), years:(h[1]||'').trim(), inst:(b.lines[0]||'').trim() };
   });
   let referees;
-  const rb = _blocks(m.REFEREES);
+  const refText = _cutTail(m.REFEREES||'');
+  const rb = _blocks(refText);
   if (rb.length) referees = rb.map(b=>({ name:b.head.trim(), title:(b.lines[0]||'').trim(), contact:(b.lines[1]||'').trim() }));
-  else referees = [{ available: _flat(m.REFEREES) || 'Available upon request.' }];
+  else referees = [{ available: _flat(refText) || 'Available upon request.' }];
   return {
     summary: _flat(m.SUMMARY), competencies: comp, experience, education,
     certifications: _bullets(m.CERTIFICATIONS), achievements: _bullets(m.ACHIEVEMENTS), referees
@@ -1955,10 +2003,11 @@ function _fit(type,chars){
   if(chars>3600)return{after:40,line:240}; if(chars>2600)return{after:80,line:259}; return{after:120,line:276};
 }
 
-function buildCLBody(d){
+function buildCLBody(d, sigDrawing){
   const chars=(d.intro+d.about+d.closing.join(' ')+d.table.map(r=>r.req+r.con).join(' ')).length;
   const sp=_fit('cl',chars);
-  let b=xpara(d.salutation||'Dear Hiring Manager,',{after:sp.after,line:sp.line});
+  let b=xrule();  // blue horizontal rule under the letterhead
+  b+=xpara(d.salutation||'Dear Hiring Manager,',{after:sp.after,line:sp.line});
   if(d.intro) b+=xpara(d.intro,{after:sp.after,line:sp.line});
   if(d.about) b+=xpara(d.about,{after:sp.after,line:sp.line});
   if(d.table.length){
@@ -1968,8 +2017,9 @@ function buildCLBody(d){
     b+=xpara('',{after:60});
   }
   for(const c of d.closing) b+=xpara(c,{after:sp.after,line:sp.line});
-  b+=xpara('Kind regards,',{after:40,line:sp.line});
-  b+=xpara(d.signName||P.personal.fullName||'',{b:true});
+  b+=xpara('Kind regards,',{after:sigDrawing?20:40,line:sp.line});
+  if(sigDrawing) b+=sigDrawing;
+  b+=xpara(d.signName||_shortName(P.personal.fullName)||'',{b:true});
   return b;
 }
 
@@ -2025,6 +2075,29 @@ async function _fetchTemplate(type){
   return buf.slice(0);
 }
 
+// ---- signature (cover letter) ----
+function _loadSignature(){ try{ const s=localStorage.getItem('gethired_signature'); return s?JSON.parse(s):null; }catch(e){ return null; } }
+function _sigDrawing(rid,w,h){
+  return '<w:p><w:pPr><w:spacing w:after="20"/><w:rPr>'+XF+'</w:rPr></w:pPr><w:r><w:rPr>'+XF+'</w:rPr><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="'+w+'" cy="'+h+'"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="201" name="Signature"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="201" name="Signature"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="'+rid+'"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+w+'" cy="'+h+'"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>';
+}
+async function _embedSignature(zip){
+  const sig=_loadSignature(); if(!sig||!sig.dataUrl) return null;
+  let rels=await zip.file('word/_rels/document.xml.rels').async('string');
+  let max=0; (rels.match(/Id="rId(\d+)"/g)||[]).forEach(m=>{const n=+m.match(/\d+/)[0]; if(n>max)max=n;});
+  const rid='rId'+(max+1);
+  const ext=(sig.ext||'png').toLowerCase();
+  const media='gethired_sig.'+ext;
+  zip.file('word/media/'+media, sig.dataUrl.split(',')[1], {base64:true});
+  rels=rels.replace('</Relationships>','<Relationship Id="'+rid+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/'+media+'"/></Relationships>');
+  zip.file('word/_rels/document.xml.rels', rels);
+  let ct=await zip.file('[Content_Types].xml').async('string');
+  const type = (ext==='jpg'||ext==='jpeg')?'image/jpeg':(ext==='gif'?'image/gif':'image/png');
+  if(!new RegExp('Extension="'+ext+'"','i').test(ct)){ ct=ct.replace('</Types>','<Default Extension="'+ext+'" ContentType="'+type+'"/></Types>'); zip.file('[Content_Types].xml', ct); }
+  const wEmu=828000;                                   // ~2.3cm wide
+  const hEmu=Math.max(120000, Math.round(wEmu*(sig.h||1)/(sig.w||3)));
+  return _sigDrawing(rid, wEmu, hEmu);
+}
+
 async function downloadExportDocx(){
   if(!exportData){ toast('Read or paste content first','error'); return; }
   try {
@@ -2034,11 +2107,14 @@ async function downloadExportDocx(){
     const bs = docXml.indexOf('<w:body>');
     const docOpen = docXml.slice(0, bs);
     const sect = (docXml.match(/<w:sectPr[\s\S]*?<\/w:sectPr>/)||[''])[0];
-    const body = exportType==='cl' ? buildCLBody(exportData) : buildCVBody(exportData);
+    let sigDrawing = null;
+    if(exportType==='cl') sigDrawing = await _embedSignature(zip);
+    const body = exportType==='cl' ? buildCLBody(exportData, sigDrawing) : buildCVBody(exportData);
     zip.file('word/document.xml', docOpen+'<w:body>'+body+sect+'</w:body></w:document>');
 
     const p = P.personal||{};
-    const htext = { '[YOUR_FULL_NAME]': p.fullName||'Your Name', '[YOUR_PHONE]': p.phone||'', '[YOUR_EMAIL]': p.email||'', '[YOUR_LOCATION]': p.location||'' };
+    const dispName = _shortName(p.fullName) || 'Your Name';
+    const htext = { '[YOUR_FULL_NAME]': dispName, '[YOUR_PHONE]': p.phone||'', '[YOUR_EMAIL]': p.email||'', '[YOUR_LOCATION]': p.location||'' };
     let hdr = await zip.file('word/header2.xml').async('string');
     for(const k in htext) hdr = hdr.split(k).join(xesc(htext[k]));
     zip.file('word/header2.xml', hdr);
@@ -2052,7 +2128,7 @@ async function downloadExportDocx(){
     }
 
     const blob = await zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-    const nameFile = (p.fullName||'Document').trim().split(/\s+/).join('_').replace(/[^A-Za-z0-9_]/g,'') || 'Document';
+    const nameFile = dispName.trim().split(/\s+/).join('_').replace(/[^A-Za-z0-9_]/g,'') || 'Document';
     const fn = nameFile+'_'+(exportType==='cl'?'CoverLetter':'CV')+'.docx';
     const url = URL.createObjectURL(blob);
     const a = Object.assign(document.createElement('a'), {href:url, download:fn});
