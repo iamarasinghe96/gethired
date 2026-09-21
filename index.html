@@ -2028,7 +2028,7 @@ function buildCVBody(d){
   const sp=_fit('cv',chars);
   let b=xrule();
   b+=xheading('PROFESSIONAL SUMMARY');
-  b+=xpara(d.summary,{after:sp.after,line:sp.line,sz:21});
+  b+=xpara(d.summary,{align:'both',after:sp.after,line:sp.line,sz:21});
   if(d.competencies.length){ b+=xheading('CORE COMPETENCIES'); b+=xtwoColBullets(d.competencies,sp.line); b+=xpara('',{after:40}); }
   if(d.experience.length){
     b+=xheading('PROFESSIONAL EXPERIENCE');
