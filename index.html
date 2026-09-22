@@ -1405,17 +1405,23 @@ function importCVBank() {
   }
 }
 
+function _downloadBlob(blob, filename){
+  // Anchor must be in the DOM, and the blob URL must stay alive until the browser
+  // has finished reading it — revoking immediately truncates the file.
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.rel = 'noopener'; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{ try{ document.body.removeChild(a); }catch(e){} URL.revokeObjectURL(url); }, 60000);
+}
+
 function exportCVBank() {
   const text = generateCVBankText();
   if (!text || text.length < 20) { toast('Fill in some profile details first.', 'error'); return; }
   const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
   const name = (P.personal.fullName || 'My').trim().replace(/\s+/g,'_');
-  a.href = url;
-  a.download = `${name}_CV_Content_Bank.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
+  _downloadBlob(blob, `${name}_CV_Content_Bank.txt`);
   toast('CV Bank downloaded \u2714', 'success');
 }
 
@@ -1541,10 +1547,7 @@ function downloadPrompt(which) {
   const text     = document.getElementById(taId).value;
   if (!text.trim()) { toast('Prompt is empty', 'error'); return; }
   const blob = new Blob([text], { type: 'text/plain' });
-  const url  = URL.createObjectURL(blob);
-  const a    = Object.assign(document.createElement('a'), { href: url, download: filename });
-  a.click();
-  URL.revokeObjectURL(url);
+  _downloadBlob(blob, filename);
   toast(`Downloaded ${filename} ✔`, 'success');
 }
 
@@ -2257,13 +2260,34 @@ async function downloadExportDocx(){
       }
     }
 
-    const blob = await zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    const blob = await zip.generateAsync({
+      type:'blob',
+      mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      compression:'DEFLATE', compressionOptions:{level:6}
+    });
+
+    // self-check: re-open what we just built and confirm Word will accept it
+    try {
+      const verify = await JSZip.loadAsync(blob);
+      const vdoc = await verify.file('word/document.xml').async('string');
+      const vp = new DOMParser().parseFromString(vdoc, 'application/xml');
+      if(vp.getElementsByTagName('parsererror').length) throw new Error('document.xml is malformed');
+      for(const req of ['[Content_Types].xml','word/_rels/document.xml.rels','word/styles.xml']){
+        if(!verify.file(req)) throw new Error('missing '+req);
+      }
+    } catch(vErr){
+      console.error('Package verification failed:', vErr);
+      toast('Export aborted — package failed verification ('+vErr.message+')','error');
+      return;
+    }
+
     const nameFile = dispName.trim().split(/\s+/).join('_').replace(/[^A-Za-z0-9_]/g,'') || 'Document';
     const fn = nameFile+'_'+(exportType==='cl'?'CoverLetter':'CV')+'.docx';
-    const url = URL.createObjectURL(blob);
-    const a = Object.assign(document.createElement('a'), {href:url, download:fn});
-    a.click(); URL.revokeObjectURL(url);
-    toast('Downloaded '+fn+' ✔','success');
+    // Attach the anchor and keep the blob URL alive until the browser has read it.
+    // Revoking immediately after click() truncates large downloads (~1MB) and
+    // produces a file Word cannot open.
+    _downloadBlob(blob, fn);
+    toast('Downloaded '+fn+' ('+Math.round(blob.size/1024)+' KB) ✔','success');
   } catch(e){ console.error(e); toast('Export failed: '+e.message,'error'); }
 }
 
