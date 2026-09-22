@@ -1878,6 +1878,7 @@ function parseExportFromPaste(){
 }
 function handleExportText(text){
   try {
+    text = _sanitize(text);   // clean at the door: parse, preview and export all see safe text
     exportData = exportType==='cl' ? parseCL(text) : parseCV(text);
     const ok = exportType==='cl'
       ? (exportData.table.length>0 || !!exportData.intro)
@@ -1982,7 +1983,17 @@ function parseCV(text){
 }
 
 // ---- OOXML builders — see docs/DOCX_EXPORT_SPEC.md ----
-const xesc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// Strip characters XML 1.0 forbids. Clipboard/AI text often carries stray control
+// codes; even one makes document.xml malformed and Word refuses to open the file.
+function _sanitize(s){
+  return (s==null?'':String(s))
+    .replace(/^﻿/, '')                                              // BOM
+    .replace(/\r\n?/g, '\n')                                             // CRLF/CR -> LF
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F￾￿]/g,'') // illegal controls
+    .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g,'')                   // lone high surrogate
+    .replace(/(^|[^\uD800-\uDBFF])([\uDC00-\uDFFF])/g,'$1');             // lone low surrogate
+}
+const xesc = s => _sanitize(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const XF = '<w:rFonts w:asciiTheme="majorBidi" w:hAnsiTheme="majorBidi" w:cstheme="majorBidi"/>';
 const ACCENT = '156082';   // headings + rules (theme accent1)
 const CLHDR  = '215E99';   // cover-letter table header text
@@ -2216,7 +2227,16 @@ async function downloadExportDocx(){
       rels = rels.replace('</Relationships>', adds+'</Relationships>');
       zip.file('word/_rels/document.xml.rels', rels);
     }
-    zip.file('word/document.xml', docOpen+'<w:body>'+body+sect+'</w:body></w:document>');
+    const finalDoc = docOpen+'<w:body>'+body+sect+'</w:body></w:document>';
+    // pre-flight: never hand Word a malformed package
+    const probe = new DOMParser().parseFromString(finalDoc, 'application/xml');
+    if(probe.getElementsByTagName('parsererror').length){
+      const msg = (probe.getElementsByTagName('parsererror')[0].textContent||'').split('\n')[0];
+      console.error('Generated document.xml is not well-formed:', msg);
+      toast('Export aborted — generated document was invalid. Re-copy the AI reply and try again.','error');
+      return;
+    }
+    zip.file('word/document.xml', finalDoc);
 
     // letterhead substitution — across every header part (CV uses header2, CL uses header1)
     const p = P.personal||{};

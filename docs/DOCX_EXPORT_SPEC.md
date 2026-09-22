@@ -216,3 +216,22 @@ Previously: <earlier title and dates>
 | `[YOUR_PHONE]`, `[YOUR_EMAIL]`, `[YOUR_LOCATION]` | Profile personal fields |
 | `[YOUR_LINKEDIN_URL]`, `[YOUR_PORTFOLIO_URL]`, `[YOUR_RIGHT_TO_WORK_URL]`, `[YOUR_SEEK_URL]` | Profile URLs (header rels) |
 | Signature image | Uploaded PNG/JPG stored in `localStorage`, embedded at §6.9 size |
+
+---
+
+## 9. Input sanitisation (required)
+
+Clipboard / AI-reply text frequently carries characters that XML 1.0 forbids. A single
+one makes `word/document.xml` malformed and Word refuses the file with
+*"Word experienced an error trying to open the file."*
+
+Before parsing, every input is passed through `_sanitize()`:
+
+- strip a leading BOM (`U+FEFF`)
+- normalise `\r\n` / `\r` → `\n`
+- remove `U+0000–U+0008`, `U+000B`, `U+000C`, `U+000E–U+001F`, `U+FFFE`, `U+FFFF`
+- drop unpaired surrogates
+
+`xesc()` applies the same filter as defence in depth. Additionally, the assembled
+`document.xml` is parsed with `DOMParser` **before** zipping; if it is not well-formed
+the export aborts with an explicit message rather than producing a broken `.docx`.
