@@ -480,9 +480,7 @@
           </div>
         </div>
         <div class="panel-badges">
-          <label class="panel-desc" style="display:flex;align-items:center;gap:6px;cursor:pointer">
-            <input type="checkbox" id="exp-autofit" checked> auto-fit spacing
-          </label>
+          <span class="badge badge-muted">template-exact spacing</span>
         </div>
       </div>
       <div style="padding:14px 16px">
@@ -1950,18 +1948,32 @@ function parseCV(text){
              : (m.COMPETENCIES||'').split('\n').map(s=>s.trim()).filter(Boolean);
   const experience = _blocks(m.EXPERIENCE).map(b=>{
     const h = b.head.split('|');
-    const org = b.lines.find(l=>!/^[-•*]/.test(l)) || '';
-    const bl  = b.lines.filter(l=>/^[-•*]/.test(l)).map(l=>l.replace(/^[-•*]\s*/,'').trim());
-    return { title:(h[0]||'').trim(), dates:(h[1]||'').trim(), org, bullets:bl };
+    let linkLabel=null, linkUrl=null;
+    if (h.length>2){
+      const lm = h.slice(2).join('|').trim().match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+      if (lm){ linkLabel=lm[1]; linkUrl=lm[2]; }
+    }
+    const plain = b.lines.filter(l=>!/^[-•*]/.test(l));
+    const org   = _splitLabel(plain.find(l=>!/^previously\s*:/i.test(l)) || '');
+    const prev  = plain.find(l=>/^previously\s*:/i.test(l)) || '';
+    const bl    = b.lines.filter(l=>/^[-•*]/.test(l)).map(l=>l.replace(/^[-•*]\s*/,'').trim());
+    return { title:(h[0]||'').trim(), dates:(h[1]||'').trim(), linkLabel, linkUrl,
+             org:org.text, orgLabel:org.label, orgUrl:org.url, previously:prev, bullets:bl };
   });
   const education = _blocks(m.EDUCATION).map(b=>{
     const h = b.head.split('|');
-    return { degree:(h[0]||'').trim(), years:(h[1]||'').trim(), inst:(b.lines[0]||'').trim() };
+    const inst = _splitLabel(b.lines[0]||'');
+    return { degree:(h[0]||'').trim(), years:(h[1]||'').trim(),
+             inst:inst.text, instLabel:inst.label, instUrl:inst.url };
   });
   let referees;
   const refText = _cutTail(m.REFEREES||'');
   const rb = _blocks(refText);
-  if (rb.length) referees = rb.map(b=>({ name:b.head.trim(), title:(b.lines[0]||'').trim(), contact:(b.lines[1]||'').trim() }));
+  if (rb.length) referees = rb.map(b=>{
+    const n = _splitLabel(b.head);
+    return { name:n.text, linkLabel:n.label, linkUrl:n.url,
+             title:(b.lines[0]||'').trim(), contact:(b.lines[1]||'').trim() };
+  });
   else referees = [{ available: _flat(refText) || 'Available upon request.' }];
   return {
     summary: _flat(m.SUMMARY), competencies: comp, experience, education,
@@ -1969,122 +1981,178 @@ function parseCV(text){
   };
 }
 
-// ---- OOXML builders ----
+// ---- OOXML builders — see docs/DOCX_EXPORT_SPEC.md ----
 const xesc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const XF = '<w:rFonts w:asciiTheme="majorBidi" w:hAnsiTheme="majorBidi" w:cstheme="majorBidi"/>';
+const ACCENT = '156082';   // headings + rules (theme accent1)
+const CLHDR  = '215E99';   // cover-letter table header text
+const SZ_SM  = '21';       // 10.5pt — table cells
+
 function xrpr(o){ o=o||{}; let p=XF;
-  if(o.b)p+='<w:b/><w:bCs/>'; if(o.i)p+='<w:i/><w:iCs/>';
-  if(o.c)p+='<w:color w:val="'+o.c+'"/>'; if(o.sz)p+='<w:sz w:val="'+o.sz+'"/><w:szCs w:val="'+o.sz+'"/>';
+  if(o.b)p+='<w:b/><w:bCs/>'; if(o.i)p+='<w:i/><w:iCs/>'; if(o.u)p+='<w:u w:val="single"/>';
+  if(o.c)p+='<w:color w:val="'+o.c+'"/>';
+  if(o.sz)p+='<w:sz w:val="'+o.sz+'"/><w:szCs w:val="'+o.sz+'"/>';
   return '<w:rPr>'+p+'</w:rPr>'; }
 function xrun(t,o){ const parts=xesc(t).split('\n');
   return '<w:r>'+xrpr(o)+parts.map(p=>'<w:t xml:space="preserve">'+p+'</w:t>').join('<w:br/>')+'</w:r>'; }
-// inline links: markdown [label](https://url) -> Word hyperlink run (resolved to rIds at export time)
+
+// inline links: [label](url) -> Word hyperlink run (rIds resolved at export time)
 let _linkReg = [];
 function _linkRpr(o){ o=o||{}; let p='<w:rStyle w:val="Hyperlink"/>'+XF;
-  if(o.b)p+='<w:b/><w:bCs/>'; if(o.i)p+='<w:i/><w:iCs/>';
+  if(o.b)p+='<w:b/><w:bCs/>'; if(o.i)p+='<w:i/><w:iCs/>'; if(o.u)p+='<w:u w:val="single"/>';
   if(o.sz)p+='<w:sz w:val="'+o.sz+'"/><w:szCs w:val="'+o.sz+'"/>'; return '<w:rPr>'+p+'</w:rPr>'; }
+function _linkRun(label,url,o){ const i=_linkReg.push(url)-1;
+  const inner=xesc(label).split('\n').map(x=>'<w:t xml:space="preserve">'+x+'</w:t>').join('<w:br/>');
+  return '<w:hyperlink r:id="__LNK'+i+'__" w:history="1"><w:r>'+_linkRpr(o)+inner+'</w:r></w:hyperlink>'; }
 function _renderText(t,o){
   o=o||{};
-  if((t||'').indexOf('](')<0) return xrun(t,o);
-  const re=/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
-  let out='', last=0, m;
+  if((t||'').indexOf('](')<0) return t?xrun(t,o):'';
+  const re=/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g; let out='', last=0, m;
   while((m=re.exec(t))){
     if(m.index>last) out+=xrun(t.slice(last,m.index),o);
-    const idx=_linkReg.push(m[2])-1;
-    const inner=xesc(m[1]).split('\n').map(x=>'<w:t xml:space="preserve">'+x+'</w:t>').join('<w:br/>');
-    out+='<w:hyperlink r:id="__LNK'+idx+'__" w:history="1"><w:r>'+_linkRpr(o)+inner+'</w:r></w:hyperlink>';
-    last=m.index+m[0].length;
+    out+=_linkRun(m[1],m[2],o); last=m.index+m[0].length;
   }
   if(last<t.length) out+=xrun(t.slice(last),o);
   return out;
 }
-function xpara(t,o){ o=o||{}; let ppr='<w:pPr>';
-  if(o.after!=null||o.line!=null||o.before!=null){ ppr+='<w:spacing'; if(o.before!=null)ppr+=' w:before="'+o.before+'"'; if(o.after!=null)ppr+=' w:after="'+o.after+'"'; if(o.line!=null)ppr+=' w:line="'+o.line+'" w:lineRule="auto"'; ppr+='/>'; }
-  if(o.align)ppr+='<w:jc w:val="'+o.align+'"/>';
-  ppr+='<w:rPr>'+XF+'</w:rPr></w:pPr>';
-  const body = o.runs!=null ? o.runs : (t?_renderText(t,o):'');
-  return '<w:p>'+ppr+body+'</w:p>'; }
-// section heading: clear space above (separates topics) + bold blue + thin blue rule under it
-function xheading(t,first){ return '<w:p><w:pPr><w:spacing w:before="'+(first?140:240)+'" w:after="80"/><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="2" w:color="156082"/></w:pBdr><w:rPr>'+XF+'<w:b/><w:bCs/><w:color w:val="156082"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:pPr>'+xrun(t,{b:true,c:'156082',sz:24})+'</w:p>'; }
-function xrule(){ return '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="156082"/></w:pBdr><w:rPr>'+XF+'</w:rPr></w:pPr></w:p>'; }
-function xbullet(t,line){ return '<w:p><w:pPr><w:pStyle w:val="ListParagraph"/><w:numPr><w:ilvl w:val="0"/><w:numId w:val="6"/></w:numPr><w:spacing w:after="0" w:line="'+(line||259)+'" w:lineRule="auto"/><w:rPr>'+XF+'</w:rPr></w:pPr>'+_renderText(t,{sz:21})+'</w:p>'; }
-function xcell(w,content,span){ const tcpr='<w:tcPr><w:tcW w:w="'+w+'" w:type="dxa"/>'+(span?'<w:gridSpan w:val="'+span+'"/>':'')+'</w:tcPr>'; return '<w:tc>'+tcpr+content+'</w:tc>'; }
-const XNOBORD='<w:tblBorders><w:top w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:left w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:bottom w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:right w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:insideH w:val="none" w:sz="0" w:space="0" w:color="auto"/><w:insideV w:val="none" w:sz="0" w:space="0" w:color="auto"/></w:tblBorders>';
-function xtbl(grid,rows,bordered){
-  const g = grid.map(w=>'<w:gridCol w:w="'+w+'"/>').join('');
-  const bord = bordered ? '' : XNOBORD;
-  const wtot = grid.reduce((a,b)=>a+b,0);
-  return '<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="'+(bordered?wtot:0)+'" w:type="'+(bordered?'dxa':'auto')+'"/>'+bord+'<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/></w:tblPr><w:tblGrid>'+g+'</w:tblGrid>'+rows+'</w:tbl>';
-}
-function xtwoColBullets(items,line){
-  const half=Math.ceil(items.length/2);
-  const L=items.slice(0,half).map(x=>xbullet(x,line)).join('') || xpara('');
-  const R=items.slice(half).map(x=>xbullet(x,line)).join('') || xpara('');
-  return xtbl([5395,5395],'<w:tr>'+xcell(5395,L)+xcell(5395,R)+'</w:tr>',false);
-}
-function _fit(type,chars){
-  if(!document.getElementById('exp-autofit').checked) return {after:120,line:259};
-  if(type==='cl'){ if(chars>3200)return{after:60,line:240}; if(chars>2400)return{after:100,line:259}; return{after:140,line:276}; }
-  if(chars>3600)return{after:40,line:240}; if(chars>2600)return{after:80,line:259}; return{after:120,line:276};
+// "Organisation, Location | [Milestones](url)" -> {text,label,url}
+function _splitLabel(s){
+  const m=(s||'').match(/^(.*?)\s*\|\s*\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)\s*$/);
+  return m ? {text:m[1].trim(), label:m[2], url:m[3]} : {text:(s||'').trim()};
 }
 
+function xpara(t,o){ o=o||{}; let ppr='<w:pPr>';
+  if(o.pStyle) ppr+='<w:pStyle w:val="'+o.pStyle+'"/>';
+  if(o.numId!=null) ppr+='<w:numPr><w:ilvl w:val="0"/><w:numId w:val="'+o.numId+'"/></w:numPr>';
+  if(o.before!=null||o.after!=null||o.line!=null){ ppr+='<w:spacing';
+    if(o.before!=null)ppr+=' w:before="'+o.before+'"';
+    if(o.after!=null)ppr+=' w:after="'+o.after+'"';
+    if(o.line!=null)ppr+=' w:line="'+o.line+'" w:lineRule="auto"'; ppr+='/>'; }
+  if(o.align)ppr+='<w:jc w:val="'+o.align+'"/>';
+  ppr+='<w:rPr>'+XF+'</w:rPr></w:pPr>';
+  return '<w:p>'+ppr+(o.runs!=null?o.runs:(t?_renderText(t,o):''))+'</w:p>'; }
+
+// blue rule = anchored Straight Connector: 1pt (w=12700), theme accent1, full content width
+let _shapeId = 100;
+function xline(headline){
+  const cx=headline?6855460:6855873, cy=headline?12065:12227;
+  const ph=headline?1905:0, pv=headline?148694:-635, id=++_shapeId;
+  return '<w:p><w:pPr>'+(headline?'':'<w:jc w:val="both"/>')+'<w:rPr>'+XF+'</w:rPr></w:pPr>'
+    +'<w:r><w:rPr>'+XF+'<w:noProof/></w:rPr><w:drawing>'
+    +'<wp:anchor distT="0" distB="0" distL="114300" distR="114300" simplePos="0" relativeHeight="'+(251658240+id)+'" behindDoc="0" locked="0" layoutInCell="1" allowOverlap="1">'
+    +'<wp:simplePos x="0" y="0"/>'
+    +'<wp:positionH relativeFrom="column"><wp:posOffset>'+ph+'</wp:posOffset></wp:positionH>'
+    +'<wp:positionV relativeFrom="paragraph"><wp:posOffset>'+pv+'</wp:posOffset></wp:positionV>'
+    +'<wp:extent cx="'+cx+'" cy="'+cy+'"/><wp:effectExtent l="0" t="0" r="21590" b="26035"/><wp:wrapNone/>'
+    +'<wp:docPr id="'+id+'" name="Straight Connector '+id+'"/><wp:cNvGraphicFramePr/>'
+    +'<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+    +'<a:graphicData uri="http://schemas.microsoft.com/office/word/2010/wordprocessingShape">'
+    +'<wps:wsp><wps:cNvCnPr/><wps:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+cx+'" cy="'+cy+'"/></a:xfrm>'
+    +'<a:prstGeom prst="line"><a:avLst/></a:prstGeom><a:ln w="12700"/></wps:spPr>'
+    +'<wps:style><a:lnRef idx="1"><a:schemeClr val="accent1"/></a:lnRef><a:fillRef idx="0"><a:schemeClr val="accent1"/></a:fillRef>'
+    +'<a:effectRef idx="0"><a:schemeClr val="accent1"/></a:effectRef><a:fontRef idx="minor"><a:schemeClr val="tx1"/></a:fontRef></wps:style>'
+    +'<wps:bodyPr/></wps:wsp></a:graphicData></a:graphic></wp:anchor></w:drawing></w:r></w:p>';
+}
+// section = bold accent CAPS heading + its own rule paragraph
+function xheading(t,first){ return xpara(t.toUpperCase(),{before:first?null:240,b:true,c:ACCENT})+xline(false); }
+function xbullet(t,numId,o){ return xpara(t,Object.assign({pStyle:'ListParagraph',numId:numId||1,align:'both'},o||{})); }
+
+function xcell(w,content,span){ return '<w:tc><w:tcPr><w:tcW w:w="'+w+'" w:type="dxa"/>'+(span?'<w:gridSpan w:val="'+span+'"/>':'')+'</w:tcPr>'+(content||xpara(''))+'</w:tc>'; }
+const XNOBORD='<w:tblBorders>'+['top','left','bottom','right','insideH','insideV'].map(s=>'<w:'+s+' w:val="none" w:sz="0" w:space="0" w:color="auto"/>').join('')+'</w:tblBorders>';
+function xtbl(grid,rows,bordered){
+  return '<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="0" w:type="auto"/>'+(bordered?'':XNOBORD)
+    +'<w:tblLook w:val="04A0" w:firstRow="1" w:lastRow="0" w:firstColumn="1" w:lastColumn="0" w:noHBand="0" w:noVBand="1"/></w:tblPr>'
+    +'<w:tblGrid>'+grid.map(w=>'<w:gridCol w:w="'+w+'"/>').join('')+'</w:tblGrid>'+rows+'</w:tbl>'; }
+const xrow = cells => '<w:tr>'+cells+'</w:tr>';
+
 function buildCLBody(d, sigDrawing){
-  const chars=(d.intro+d.about+d.closing.join(' ')+d.table.map(r=>r.req+r.con).join(' ')).length;
-  const sp=_fit('cl',chars);
-  let b=xrule();  // blue horizontal rule under the letterhead
-  b+=xpara(d.salutation||'Dear Hiring Manager,',{after:sp.after,line:sp.line});
-  if(d.intro) b+=xpara(d.intro,{align:'both',after:sp.after,line:sp.line});
-  if(d.about) b+=xpara(d.about,{align:'both',after:sp.after,line:sp.line});
+  let b=xline(true);
+  b+=xpara(d.salutation||'Dear Hiring Manager,',{after:60,line:240});
+  if(d.intro) b+=xpara(d.intro,{align:'both',after:60,line:240});
+  if(d.about)  b+=xpara(d.about,{align:'both',after:60,line:240});
   if(d.table.length){
-    const hdr='<w:tr>'+xcell(3505,xpara('What the Role Requires',{align:'center',b:true,c:'215E99',sz:21}))+xcell(7285,xpara('How I Can Contribute',{align:'center',b:true,c:'215E99',sz:21}))+'</w:tr>';
-    let rows=''; for(const r of d.table){ rows+='<w:tr>'+xcell(3505,xpara(r.req,{sz:21,line:sp.line}))+xcell(7285,xpara(r.con,{align:'both',sz:21,line:sp.line}))+'</w:tr>'; }
-    b+=xtbl([3505,7285],hdr+rows,true);
-    b+=xpara('',{after:60});
+    let rows=xrow(xcell(3505,xpara('What the Role Requires',{align:'center',b:true,c:CLHDR,sz:SZ_SM}))
+                 +xcell(7285,xpara('How I Can Contribute',{align:'center',b:true,c:CLHDR,sz:SZ_SM})));
+    for(const r of d.table)
+      rows+=xrow(xcell(3505,xpara(r.req,{sz:SZ_SM}))+xcell(7285,xpara(r.con,{align:'both',sz:SZ_SM})));
+    b+=xtbl([3505,7285],rows,true);
+    b+=xpara('',{align:'both',after:60,line:240});
   }
-  for(const c of d.closing) b+=xpara(c,{align:'both',after:sp.after,line:sp.line});
-  b+=xpara('Kind regards,',{after:sigDrawing?20:40,line:sp.line});
-  if(sigDrawing) b+=sigDrawing;
-  b+=xpara(d.signName||_shortName(P.personal.fullName)||'',{b:true});
+  d.closing.forEach((c,i)=>{
+    if(i) b+=xpara('',{align:'both',after:60,line:240});
+    b+=xpara(c,{align:'both',after:60,line:240});
+  });
+  b+=xpara('Kind regards,',{after:20,line:240});
+  b+=xpara('',{runs:(sigDrawing||'')+xrun(d.signName||_shortName(P.personal.fullName)||'',{})});
   return b;
 }
 
 function buildCVBody(d){
-  const chars=(d.summary+d.competencies.join(' ')+d.experience.map(e=>e.title+e.org+e.bullets.join(' ')).join(' ')+d.certifications.join(' ')+d.achievements.join(' ')).length;
-  const sp=_fit('cv',chars);
-  let b=xrule();  // headline bar: blue rule directly under the letterhead
-  b+=xheading('PROFESSIONAL SUMMARY', true);
-  b+=xpara(d.summary,{align:'both',after:sp.after,line:sp.line,sz:21});
-  if(d.competencies.length){ b+=xheading('CORE COMPETENCIES'); b+=xtwoColBullets(d.competencies,sp.line); b+=xpara('',{after:40}); }
+  let b=xline(true);                       // headline bar under the letterhead
+  let first=true;
+  const sec=t=>{ const h=xheading(t,first); first=false; return h; };
+
+  b+=sec('Professional Summary');
+  b+=xpara(d.summary,{align:'both',after:40,line:240});
+  b+=xpara('',{align:'both',after:40,line:240});
+
+  if(d.competencies.length){
+    b+=sec('Core Competencies');
+    const half=Math.ceil(d.competencies.length/2);
+    const col=items=>items.map(x=>xpara('',{line:276,runs:xrun('• ',{})+_renderText(x,{})})).join('')||xpara('');
+    b+=xtbl([5395,5395],xrow(xcell(5395,col(d.competencies.slice(0,half)))+xcell(5395,col(d.competencies.slice(half)))),false);
+    b+=xpara('');
+  }
+
   if(d.experience.length){
-    b+=xheading('PROFESSIONAL EXPERIENCE');
+    b+=sec('Professional Experience');
+    let rows='', n=0;
     for(const e of d.experience){
-      const hdr='<w:tr>'+xcell(8455,xpara(e.title,{b:true}))+xcell(2335,xpara(e.dates,{align:'right',b:true,i:true}))+'</w:tr>';
-      let content=e.org?xpara(e.org,{i:true,after:0}):'';
-      for(const bl of e.bullets) content+=xbullet(bl,sp.line);
-      b+=xtbl([8455,2335],hdr+'<w:tr>'+xcell(10790,content,2)+'</w:tr>',false);
-      b+=xpara('',{after:60});
+      const numId=(n%5)+1; n++;
+      const titleRuns=xrun(e.title,{b:true})+(e.linkUrl?xrun(' ',{})+_linkRun(e.linkLabel,e.linkUrl,{u:true}):'');
+      rows+=xrow(xcell(8455,xpara('',{runs:titleRuns}))+xcell(2335,xpara(e.dates,{align:'right',b:true,i:true})));
+      let inner='';
+      if(e.org) inner+=xpara('',{runs:xrun(e.org+' ',{i:true})+(e.orgUrl?_linkRun(e.orgLabel,e.orgUrl,{u:true}):'')});
+      if(e.previously) inner+=xpara(e.previously,{i:true});
+      for(const bl of e.bullets) inner+=xbullet(bl,numId);
+      rows+=xrow(xcell(10790,inner,2));
+      rows+=xrow(xcell(10790,xpara(''),2));
     }
+    b+=xtbl([8455,2335],rows,false);
   }
+
   if(d.education.length){
-    b+=xheading('EDUCATION');
+    b+=sec('Education');
+    let rows='';
     for(const e of d.education){
-      b+=xtbl([8455,2335],'<w:tr>'+xcell(8455,xpara(e.degree,{b:true}))+xcell(2335,xpara(e.years,{align:'right',b:true}))+'</w:tr>',false);
-      b+=xpara(e.inst,{i:true,after:80});
+      rows+=xrow(xcell(8455,xpara(e.degree,{b:true}))+xcell(2335,xpara(e.years,{align:'right',b:true})));
+      rows+=xrow(xcell(10790,xpara('',{runs:xrun(e.inst+' ',{i:true})+(e.instUrl?_linkRun(e.instLabel,e.instUrl,{u:true}):'')}),2));
     }
+    b+=xtbl([8455,2335],rows,false);
   }
-  if(d.certifications.length){ b+=xheading('CERTIFICATIONS'); b+=xtwoColBullets(d.certifications,sp.line); b+=xpara('',{after:40}); }
-  if(d.achievements.length){ b+=xheading('KEY ACHIEVEMENTS'); for(const a of d.achievements) b+=xbullet(a,sp.line); b+=xpara('',{after:40}); }
+
+  if(d.certifications.length){
+    b+=sec('Certifications');
+    const half=Math.ceil(d.certifications.length/2);
+    const col=items=>items.map(x=>xbullet(x,4)).join('')||xpara('');
+    b+=xtbl([5395,5395],xrow(xcell(5395,col(d.certifications.slice(0,half)))+xcell(5395,col(d.certifications.slice(half)))),false);
+  }
+
+  if(d.achievements.length){
+    b+=sec('Key Achievements');
+    for(const a of d.achievements) b+=xbullet(a,5);
+  }
+
   if(d.referees && d.referees.length){
-    b+=xheading('REFEREES');
-    if(d.referees[0].available){ b+=xpara(d.referees[0].available,{sz:21}); }
+    b+=sec('Referees');
+    if(d.referees[0].available){ b+=xpara(d.referees[0].available); }
     else {
-      const cellFor=r=>xpara(r.name,{b:true,after:0})+xpara(r.title,{after:0,sz:21})+xpara(r.contact,{after:0,sz:21});
-      for(let i=0;i<d.referees.length;i+=2){
-        const left=cellFor(d.referees[i]);
-        const right=d.referees[i+1]?cellFor(d.referees[i+1]):'';
-        b+=xtbl([5395,5395],'<w:tr>'+xcell(5395,left)+xcell(5395,right)+'</w:tr>',false);
-        b+=xpara('',{after:40});
-      }
+      const cellFor=r=>xpara('',{runs:xrun(r.name,{b:true})+(r.linkUrl?xrun(' | ',{})+_linkRun(r.linkLabel||'LinkedIn',r.linkUrl,{}):'')})
+                      +xpara(r.title)+xpara(r.contact);
+      let rows='';
+      for(let i=0;i<d.referees.length;i+=2)
+        rows+=xrow(xcell(5395,cellFor(d.referees[i]))+xcell(5395,d.referees[i+1]?cellFor(d.referees[i+1]):xpara('')));
+      b+=xtbl([5395,5395],rows,false);
     }
   }
   return b;
@@ -2150,19 +2218,23 @@ async function downloadExportDocx(){
     }
     zip.file('word/document.xml', docOpen+'<w:body>'+body+sect+'</w:body></w:document>');
 
+    // letterhead substitution — across every header part (CV uses header2, CL uses header1)
     const p = P.personal||{};
     const dispName = _shortName(p.fullName) || 'Your Name';
-    const htext = { '[YOUR_FULL_NAME]': dispName, '[YOUR_PHONE]': p.phone||'', '[YOUR_EMAIL]': p.email||'', '[YOUR_LOCATION]': p.location||'' };
-    let hdr = await zip.file('word/header2.xml').async('string');
-    for(const k in htext) hdr = hdr.split(k).join(xesc(htext[k]));
-    zip.file('word/header2.xml', hdr);
-
-    const relf = zip.file('word/_rels/header2.xml.rels');
-    if(relf){
-      let rel = await relf.async('string');
-      const hurl = { '[YOUR_LINKEDIN_URL]': p.linkedin||'#', '[YOUR_PORTFOLIO_URL]': p.portfolio||'#', '[YOUR_RIGHT_TO_WORK_URL]': p.rtwUrl||'#', '[YOUR_SEEK_URL]': p.portfolio||'#' };
-      for(const k in hurl) rel = rel.split(k).join(xesc(hurl[k]));
-      zip.file('word/_rels/header2.xml.rels', rel);
+    const htext = { '[YOUR_FULL_NAME]': dispName.toUpperCase(), '[YOUR_PHONE]': p.phone||'',
+                    '[YOUR_EMAIL]': p.email||'', '[YOUR_LOCATION]': p.location||'' };
+    const hurl  = { '[YOUR_LINKEDIN_URL]': p.linkedin||'#', '[YOUR_PORTFOLIO_URL]': p.portfolio||'#',
+                    '[YOUR_RIGHT_TO_WORK_URL]': p.rtwUrl||'#', '[YOUR_SEEK_URL]': p.portfolio||'#' };
+    for(const name of Object.keys(zip.files)){
+      if(/^word\/header\d*\.xml$/.test(name)){
+        let h = await zip.file(name).async('string');
+        for(const k in htext) h = h.split(k).join(xesc(htext[k]));
+        zip.file(name, h);
+      } else if(/^word\/_rels\/header\d*\.xml\.rels$/.test(name)){
+        let r = await zip.file(name).async('string');
+        for(const k in hurl) r = r.split(k).join(xesc(hurl[k]));
+        zip.file(name, r);
+      }
     }
 
     const blob = await zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});

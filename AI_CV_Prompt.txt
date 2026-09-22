@@ -72,7 +72,7 @@ Do NOT produce LaTeX, HTML, or any code. The GetHired tool reads the tagged stru
 
 Inline links — LINK GENEROUSLY: use the syntax [visible text](https://the-url) to hyperlink every item that has a real URL in the content bank. This is important; a strong CV carries many working links. Specifically:
 - Every named project or tool mentioned in the summary, experience bullets, or achievements links to its own page (for example a landfill or waste tool to its GitHub/portfolio URL).
-- Each referee's name links to their LinkedIn profile: write the referee header as "### [Full Name](https://linkedin-url)".
+- Each referee's name is followed by a LinkedIn link: write the referee header as "### <Mrs./Mr. Full Name> | [LinkedIn](url)".
 - Each certification links to its credential/verification URL when the content bank has one.
 - The portfolio is linked wherever it is named.
 There is no maximum — a rich CV commonly has 8-15 links. NEVER show a raw URL as plain visible text; always wrap it as [label](url). Only use URLs that actually appear in the content bank — never invent one. Do not link generic words, job titles, or employer names. Wrap only the exact words that should be clickable.
@@ -82,11 +82,11 @@ Rules:
 - Do NOT write the name or contact header — the template already has it.
 - [SUMMARY]: a 3-4 line professional summary as one paragraph, job-title specific. Fold the right-to-work statement into it (for example "...with full working rights and no visa sponsorship required.").
 - [COMPETENCIES]: 10-16 core skills pulled from the JD, one per line, each starting with "- ". They render as a two-column bulleted list.
-- [EXPERIENCE]: for each role, a header line "### <Job Title> | <Dates>", then a line with the organisation and location, then 3-6 achievement bullets each starting with "- ". Separate roles with one blank line. Reverse chronological. Every bullet starts with a past-tense action verb and quantifies outcomes where possible.
-- [EDUCATION]: for each qualification, a header line "### <Degree> | <Years>", then a line with the institution. Reverse chronological.
-- [CERTIFICATIONS]: relevant certifications, one per line each starting with "- " (renders as two columns).
-- [ACHIEVEMENTS]: key achievements, one per line each starting with "- ".
-- [REFEREES]: for each referee, a header line "### <Full Name>" (link the name to their LinkedIn when the content bank has it: "### [Full Name](https://linkedin-url)"), then a title and organisation line, then a contact line formatted "email | phone". If no referee data is in the content bank, write a single line under [REFEREES]: Available upon request.
+- [EXPERIENCE]: for each role a header line "### <Job Title> | <Dates>", optionally followed by " | [Responsibilities](url)" or " | [Website](url)" as a third field linking to supporting evidence. Next line: the organisation and location, optionally followed by " | [Milestones](url)". If the role absorbed an earlier title, add a line starting "Previously: <earlier title and dates>". Then 3-6 achievement bullets each starting with "- ". Separate roles with one blank line. Reverse chronological. Every bullet starts with a past-tense action verb and quantifies outcomes where possible.
+- [EDUCATION]: for each qualification a header line "### <Degree> | <Years>", then a line with the institution, optionally followed by " | [Credentials](url)" linking to the certificate. Reverse chronological.
+- [CERTIFICATIONS]: relevant certifications, one per line each starting with "- ". Wrap the whole certification name as a link to its credential when the content bank has one, e.g. "- [Climate Risk Management](url)". Renders as two columns.
+- [ACHIEVEMENTS]: key achievements, one per line each starting with "- ". Append " [View](url)" to any achievement that has supporting evidence in the content bank.
+- [REFEREES]: for each referee a header line "### <Mrs./Mr. Full Name> | [LinkedIn](url)" (omit the " | [LinkedIn](url)" part if the content bank has no profile URL), then a line with their position and organisation, then a line with their email and phone. If no referee data is in the content bank, write a single line under [REFEREES]: Available upon request.
 
 Follow this template exactly (replace the angle-bracket placeholders):
 
@@ -99,8 +99,9 @@ Follow this template exactly (replace the angle-bracket placeholders):
 - <skill 3>
 
 [EXPERIENCE]
-### <Job Title> | <Start - End>
-<Organisation, Location>
+### <Job Title> | <Start - End> | [Responsibilities](url)
+<Organisation, Location> | [Milestones](url)
+Previously: <earlier title and dates, only if applicable>
 - <achievement bullet>
 - <achievement bullet>
 
@@ -110,20 +111,20 @@ Follow this template exactly (replace the angle-bracket placeholders):
 
 [EDUCATION]
 ### <Degree> | <Years>
-<Institution>
+<Institution> | [Credentials](url)
 
 [CERTIFICATIONS]
-- <certification>
+- [<certification>](url)
 - <certification>
 
 [ACHIEVEMENTS]
-- <achievement>
+- <achievement> [View](url)
 - <achievement>
 
 [REFEREES]
-### [<Referee Name>](<LinkedIn URL if available>)
-<Title, Organisation>
-<email> | <phone>
+### <Mrs./Mr. Referee Name> | [LinkedIn](url)
+<Position, Organisation>
+<email> <phone>
 
 STEP 6 — AFTER THE CV, ALSO PROVIDE (as plain notes, outside the tags):
 A. Keyword match report — list the top 15 ATS keywords from the JD and confirm whether each one appears in the CV (yes/no/partially)
