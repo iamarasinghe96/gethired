@@ -2235,7 +2235,7 @@ async function downloadExportDocx(){
     // well-formed XML but invalid WordprocessingML, and Word rejects the file.
     let _depth=0, _nested=0;
     (body.match(/<w:p(?:\s[^>]*)?>|<\/w:p>/g)||[]).forEach(tag=>{
-      if(tag.charAt(2)==='/') _depth--; else { if(_depth>0) _nested++; _depth++; }
+      if(tag.charAt(1)==='/') _depth--; else { if(_depth>0) _nested++; _depth++; }
     });
     if(_nested>0 || _depth!==0){
       console.error('Invalid paragraph nesting: nested='+_nested+' unbalanced='+_depth);
