@@ -52,8 +52,23 @@ Every horizontal blue line is an **anchored Straight Connector drawing**, not a 
 | Section rules | `positionH posOffset=0`, `positionV posOffset=-635` |
 | Headline bar | `cx=6855460`, `cy=12065`, `posH=1905`, `posV=148694` |
 
-**Placement:** the drawing sits in its **own paragraph** with `jc=both`, placed *immediately
-after* the heading paragraph. The headline bar is the very first paragraph of the CV body.
+**Placement:** the rule sits in its **own paragraph**, placed *immediately after* the
+heading paragraph. The headline bar is the very first paragraph of the body.
+
+### Implementation note (important)
+
+The approved template draws these as anchored `wps` Straight Connector **shapes**.
+The generator deliberately renders the identical line as a **paragraph bottom border**
+instead:
+
+```
+<w:pBdr><w:bottom w:val="single" w:sz="8" w:space="2" w:color="156082"/></w:pBdr>
+```
+
+`w:sz` is in **eighths of a point**, so `sz="8"` is exactly **1.0 pt** — the same weight
+and colour as `<a:ln w="12700"/>` with theme accent1. This avoids emitting DrawingML /
+`wps` extension content, which Word rejected in testing ("Word experienced an error
+trying to open the file"). Visually the result is the same 1 pt accent rule.
 
 Total in the approved CV: **8 lines** = 1 headline bar + 7 section rules.
 

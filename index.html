@@ -2046,26 +2046,16 @@ function xpara(t,o){ o=o||{}; let ppr='<w:pPr>';
   ppr+='<w:rPr>'+XF+'</w:rPr></w:pPr>';
   return '<w:p>'+ppr+(o.runs!=null?o.runs:(t?_renderText(t,o):''))+'</w:p>'; }
 
-// blue rule = anchored Straight Connector: 1pt (w=12700), theme accent1, full content width
-let _shapeId = 100;
+// Blue rule. The approved template draws these as anchored "Straight Connector"
+// shapes (a:ln w=12700 = 1pt, theme accent1). We render the identical 1pt accent
+// line as a paragraph bottom border instead: w:sz is in EIGHTHS of a point, so
+// sz="8" == 1.0pt — visually the same, but plain WordprocessingML with no
+// DrawingML/wps extension content, which is far more robust across Word builds.
 function xline(headline){
-  const cx=headline?6855460:6855873, cy=headline?12065:12227;
-  const ph=headline?1905:0, pv=headline?148694:-635, id=++_shapeId;
-  return '<w:p><w:pPr>'+(headline?'':'<w:jc w:val="both"/>')+'<w:rPr>'+XF+'</w:rPr></w:pPr>'
-    +'<w:r><w:rPr>'+XF+'<w:noProof/></w:rPr><w:drawing>'
-    +'<wp:anchor distT="0" distB="0" distL="114300" distR="114300" simplePos="0" relativeHeight="'+(251658240+id)+'" behindDoc="0" locked="0" layoutInCell="1" allowOverlap="1">'
-    +'<wp:simplePos x="0" y="0"/>'
-    +'<wp:positionH relativeFrom="column"><wp:posOffset>'+ph+'</wp:posOffset></wp:positionH>'
-    +'<wp:positionV relativeFrom="paragraph"><wp:posOffset>'+pv+'</wp:posOffset></wp:positionV>'
-    +'<wp:extent cx="'+cx+'" cy="'+cy+'"/><wp:effectExtent l="0" t="0" r="21590" b="26035"/><wp:wrapNone/>'
-    +'<wp:docPr id="'+id+'" name="Straight Connector '+id+'"/><wp:cNvGraphicFramePr/>'
-    +'<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
-    +'<a:graphicData uri="http://schemas.microsoft.com/office/word/2010/wordprocessingShape">'
-    +'<wps:wsp><wps:cNvCnPr/><wps:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+cx+'" cy="'+cy+'"/></a:xfrm>'
-    +'<a:prstGeom prst="line"><a:avLst/></a:prstGeom><a:ln w="12700"/></wps:spPr>'
-    +'<wps:style><a:lnRef idx="1"><a:schemeClr val="accent1"/></a:lnRef><a:fillRef idx="0"><a:schemeClr val="accent1"/></a:fillRef>'
-    +'<a:effectRef idx="0"><a:schemeClr val="accent1"/></a:effectRef><a:fontRef idx="minor"><a:schemeClr val="tx1"/></a:fontRef></wps:style>'
-    +'<wps:bodyPr/></wps:wsp></a:graphicData></a:graphic></wp:anchor></w:drawing></w:r></w:p>';
+  return '<w:p><w:pPr>'
+    + '<w:pBdr><w:bottom w:val="single" w:sz="8" w:space="'+(headline?1:2)+'" w:color="'+ACCENT+'"/></w:pBdr>'
+    + '<w:spacing w:after="'+(headline?40:0)+'" w:line="240" w:lineRule="auto"/>'
+    + '<w:rPr>'+XF+'<w:sz w:val="4"/><w:szCs w:val="4"/></w:rPr></w:pPr></w:p>';
 }
 // section = bold accent CAPS heading + its own rule paragraph
 function xheading(t,first){ return xpara(t.toUpperCase(),{before:first?null:240,b:true,c:ACCENT})+xline(false); }
