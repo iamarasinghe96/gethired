@@ -2087,7 +2087,10 @@ function buildCLBody(d, sigDrawing){
     b+=xpara(c,{align:'both',after:60,line:240});
   });
   b+=xpara('Kind regards,',{after:20,line:240});
-  b+=xpara('',{runs:(sigDrawing||'')+xrun(d.signName||_shortName(P.personal.fullName)||'',{})});
+  // Sign-off paragraph, matching the template: space, signature image, line break, name.
+  const signName = d.signName || _shortName(P.personal.fullName) || '';
+  const nameRun = '<w:r>'+xrpr({})+'<w:br/><w:t xml:space="preserve">'+xesc(signName)+'</w:t></w:r>';
+  b+=xpara('',{runs: xrun(' ',{}) + (sigDrawing||'') + (sigDrawing ? nameRun : xrun(signName,{}))});
   return b;
 }
 
@@ -2174,8 +2177,11 @@ async function _fetchTemplate(type){
 
 // ---- signature (cover letter) ----
 function _loadSignature(){ try{ const s=localStorage.getItem('gethired_signature'); return s?JSON.parse(s):null; }catch(e){ return null; } }
+// Returns a RUN (not a paragraph). It is composed into the sign-off paragraph by
+// buildCLBody. Returning a <w:p> here nested a paragraph inside a paragraph, which
+// is well-formed XML but invalid WordprocessingML — Word refused the whole file.
 function _sigDrawing(rid,w,h){
-  return '<w:p><w:pPr><w:spacing w:after="20"/><w:rPr>'+XF+'</w:rPr></w:pPr><w:r><w:rPr>'+XF+'</w:rPr><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="'+w+'" cy="'+h+'"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="201" name="Signature"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="201" name="Signature"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="'+rid+'"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+w+'" cy="'+h+'"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>';
+  return '<w:r><w:rPr>'+XF+'<w:noProof/></w:rPr><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="'+w+'" cy="'+h+'"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:docPr id="201" name="Signature"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="201" name="Signature"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="'+rid+'"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+w+'" cy="'+h+'"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>';
 }
 async function _embedSignature(zip){
   const sig=_loadSignature(); if(!sig||!sig.dataUrl) return null;
@@ -2190,7 +2196,7 @@ async function _embedSignature(zip){
   let ct=await zip.file('[Content_Types].xml').async('string');
   const type = (ext==='jpg'||ext==='jpeg')?'image/jpeg':(ext==='gif'?'image/gif':'image/png');
   if(!new RegExp('Extension="'+ext+'"','i').test(ct)){ ct=ct.replace('</Types>','<Default Extension="'+ext+'" ContentType="'+type+'"/></Types>'); zip.file('[Content_Types].xml', ct); }
-  const wEmu=828000;                                   // ~2.3cm wide
+  const wEmu=858129;                                   // template signature width (~2.38cm)
   const hEmu=Math.max(120000, Math.round(wEmu*(sig.h||1)/(sig.w||3)));
   return _sigDrawing(rid, wEmu, hEmu);
 }
@@ -2224,7 +2230,20 @@ async function downloadExportDocx(){
       zip.file('word/_rels/document.xml.rels', rels);
     }
     const finalDoc = docOpen+'<w:body>'+body+sect+'</w:body></w:document>';
-    // pre-flight: never hand Word a malformed package
+
+    // pre-flight A: no paragraph may nest inside another paragraph. This is
+    // well-formed XML but invalid WordprocessingML, and Word rejects the file.
+    let _depth=0, _nested=0;
+    (body.match(/<w:p(?:\s[^>]*)?>|<\/w:p>/g)||[]).forEach(tag=>{
+      if(tag.charAt(2)==='/') _depth--; else { if(_depth>0) _nested++; _depth++; }
+    });
+    if(_nested>0 || _depth!==0){
+      console.error('Invalid paragraph nesting: nested='+_nested+' unbalanced='+_depth);
+      toast('Export aborted — invalid document structure (nested paragraphs).','error');
+      return;
+    }
+
+    // pre-flight B: never hand Word a malformed package
     const probe = new DOMParser().parseFromString(finalDoc, 'application/xml');
     if(probe.getElementsByTagName('parsererror').length){
       const msg = (probe.getElementsByTagName('parsererror')[0].textContent||'').split('\n')[0];
