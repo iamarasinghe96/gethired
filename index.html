@@ -2200,7 +2200,10 @@ async function downloadExportDocx(){
   try {
     toast('Building .docx…','info');
     _linkReg = [];
-    const zip = await JSZip.loadAsync(await _fetchTemplate(exportType));
+    // createFolders:false — JSZip otherwise injects zero-length directory entries
+    // (word/, word/_rels/) which have no content type. OPC requires every part to
+    // have one, and Word rejects the package outright.
+    const zip = await JSZip.loadAsync(await _fetchTemplate(exportType), {createFolders:false});
     let docXml = await zip.file('word/document.xml').async('string');
     const bs = docXml.indexOf('<w:body>');
     const docOpen = docXml.slice(0, bs);
@@ -2249,6 +2252,10 @@ async function downloadExportDocx(){
         zip.file(name, r);
       }
     }
+
+    // Belt and braces: drop any directory entries JSZip created while we wrote files.
+    // A zero-length "word/" part has no content type and Word refuses the whole package.
+    for(const n of Object.keys(zip.files)){ if(zip.files[n].dir) delete zip.files[n]; }
 
     const blob = await zip.generateAsync({
       type:'blob',
