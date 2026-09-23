@@ -1139,8 +1139,14 @@ function parseCVBankText(text) {
   let curLines = [];
 
   for (const line of allLines) {
-    const upper = line.trim().toUpperCase();
-    const matched = HEADERS.find(h => upper.startsWith(h));
+    const trimmed = line.trim();
+    const upper = trimmed.toUpperCase();
+    // Section headers are always written in ALL CAPS. Requiring that stops a
+    // mixed-case body line (e.g. "Education / Student Services: ...") from being
+    // mistaken for a header and silently overwriting the real section.
+    const matched = (trimmed && !/[a-z]/.test(trimmed))
+      ? HEADERS.find(h => upper.startsWith(h))
+      : null;
     if (matched) {
       if (curSection) sections[curSection] = curLines.join('\n');
       curSection = matched;
@@ -1260,7 +1266,7 @@ function parseCVBankText(text) {
       const isLabel = /^(Employer|Period|Grade|Dissertation|Thesis|GPA):/i.test(firstLine);
       // Single-line non-label block = a new degree name (even if a previous entry exists)
       if (!isLabel && blines.length === 1 && (!curEdu || curEdu.institution)) {
-        curEdu = { degree: firstLine, institution:'', startYear:'', endYear:'', gpa:'', thesis:'', notes:'' };
+        curEdu = { degree: firstLine, institution:'', startYear:'', endYear:'', gpa:'', thesis:'', notes:'', credentialsUrl:'' };
         edus.push(curEdu);
         continue;
       }
@@ -1268,6 +1274,8 @@ function parseCVBankText(text) {
       for (const line of blines) {
         const gpa = line.match(/^Grade\/GPA:\s*(.+)/);
         const the = line.match(/^(?:Dissertation|Thesis):\s*(.+)/i);
+        const cru = line.match(/^Credentials URL:\s*(.+)/i);
+        if (cru) { curEdu.credentialsUrl = cru[1].trim(); continue; }
         if (gpa) { curEdu.gpa = gpa[1]; continue; }
         if (the) { curEdu.thesis = the[1]; continue; }
         if (!curEdu.institution) {
@@ -1339,12 +1347,17 @@ function parseCVBankText(text) {
 
   // ── PERSONAL PROJECTS ──
   if (sections['PERSONAL PROJECTS']) {
-    const projs = sections['PERSONAL PROJECTS'].trim().split('\n')
-      .filter(Boolean)
-      .map(line => {
-        const m = line.match(/^([^:]+):\s*(.+)$/);
-        return m ? { name: m[1].trim(), description: m[2].trim() }
-                 : { name: line.trim(), description: '' };
+    const projs = [];
+    sections['PERSONAL PROJECTS'].trim().split('\n')
+      .filter(line => line.trim())
+      .forEach(line => {
+        const t = line.trim();
+        // "Project URL: ..." belongs to the project on the line above it
+        const pu = t.match(/^Project URL:\s*(.+)$/i);
+        if (pu) { if (projs.length) projs[projs.length - 1].url = pu[1].trim(); return; }
+        const m = t.match(/^([^:]+):\s*(.+)$/);
+        projs.push(m ? { name: m[1].trim(), description: m[2].trim(), url:'' }
+                     : { name: t, description: '', url:'' });
       });
     if (projs.length) result.projects = projs;
   }
@@ -1373,20 +1386,26 @@ function parseCVBankText(text) {
     for (const block of blocks) {
       const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
       if (!blines.length) continue;
+      let fields = blines;
       if (!blines[0].match(/^(Title|Email|Phone|LinkedIn):/)) {
         if (curRef) refs.push(curRef);
         curRef = { name: blines[0], title:'', email:'', phone:'', linkedin:'' };
-        blines.slice(1).forEach(l => {
-          const tm = l.match(/^Title:\s*(.+)/);
-          const em = l.match(/^Email:\s*(.+)/);
-          const ph = l.match(/^Phone:\s*(.+)/);
-          const li = l.match(/^LinkedIn:\s*(.+)/);
-          if (li) curRef.linkedin = li[1].trim();
-          if (tm) curRef.title = tm[1];
-          if (em) curRef.email = em[1];
-          if (ph) curRef.phone = ph[1];
-        });
+        fields = blines.slice(1);
       }
+      // A blank line between the name and its Title:/Email:/Phone: lines splits
+      // them into two blocks — attach a label-only block to the referee in progress
+      // instead of discarding it.
+      if (!curRef) continue;
+      fields.forEach(l => {
+        const tm = l.match(/^Title:\s*(.+)/);
+        const em = l.match(/^Email:\s*(.+)/);
+        const ph = l.match(/^Phone:\s*(.+)/);
+        const li = l.match(/^LinkedIn:\s*(.+)/);
+        if (li) curRef.linkedin = li[1].trim();
+        if (tm) curRef.title = tm[1];
+        if (em) curRef.email = em[1];
+        if (ph) curRef.phone = ph[1];
+      });
     }
     if (curRef) refs.push(curRef);
     if (refs.length) result.referees = refs;
