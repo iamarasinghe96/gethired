@@ -1916,6 +1916,17 @@ function _blocks(block){
   });
   return out;
 }
+// Drop unfilled angle-bracket placeholders the model copied from the template
+// (<YEAR RANGE>, <EMAIL>, <PHONE>, <Degree> ...) so they never reach the document.
+function _noPlaceholder(s){
+  if(!s) return '';
+  return String(s)
+    .replace(/<[A-Za-z][A-Za-z0-9 _\/.,'()-]{0,48}>/g,'')  // the placeholder itself
+    .replace(/\s{2,}/g,' ')                                 // collapse the gap it left
+    .replace(/\s*\|\s*$/,'')                                // trailing separator
+    .replace(/^[\s,;:|-]+/,'')                              // leading punctuation
+    .trim();
+}
 // short display name: "L.I.D. Amarasinghe (Indika Amarasinghe)" -> "Indika Amarasinghe"
 function _shortName(full){ full = full||''; const m = full.match(/\(([^)]+)\)/); return (m ? m[1] : full).trim(); }
 // cut off trailing report sections (KEYWORD MATCH REPORT, A./B./C./D., etc.) that follow the last tag
@@ -1940,9 +1951,11 @@ function parseCL(text){
   for (const l of _cutTail(m.SIGNOFF||'').split('\n').map(x=>x.trim()).filter(Boolean)){ if (stop.test(l)) break; sign.push(l); }
   const signName = sign.find(l=>!/^kind regards/i.test(l)) || _shortName(P.personal.fullName);
   return {
-    salutation: (_flat(m.SALUTATION)||'Dear Hiring Manager,').split('\n')[0].trim(),
-    intro: _flat(m.INTRO), about: _flat(m.ABOUT), table,
-    closing: _paras(m.CLOSING), signName
+    salutation: _noPlaceholder((_flat(m.SALUTATION)||'Dear Hiring Manager,').split('\n')[0]),
+    intro: _noPlaceholder(_flat(m.INTRO)), about: _noPlaceholder(_flat(m.ABOUT)),
+    table: table.map(r=>({req:_noPlaceholder(r.req), con:_noPlaceholder(r.con)})),
+    closing: _paras(m.CLOSING).map(_noPlaceholder).filter(Boolean),
+    signName: _noPlaceholder(signName)
   };
 }
 
@@ -1961,27 +1974,30 @@ function parseCV(text){
     const org   = _splitLabel(plain.find(l=>!/^previously\s*:/i.test(l)) || '');
     const prev  = plain.find(l=>/^previously\s*:/i.test(l)) || '';
     const bl    = b.lines.filter(l=>/^[-•*]/.test(l)).map(l=>l.replace(/^[-•*]\s*/,'').trim());
-    return { title:(h[0]||'').trim(), dates:(h[1]||'').trim(), linkLabel, linkUrl,
-             org:org.text, orgLabel:org.label, orgUrl:org.url, previously:prev, bullets:bl };
+    return { title:_noPlaceholder(h[0]), dates:_noPlaceholder(h[1]), linkLabel, linkUrl,
+             org:_noPlaceholder(org.text), orgLabel:org.label, orgUrl:org.url,
+             previously:_noPlaceholder(prev), bullets:bl.map(_noPlaceholder).filter(Boolean) };
   });
   const education = _blocks(m.EDUCATION).map(b=>{
     const h = b.head.split('|');
     const inst = _splitLabel(b.lines[0]||'');
-    return { degree:(h[0]||'').trim(), years:(h[1]||'').trim(),
-             inst:inst.text, instLabel:inst.label, instUrl:inst.url };
+    return { degree:_noPlaceholder(h[0]), years:_noPlaceholder(h[1]),
+             inst:_noPlaceholder(inst.text), instLabel:inst.label, instUrl:inst.url };
   });
   let referees;
   const refText = _cutTail(m.REFEREES||'');
   const rb = _blocks(refText);
   if (rb.length) referees = rb.map(b=>{
     const n = _splitLabel(b.head);
-    return { name:n.text, linkLabel:n.label, linkUrl:n.url,
-             title:(b.lines[0]||'').trim(), contact:(b.lines[1]||'').trim() };
+    return { name:_noPlaceholder(n.text), linkLabel:n.label, linkUrl:n.url,
+             title:_noPlaceholder(b.lines[0]), contact:_noPlaceholder(b.lines[1]) };
   });
   else referees = [{ available: _flat(refText) || 'Available upon request.' }];
   return {
-    summary: _flat(m.SUMMARY), competencies: comp, experience, education,
-    certifications: _bullets(m.CERTIFICATIONS), achievements: _bullets(m.ACHIEVEMENTS), referees
+    summary: _noPlaceholder(_flat(m.SUMMARY)),
+    competencies: comp.map(_noPlaceholder).filter(Boolean), experience, education,
+    certifications: _bullets(m.CERTIFICATIONS).map(_noPlaceholder).filter(Boolean),
+    achievements: _bullets(m.ACHIEVEMENTS).map(_noPlaceholder).filter(Boolean), referees
   };
 }
 
@@ -2012,11 +2028,23 @@ function xrun(t,o){ const parts=xesc(t).split('\n');
 
 // inline links: [label](url) -> Word hyperlink run (rIds resolved at export time)
 let _linkReg = [];
+// Structural label links render bracketed AND underlined: [Credentials] [View]
+// [Responsibilities] [Milestones] [Website]. Every other link (certifications,
+// project/tool mentions inside prose and bullets) is blue but NOT underlined.
+const LINK_LABELS = ['Responsibilities','Milestones','Website','Credentials','View'];
 function _linkRpr(o){ o=o||{}; let p='<w:rStyle w:val="Hyperlink"/>'+XF;
-  if(o.b)p+='<w:b/><w:bCs/>'; if(o.i)p+='<w:i/><w:iCs/>'; if(o.u)p+='<w:u w:val="single"/>';
+  if(o.b)p+='<w:b/><w:bCs/>'; if(o.i)p+='<w:i/><w:iCs/>';
+  p += (o.u===true) ? '<w:u w:val="single"/>' : '<w:u w:val="none"/>';
   if(o.sz)p+='<w:sz w:val="'+o.sz+'"/><w:szCs w:val="'+o.sz+'"/>'; return '<w:rPr>'+p+'</w:rPr>'; }
-function _linkRun(label,url,o){ const i=_linkReg.push(url)-1;
-  const inner=xesc(label).split('\n').map(x=>'<w:t xml:space="preserve">'+x+'</w:t>').join('<w:br/>');
+function _linkRun(label,url,o){
+  o = Object.assign({}, o||{});
+  const bare = String(label||'').replace(/^\[|\]$/g,'').trim();
+  const isLabel = LINK_LABELS.indexOf(bare) !== -1;
+  const text = isLabel ? '['+bare+']' : label;      // structural labels keep their brackets
+  if(isLabel) o.u = true;                            // and stay underlined
+  else if(o.u !== true) o.u = false;                 // mid-content links: no underline
+  const i=_linkReg.push(url)-1;
+  const inner=xesc(text).split('\n').map(x=>'<w:t xml:space="preserve">'+x+'</w:t>').join('<w:br/>');
   return '<w:hyperlink r:id="__LNK'+i+'__" w:history="1"><w:r>'+_linkRpr(o)+inner+'</w:r></w:hyperlink>'; }
 function _renderText(t,o){
   o=o||{};
@@ -2054,7 +2082,7 @@ function xpara(t,o){ o=o||{}; let ppr='<w:pPr>';
 function xline(headline){
   return '<w:p><w:pPr>'
     + '<w:pBdr><w:bottom w:val="single" w:sz="8" w:space="'+(headline?1:2)+'" w:color="'+ACCENT+'"/></w:pBdr>'
-    + '<w:spacing w:after="'+(headline?40:0)+'" w:line="240" w:lineRule="auto"/>'
+    + '<w:spacing w:after="'+(headline?40:120)+'" w:line="240" w:lineRule="auto"/>'
     + '<w:rPr>'+XF+'<w:sz w:val="4"/><w:szCs w:val="4"/></w:rPr></w:pPr></w:p>';
 }
 // section = bold accent CAPS heading + its own rule paragraph
@@ -2154,7 +2182,7 @@ function buildCVBody(d){
     b+=sec('Referees');
     if(d.referees[0].available){ b+=xpara(d.referees[0].available); }
     else {
-      const cellFor=r=>xpara('',{runs:xrun(r.name,{b:true})+(r.linkUrl?xrun(' | ',{})+_linkRun(r.linkLabel||'LinkedIn',r.linkUrl,{}):'')})
+      const cellFor=r=>xpara('',{runs:xrun(r.name,{b:true})+(r.linkUrl?xrun(' | ',{})+_linkRun(r.linkLabel||'LinkedIn',r.linkUrl,{u:true}):'')})
                       +xpara(r.title)+xpara(r.contact);
       let rows='';
       for(let i=0;i<d.referees.length;i+=2)
