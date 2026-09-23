@@ -70,12 +70,35 @@ Referees: Use the referee details from the REFEREES section of the content bank 
 STEP 5 — OUTPUT THE CV IN WORD EXPORT FORMAT
 Do NOT produce LaTeX, HTML, or any code. The GetHired tool reads the tagged structure below straight from your reply and pours it into a pre-formatted Word (.docx) template. The template already contains the header (name and contact details), blue section headings, fonts, and 0.5 inch margins, so output plain text inside the tags, with ONE exception: the inline-link syntax below.
 
-Inline links — LINK GENEROUSLY: use the syntax [visible text](https://the-url) to hyperlink every item that has a real URL in the content bank. This is important; a strong CV carries many working links. Specifically:
-- Every named project or tool mentioned in the summary, experience bullets, or achievements links to its own page (for example a landfill or waste tool to its GitHub/portfolio URL).
-- Each referee's name is followed by a LinkedIn link: write the referee header as "### <Mrs./Mr. Full Name> | [LinkedIn](url)".
-- Each certification links to its credential/verification URL when the content bank has one.
-- The portfolio is linked wherever it is named.
-There is no maximum — a rich CV commonly has 8-15 links. NEVER show a raw URL as plain visible text; always wrap it as [label](url). Only use URLs that actually appear in the content bank — never invent one. Do not link generic words, job titles, or employer names. Wrap only the exact words that should be clickable.
+Inline links — LINK GENEROUSLY, USING ONLY THE CONTENT BANK
+All links come from the content bank. There is no link list in this prompt. Never
+invent a URL, and never show a raw URL as visible text: always wrap it as
+[label](url). If the content bank has no URL for something, simply omit the link.
+
+The content bank marks links with these exact labels. Map them as follows:
+
+  "Responsibilities URL:" under a role      ->  append " | [Responsibilities](url)"
+                                                to that role's "### Title | Dates" line
+  "Milestones URL:" under a role            ->  append " | [Milestones](url)"
+                                                to that role's organisation line
+  "Credentials URL:" under a qualification  ->  append " | [Credentials](url)"
+                                                to that institution line
+  "LinkedIn:" under a referee               ->  "### <Name> | [LinkedIn](url)"
+  "Project URL:" under a project            ->  wrap the project's name as a link
+                                                wherever you mention it in the summary,
+                                                experience bullets or achievements
+  "Item | https://..." in certifications
+   or achievements                          ->  wrap that item: "- [Item](url)"
+                                                (achievements may instead take a
+                                                trailing " [View](url)")
+
+The bracketed labels [Responsibilities], [Milestones], [Website], [Credentials] and
+[View] are rendered bracketed and underlined by the export. Every other link, such as
+a certification name or a project mentioned inside a bullet, is rendered without an
+underline. Write them all the same way; the export handles the styling.
+
+Do not link generic words, job titles, or employer names. Wrap only the exact words
+that should be clickable.
 
 Rules:
 - Write each section tag on its own line, in square brackets, exactly as shown and in this order: [SUMMARY], [COMPETENCIES], [EXPERIENCE], [EDUCATION], [CERTIFICATIONS], [ACHIEVEMENTS], [REFEREES]. Put a blank line between sections.

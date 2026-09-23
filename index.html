@@ -555,14 +555,14 @@ function defaultP() {
     },
     summary: { headline:'', tagline:'', paragraphs:'' },
     skills:       [{ category:'', items:'' }],
-    workHistory:  [{ title:'', employer:'', startDate:'', endDate:'', nature:'', bullets:'' }],
-    education:    [{ degree:'', institution:'', startYear:'', endYear:'', gpa:'', thesis:'', notes:'' }],
+    workHistory:  [{ title:'', employer:'', startDate:'', endDate:'', nature:'', bullets:'', respUrl:'', milestonesUrl:'' }],
+    education:    [{ degree:'', institution:'', startYear:'', endYear:'', gpa:'', thesis:'', notes:'', credentialsUrl:'' }],
     certifications: [{ category:'', items:'' }],
     publications: { academic:'', awards:'' },
     storyBank:    [{ title:'', usedFor:'', text:'' }],
-    projects:     [{ name:'', description:'' }],
+    projects:     [{ name:'', description:'', url:'' }],
     achievements: [{ category:'', items:'' }],
-    referees:     [{ name:'', title:'', email:'', phone:'' }],
+    referees:     [{ name:'', title:'', email:'', phone:'', linkedin:'' }],
     usageNotes:   ''
   };
 }
@@ -761,6 +761,10 @@ function workHistoryBodyHTML() {
         fi('End Date', inp(`workHistory.${i}.endDate`, 'e.g. Present')),
         fi('Nature of Employment <span class="opt">optional</span>', inp(`workHistory.${i}.nature`, 'e.g. Full-time, Permanent'))
       )}
+      ${fg(2,
+        fi('Responsibilities Link <span class="opt">optional</span>', inp(`workHistory.${i}.respUrl`, 'https://... — becomes a [Responsibilities] link')),
+        fi('Milestones / Website Link <span class="opt">optional</span>', inp(`workHistory.${i}.milestonesUrl`, 'https://... — becomes a [Milestones] link'))
+      )}
       ${fg(1, fi('Bullet Points (one per line)', ta(`workHistory.${i}.bullets`, 'Led delivery of...\nCoordinated a 30-member team...\nBuilt automated dashboards...\n...', 6)))}
     </div>`).join('');
   return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('workHistory',{title:'',employer:'',startDate:'',endDate:'',nature:'',bullets:''})">+ Add Role</button></div>`;
@@ -784,6 +788,7 @@ function educationBodyHTML() {
         fi('Thesis / Dissertation <span class="opt">optional</span>', inp(`education.${i}.thesis`, 'e.g. The Relationship Between Training and Job Satisfaction'))
       )}
       ${fg(1, fi('Additional Notes <span class="opt">optional</span>', inp(`education.${i}.notes`, 'e.g. Full Tuition Scholarship Holder')))}
+      ${fg(1, fi('Credentials Link <span class="opt">optional</span>', inp(`education.${i}.credentialsUrl`, 'https://... — becomes a [Credentials] link next to the institution')))}
     </div>`).join('');
   return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('education',{degree:'',institution:'',startYear:'',endYear:'',gpa:'',thesis:'',notes:''})">+ Add Education</button></div>`;
 }
@@ -796,7 +801,7 @@ function certificationsBodyHTML() {
         <button class="btn btn-danger" onclick="removeItem('certifications',${i})">&#x2715; Remove</button>
       </div>
       ${fg(1, fi('Category Heading', inp(`certifications.${i}.category`, 'e.g. Sustainable Finance / Climate')))}
-      ${fg(1, fi('Certifications (one per line)', ta(`certifications.${i}.items`, 'Climate-Related Financial Disclosures\nIntroduction to ESG\n...', 4)))}
+      ${fg(1, fi('Certifications (one per line — add " | https://link" to make it clickable)', ta(`certifications.${i}.items`, 'Climate-Related Financial Disclosures | https://link-to-credential\nIntroduction to ESG\n...', 4)))}
     </div>`).join('');
   return cards +
     `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('certifications',{category:'',items:''})">+ Add Category</button></div>` +
@@ -829,6 +834,7 @@ function projectsBodyHTML() {
         <button class="btn btn-danger" onclick="removeItem('projects',${i})">&#x2715; Remove</button>
       </div>
       ${fg(1, fi('Project Name', inp(`projects.${i}.name`, 'e.g. Gaia Symbiosis (Non-Profit)')))}
+      ${fg(1, fi('Project Link <span class="opt">optional</span>', inp(`projects.${i}.url`, 'https://... — the project name becomes a link wherever it is mentioned')))}
       ${fg(1, fi('Description', ta(`projects.${i}.description`, 'e.g. AI-human hybrid solutions for local sustainability issues; ISO 14001-aligned EMS services for local organisations', 3)))}
     </div>`).join('');
   return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('projects',{name:'',description:''})">+ Add Project</button></div>`;
@@ -861,6 +867,9 @@ function refereesBodyHTML() {
       ${fg(2,
         fi('Email', inp(`referees.${i}.email`, 'e.g. jane.doe@email.com')),
         fi('Phone', inp(`referees.${i}.phone`, 'e.g. +61 400 000 000'))
+      )}
+      ${fg(1,
+        fi('LinkedIn Profile <span class="opt">optional</span>', inp(`referees.${i}.linkedin`, 'https://linkedin.com/in/... — shown as a LinkedIn link beside the name'))
       )}
     </div>`).join('');
   return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('referees',{name:'',title:'',email:'',phone:''})">+ Add Referee</button></div>`;
@@ -983,6 +992,8 @@ function generateCVBankText() {
       const jPeriod = [j.startDate, j.endDate].filter(Boolean).join(' \u2013 ');
       if (jPeriod)    push(`Period: ${jPeriod}`);
       if (j.nature)   push(`Nature: ${j.nature}`);
+      if (j.respUrl)       push(`Responsibilities URL: ${j.respUrl}`);
+      if (j.milestonesUrl) push(`Milestones URL: ${j.milestonesUrl}`);
       nl();
       (j.bullets || '').split('\n').filter(Boolean).forEach(b => push(b));
       nl(); nl();
@@ -1004,6 +1015,7 @@ function generateCVBankText() {
       if (e.gpa)    push(`Grade/GPA: ${e.gpa}`);
       if (e.thesis) push(`Thesis: ${e.thesis}`);
       if (e.notes)  push(e.notes);
+      if (e.credentialsUrl) push(`Credentials URL: ${e.credentialsUrl}`);
       nl();
     });
     nl();
@@ -1056,6 +1068,7 @@ function generateCVBankText() {
     P.projects.forEach(p2 => {
       if (!p2.name && !p2.description) return;
       push(p2.description ? `${p2.name}: ${p2.description}` : p2.name);
+      if (p2.url) push(`Project URL: ${p2.url}`);
     });
     nl(); nl();
   }
@@ -1083,6 +1096,7 @@ function generateCVBankText() {
       if (r.title) push(`Title: ${r.title}`);
       if (r.email) push(`Email: ${r.email}`);
       if (r.phone) push(`Phone: ${r.phone}`);
+      if (r.linkedin) push(`LinkedIn: ${r.linkedin}`);
       nl();
     });
     nl();
@@ -1204,7 +1218,7 @@ function parseCVBankText(text) {
       const trimmed = block.trim();
       if (!trimmed) continue;
       const blines = trimmed.split('\n');
-      const job = { title:'', employer:'', startDate:'', endDate:'', nature:'', bullets:'' };
+      const job = { title:'', employer:'', startDate:'', endDate:'', nature:'', bullets:'', respUrl:'', milestonesUrl:'' };
       const bullets = [];
       let headerDone = false;
       for (const line of blines) {
@@ -1213,6 +1227,10 @@ function parseCVBankText(text) {
         const emp = t.match(/^Employer:\s*(.+)/);
         const per = t.match(/^Period:\s*(.+)/);
         const nat = t.match(/^Nature:\s*(.+)/);
+        const ru  = t.match(/^Responsibilities URL:\s*(.+)/);
+        const mu  = t.match(/^Milestones URL:\s*(.+)/);
+        if (ru) { job.respUrl = ru[1].trim(); continue; }
+        if (mu) { job.milestonesUrl = mu[1].trim(); continue; }
         if (emp) { job.employer = emp[1]; continue; }
         if (per) {
           const parts = per[1].split(/\s*[\u2013\u2014-]\s*/);
@@ -1222,7 +1240,7 @@ function parseCVBankText(text) {
         }
         if (nat) { job.nature = nat[1]; continue; }
         if (!job.title) { job.title = t; continue; }
-        if (headerDone || (!emp && !per && !nat)) bullets.push(t);
+        if (headerDone || (!emp && !per && !nat && !ru && !mu)) bullets.push(t);
       }
       job.bullets = bullets.join('\n');
       if (job.title || job.employer) jobs.push(job);
@@ -1355,13 +1373,15 @@ function parseCVBankText(text) {
     for (const block of blocks) {
       const blines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
       if (!blines.length) continue;
-      if (!blines[0].match(/^(Title|Email|Phone):/)) {
+      if (!blines[0].match(/^(Title|Email|Phone|LinkedIn):/)) {
         if (curRef) refs.push(curRef);
-        curRef = { name: blines[0], title:'', email:'', phone:'' };
+        curRef = { name: blines[0], title:'', email:'', phone:'', linkedin:'' };
         blines.slice(1).forEach(l => {
           const tm = l.match(/^Title:\s*(.+)/);
           const em = l.match(/^Email:\s*(.+)/);
           const ph = l.match(/^Phone:\s*(.+)/);
+          const li = l.match(/^LinkedIn:\s*(.+)/);
+          if (li) curRef.linkedin = li[1].trim();
           if (tm) curRef.title = tm[1];
           if (em) curRef.email = em[1];
           if (ph) curRef.phone = ph[1];
