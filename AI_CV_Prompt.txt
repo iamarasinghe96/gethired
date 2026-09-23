@@ -44,6 +44,7 @@ without an underline. Write them all the same way; the export handles the stylin
 CONTACT LINE LINKS — DO NOT OUTPUT. The Word template header already contains the name,
 phone, email, location, LinkedIn, portfolio and any right-to-work or job-board profile
 links. Never write a contact header.
+
 YOUR INSTRUCTIONS
 STEP 1 — ANALYSE THE JOB DESCRIPTION
 Before writing anything, silently extract:
@@ -95,7 +96,7 @@ Do not use images, icons, or fancy formatting in the ATS-safe version
 Australian hiring rules:
 
 Do not include photo, date of birth, marital status, or religion (illegal to request in AU; including them looks unpopular with modern HR)
-DO include right to work status — this is critical in Australia. Use the exact wording from the content bank's right-to-work field (for example "Full working rights — Subclass 485 visa, valid until 2029", or "Australian citizen"). Never invent, upgrade, or alter a visa status.
+DO include right to work status — this is critical in Australia. Use the exact wording from the content bank's right-to-work field, whatever it says. Never invent, upgrade, alter, or infer a visa status, and never write one if the content bank does not state it.
 Use Australian English spelling throughout (organisation not organization, programme not program, etc.)
 Quantify everything possible — Australian hiring managers respond strongly to numbers, percentages, dollar values, team sizes, and timeframes
 For public sector roles: structure bullet points using the STAR method (Situation, Task, Action, Result) implied within each point
@@ -126,7 +127,7 @@ Rules:
 - Do NOT write the name or contact header — the template already has it.
 - NEVER show a raw URL as visible text. Always wrap it as [label](url), using the link labels in the content bank.
 - NEVER output an angle-bracket placeholder in the finished CV. <Degree>, <Years>, <Start - End>, <Organisation, Location>, <email>, <phone> and the like appear in the template below only to show the shape of each line. If you do not have a real value, omit that field together with the separator around it — do not write the placeholder, do not write "N/A", and never emit "<YEAR RANGE>", "<EMAIL>" or "<PHONE>".
-- [SUMMARY]: a 3-4 line professional summary as one paragraph, job-title specific. Fold the right-to-work statement into it (for example "...with full working rights and no visa sponsorship required."). Embed project links where projects are named.
+- [SUMMARY]: a 3-4 line professional summary as one paragraph, job-title specific. Fold the right-to-work statement into it, using the content bank's own wording for it. Embed project links where projects are named.
 - [COMPETENCIES]: 10-16 core skills pulled from the JD, one per line, each starting with "- ". They render as a two-column bulleted list.
 - [EXPERIENCE]: for each role, a header line "### <Job Title> | <Dates>", optionally followed by " | [Responsibilities](url)" or " | [Website](url)" as a third field. Next line: the organisation and location, optionally followed by " | [Milestones](url)". If the role absorbed an earlier title, add a line starting "Previously: <earlier title and dates>". Then 3-6 achievement bullets each starting with "- ". Separate roles with one blank line. Reverse chronological. Every bullet starts with a past-tense action verb and quantifies outcomes where possible.
 - [EDUCATION]: for each qualification, a header line "### <Degree> | <Years>", then a line with the institution, optionally followed by " | [Credentials](url)". Reverse chronological.

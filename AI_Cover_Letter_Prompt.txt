@@ -13,14 +13,15 @@ HIRING MANAGER / ORGANISATION DETAILS
 Hiring manager name: [e.g. Dear Jane Smith / Dear Hiring Manager]
 Organisation name: [the exact organisation name from the JD]
 Role title: [exact title from JD]
-Any personal detail or insider knowledge: [e.g. "I live 5 minutes away", "I already built a tool for this org", "I've seen their TikToks", "I genuinely care about irrigation history"]
+Any personal detail or insider knowledge: [anything true and specific to you and this organisation — how close you live, a tool you have already built for them, something of theirs you follow, a genuine interest in what they do]
 MY PROFILE & EXPERIENCE CONTENT BANK
 [PASTE YOUR FULL MASTER CV CONTENT BANK HERE]
 
 INLINE LINKS — SOURCED FROM THE CONTENT BANK
-All links come from the content bank. There is no link list in this prompt. Whenever you name a project or tool that has a "Project URL:" in the content bank, wrap its natural wording as a link using [visible text](url). Write "a [rostering tool I built for the medicine department](url)", not "rostering tool [link]". The portfolio URL from the content bank's personal details is linked wherever the portfolio is named. NEVER show a raw URL as visible text. NEVER invent a URL — if the content bank has none for something, omit the link. Aim for 3-6 links across the letter. Do not link generic words, the job title, or the organisation. Links may appear in the introduction, the about paragraph, the table cells, or the closing. The export renders these mid-content links without an underline; write them normally and it handles the styling.
+All links come from the content bank. There is no link list in this prompt. Whenever you name a project or tool that has a "Project URL:" in the content bank, wrap its natural wording as a link using [visible text](url). Write "a [scheduling tool I built](url)", not "scheduling tool [link]". The portfolio URL from the content bank's personal details is linked wherever the portfolio is named. NEVER show a raw URL as visible text. NEVER invent a URL — if the content bank has none for something, omit the link. Aim for 3-6 links across the letter. Do not link generic words, the job title, or the organisation. Links may appear in the introduction, the about paragraph, the table cells, or the closing. The export renders these mid-content links without an underline; write them normally and it handles the styling.
 
 CONTACT LINE — DO NOT OUTPUT. The Word template header already contains the name, phone, email, location, LinkedIn, Portfolio, SEEK and Right to Work links.
+
 PART A — MY COVER LETTER STRUCTURE
 This is non-negotiable. Do not change it unless it genuinely violates a cover letter best practice — and if it does, flag it explicitly rather than silently changing it.
 
@@ -36,7 +37,7 @@ Before finalising the letter, mentally count the rendered lines for each section
 
 PART 1 — INTRODUCTION
 The first sentence is a hook: a specific, real statistic tied to the industry, sector, or problem this role sits in. Pick a number that makes the reader stop, and it must be true. Two sources are allowed:
-- Something you genuinely read, with the source named plainly: "A NSW waste audit I read found that [stat]."
+- Something you genuinely read, with the source named plainly: "A [state or national] audit I read found that [stat]."
 - Something you learned first-hand on a real project: "While building [specific project], I found that [stat]."
 Lead with the stat. It IS the opening. Do not write a warm-up sentence before it.
 
@@ -45,8 +46,8 @@ Then, in the next one or two sentences, turn that stat straight into you: where 
 The test: the first sentence should read like a fact worth knowing, not a candidate clearing their throat. If the opening could be dropped into a different person's application unchanged, it is wrong.
 
 Register examples — these are the register to aim for. Study the rhythm and plainness, not just the content:
-- "A state audit found most council waste contracts overrun budget inside two years. Closing exactly that kind of gap is what I have spent [X years] doing, which is why the [Job Title] at [Org] fits: on my last project I took a seven-figure billing gap down by more than 90% in seven months."
-- "While building a capacity planning tool from a client's own operational data, I found that most of the lost capacity came from how the work was sequenced, not from a shortage of resources. That is the technical, delivery-focused problem I am built for, and it is why the [Job Title] at [Org] stood out. [X years] of project delivery mean I can move that number, not just report it."
+- "A [state or national] audit found most council waste contracts overrun budget inside two years. Closing exactly that kind of gap is what I have spent [X years] doing, which is why the [Job Title] at [Org] fits: [your strongest quantified outcome from the content bank]."
+- "While building [a tool or project named in the content bank], I found that [what the data actually showed]. That is the technical, delivery-focused problem I am built for, and it is why the [Job Title] at [Org] stood out. [X years] of delivery mean I can move that number, not just report it."
 - "Roughly one in three regional councils misses its resource recovery target every year. Fixing the delivery systems behind numbers like that is what I do, and the [Job Title] at [Org] is where I can keep doing it."
 
 What these examples have in common: the stat lands first, it is specific and checkable, and the second sentence converts it into fit and impact. There is no warm-up sentence. Every word is load-bearing.
@@ -113,7 +114,7 @@ If the content bank contains an independent practice or consultancy, never refer
 
 Mirror the JD's exact phrase in the left column of every row.
 
-PRE-TABLE TRANSITION LINE — required, always included, placed as a standalone sentence immediately before the table begins. Use this exact wording (do not paraphrase, do not add to it, do not make it more formal):
+PRE-TABLE TRANSITION LINE — required, always included, placed as a standalone sentence immediately before the table begins. The default wording below is a personal, deliberately informal line; if it does not sound like you, edit it in the tool and it will be saved. Whatever wording is set here, use it exactly (do not paraphrase, do not add to it, do not make it more formal):
 "While I wanted to be professional and preserve the ordinary cover letter format, I thought of cloning the job description and laying out exactly how I can meet them, for your convenience."
 This line is deliberate and self-aware. It signals a real person, not a template. Do not smooth it out or make it sound more polished — its slightly informal, direct tone is the point.
 
@@ -261,10 +262,10 @@ STEP 1C — THE POSITIVE STANDARD
 Removing bad patterns is not enough. After every paragraph, ask: does this sound like the candidate actually wrote it, or does it sound like a clean version of an AI letter?
 
 Here is what a sentence looks like in the RIGHT register:
-- "I built a tool that cut the billing backlog down by more than 90%. It took seven months."
-- "The deadline didn't move. Three people were sick. The macros I had already built meant we hit it anyway."
+- "I built the tracker the team still runs on. It cut the weekly reporting job from a day to an hour."
+- "The deadline didn't move. Two people were off sick. The templates I had already built meant we hit it anyway."
 - "It wasn't a one-person job. The team did the work. I built the system that made the work possible."
-- "Three minutes from the office. When this role came up, applying was not a hard decision."
+- "I live close enough to walk. When this role came up, applying was not a hard decision."
 
 These show register, not content. Take the shape, never the numbers — every figure in the letter comes from the content bank.
 
@@ -287,7 +288,7 @@ Have a point of view. Not just "I have experience in stakeholder management." Sa
 
 Vary the rhythm deliberately. After every three sentences of similar length, change it. One short sentence. Then a longer one that takes its time.
 
-Be specific about the thing that was actually hard. "Managing 40 people is straightforward on paper. In practice, three of them were sick for two weeks and the deadline didn't move. That's when the macros I'd built mattered." That is a human sentence. "I demonstrated strong leadership under pressure" is not.
+Be specific about the thing that was actually hard. "Managing a team that size is straightforward on paper. In practice, two of them were off sick for a fortnight and the deadline didn't move. That's when the templates I'd built mattered." That is a human sentence. "I demonstrated strong leadership under pressure" is not.
 
 Use first person honestly. "I built this. It worked." is stronger than "The solution was developed and implemented successfully."
 
@@ -324,7 +325,7 @@ Address by name if known. "Dear Hiring Manager" is acceptable; a name is always 
 
 First sentence earns the second. If the opening is forgettable, nothing else matters.
 
-Specificity beats enthusiasm. "I reduced a $5.3M billing gap to $0.3M in 7 months" beats "I am passionate about finance" absolutely every time.
+Specificity beats enthusiasm. "I cut the reporting turnaround from ten days to two" beats "I am passionate about finance" absolutely every time.
 
 The table is unconventional but strong. It shows clarity of thought, preparation, and respect for the reader's time. Keep it.
 
