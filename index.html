@@ -2124,6 +2124,10 @@ function xline(headline){
     + '<w:spacing w:after="'+(headline?40:120)+'" w:line="240" w:lineRule="auto"/>'
     + '<w:rPr>'+XF+'<w:sz w:val="4"/><w:szCs w:val="4"/></w:rPr></w:pPr></w:p>';
 }
+// Empty paragraph at 1 pt font — the clearance the user adds by hand in Word.
+// It keeps the document default spacing (after=160, line=259), so it gives ~9 pt of
+// air: the original template's floating headline bar sat that far above the heading.
+function xspacer(){ return '<w:p><w:pPr><w:rPr>'+XF+'<w:sz w:val="2"/><w:szCs w:val="2"/></w:rPr></w:pPr></w:p>'; }
 // section = bold accent CAPS heading + its own rule paragraph
 function xheading(t,first){ return xpara(t.toUpperCase(),{before:first?null:240,b:true,c:ACCENT})+xline(false); }
 function xbullet(t,numId,o){ return xpara(t,Object.assign({pStyle:'ListParagraph',numId:numId||1,align:'both'},o||{})); }
@@ -2163,6 +2167,7 @@ function buildCLBody(d, sigDrawing){
 
 function buildCVBody(d){
   let b=xline(true);                       // headline bar under the letterhead
+  b+=xspacer();                            // clearance so the first heading doesn't touch the bar
   let first=true;
   const sec=t=>{ const h=xheading(t,first); first=false; return h; };
 
