@@ -2160,11 +2160,16 @@ function buildCLBody(d, sigDrawing){
   b+=xpara('Kind regards,',{after:20,line:240});
   // Sign-off paragraph, matching the template: space, signature image, line break, name.
   const signName = d.signName || _shortName(P.personal.fullName) || '';
-  const nameRun = '<w:r>'+xrpr({})+'<w:br/><w:t xml:space="preserve">'+xesc(signName)+'</w:t></w:r>';
-  b+=xpara('',{runs: xrun(' ',{}) + (sigDrawing||'') + (sigDrawing ? nameRun : xrun(signName,{}))});
+  // The name gets its own paragraph: a <w:br/> after the inline image is dropped by
+  // some PDF renderers, which left the signature with no name under it.
+  if(sigDrawing) b+=xpara('',{after:0,runs: xrun(' ',{}) + sigDrawing});
+  b+=xpara(signName,{});
   return b;
 }
 
+// Title | dates columns for experience and education. The date column must hold
+// "September 2015 – June 2019" in bold italic on one line (the old 2335 wrapped).
+const CV_DATE_W = 3400, CV_TITLE_W = 10790 - CV_DATE_W;
 function buildCVBody(d){
   let b=xline(true);                       // headline bar under the letterhead
   b+=xspacer();                            // clearance so the first heading doesn't touch the bar
@@ -2189,7 +2194,7 @@ function buildCVBody(d){
     for(const e of d.experience){
       const numId=(n%5)+1; n++;
       const titleRuns=xrun(e.title,{b:true})+(e.linkUrl?xrun(' ',{})+_linkRun(e.linkLabel,e.linkUrl,{u:true}):'');
-      rows+=xrow(xcell(8455,xpara('',{runs:titleRuns}))+xcell(2335,xpara(e.dates,{align:'right',b:true,i:true})));
+      rows+=xrow(xcell(CV_TITLE_W,xpara('',{runs:titleRuns}))+xcell(CV_DATE_W,xpara(e.dates,{align:'right',b:true,i:true})));
       let inner='';
       if(e.org) inner+=xpara('',{runs:xrun(e.org+' ',{i:true})+(e.orgUrl?_linkRun(e.orgLabel,e.orgUrl,{u:true}):'')});
       if(e.previously) inner+=xpara(e.previously,{i:true});
@@ -2197,17 +2202,17 @@ function buildCVBody(d){
       rows+=xrow(xcell(10790,inner,2));
       rows+=xrow(xcell(10790,xpara(''),2));
     }
-    b+=xtbl([8455,2335],rows,false);
+    b+=xtbl([CV_TITLE_W,CV_DATE_W],rows,false);
   }
 
   if(d.education.length){
     b+=sec('Education');
     let rows='';
     for(const e of d.education){
-      rows+=xrow(xcell(8455,xpara(e.degree,{b:true}))+xcell(2335,xpara(e.years,{align:'right',b:true})));
+      rows+=xrow(xcell(CV_TITLE_W,xpara(e.degree,{b:true}))+xcell(CV_DATE_W,xpara(e.years,{align:'right',b:true})));
       rows+=xrow(xcell(10790,xpara('',{runs:xrun(e.inst+' ',{i:true})+(e.instUrl?_linkRun(e.instLabel,e.instUrl,{u:true}):'')}),2));
     }
-    b+=xtbl([8455,2335],rows,false);
+    b+=xtbl([CV_TITLE_W,CV_DATE_W],rows,false);
   }
 
   if(d.certifications.length){
