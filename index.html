@@ -122,6 +122,26 @@
   .entry-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
   .entry-card-title{font-size:11px;font-weight:600;color:var(--navy);font-family:'DM Mono',monospace;letter-spacing:0.3px;}
   .add-entry-row{padding-top:4px;}
+  /* Example split: sample on the left, the user's own fields on the right */
+  .sample-btn{font-size:11px;padding:4px 10px;}
+  .sample-btn.on{background:var(--amber-pale);color:var(--amber);border-color:rgba(180,83,9,0.35);}
+  .builder-section-body.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;}
+  .sample-col{border:1px dashed rgba(180,83,9,0.45);border-radius:6px;padding:12px;background:#fffdf8;min-width:0;}
+  .form-col{min-width:0;}
+  .col-banner{font-size:11px;font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.6;padding:6px 10px;border-radius:4px;}
+  .sample-col .col-banner{color:var(--amber);background:var(--amber-pale);}
+  .form-col .col-banner{color:var(--navy);background:var(--navy-pale);}
+  .sample-col .field-input{background:transparent;color:var(--slate);border-style:dashed;resize:none;cursor:default;min-width:0;text-overflow:ellipsis;}
+  .sample-col textarea.field-input{field-sizing:content;}  /* grow to fit the example text; inputs keep their column width */
+  .sample-col .entry-card{background:transparent;}
+  .polish-body{padding:16px;font-size:13px;line-height:1.7;color:var(--slate);}
+  .polish-body ol{margin:0 0 12px 18px;}
+  .polish-report{margin-top:12px;font-size:12px;font-family:'DM Mono',monospace;line-height:1.6;}
+  .polish-report .ok{color:var(--green);}
+  .polish-report .bad{color:var(--amber);}
+  .polish-report ul{margin:8px 0 10px 18px;max-height:320px;overflow:auto;}
+  .polish-report code{background:var(--surface);padding:1px 4px;border-radius:3px;}
+  @media(max-width:900px){ .builder-section-body.split{grid-template-columns:1fr;} }
   .section-tip{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.6;padding:8px 12px;background:var(--navy-pale);border-radius:4px;}
 
   /* IMPORT PANEL */
@@ -234,6 +254,34 @@
 
     <!-- Profile form (rendered by JS) -->
     <div id="profile-form"></div>
+
+    <!-- Polish with AI: grammar/wording only, structure verified on the way back in -->
+    <div class="panel" id="polish-panel">
+      <div class="panel-header">
+        <div class="panel-label">
+          <div class="panel-number">&#x2728;</div>
+          <div class="panel-meta">
+            <div class="panel-title">Polish with AI &mdash; fix grammar and wording, keep the structure</div>
+            <div class="panel-desc">For when you've finished filling in your profile</div>
+          </div>
+        </div>
+      </div>
+      <div class="polish-body">
+        <ol>
+          <li>Click <strong>Copy polish prompt</strong>. It copies an editing prompt with your whole CV Bank attached.</li>
+          <li>Paste it into ChatGPT, Claude, or any AI chat.</li>
+          <li>Paste the AI's reply below and click <strong>Check &amp; Import</strong>. The tool compares it line by line with what you sent and warns you before anything important (headings, links, names, dates, figures) is changed.</li>
+        </ol>
+        <div class="toolbar" style="padding:0 0 12px;border:0;background:transparent">
+          <button class="btn btn-amber" onclick="copyPolishPrompt()">&#x2398; Copy polish prompt</button>
+        </div>
+        <textarea id="polish-text" class="field-input" rows="6" placeholder="Paste the AI's corrected CV Bank here (the code block, or the whole reply)..."></textarea>
+        <div class="toolbar" style="padding:12px 0 0;border:0;background:transparent">
+          <button class="btn btn-green" onclick="checkPolished(false)">&#x2714; Check &amp; Import</button>
+        </div>
+        <div id="polish-report" class="polish-report"></div>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -399,12 +447,12 @@
       <div class="full-width" style="background:var(--surface-2,#f8f9fb);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-size:0.82rem;color:var(--muted);line-height:1.6">
         <strong style="color:var(--text);font-size:0.85rem">&#x2139;&#xFE0F; How to use</strong>
         <ol style="margin:6px 0 0 16px;padding:0">
-          <li>Fill in your profile in <strong>Profile Builder</strong>, then switch here.</li>
+          <li>Fill in your profile in <strong>Profile Builder</strong>. Click <strong>&#x1F4A1; Show example</strong> on any section to see a filled-in example (Steve Smith, fictional) beside your own fields.</li>
+          <li>When your profile is done, use <strong>&#x2728; Polish with AI</strong> at the bottom of the Profile Builder to fix grammar and wording. <strong>Check &amp; Import</strong> refuses the AI's reply if it changed any headings, links, names, dates or figures.</li>
           <li>Paste the job description in the <strong>Job Description</strong> panel.</li>
           <li>Click <strong>&#x25B6; Build Prompts</strong> — your CV Bank + JD are injected automatically.</li>
           <li>Click <strong>&#x2398; Copy</strong> on the built prompt, then paste it into <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--navy)">Claude</a>.</li>
-          <li><strong>Cover Letter:</strong> Claude outputs a Tailoring Note + review copy + full LaTeX code. Paste the LaTeX into <a href="https://overleaf.com" target="_blank" rel="noopener" style="color:var(--navy)">Overleaf</a> → upload <code>signature.png</code> → Recompile → Download PDF.</li>
-          <li><strong>CV / LaTeX:</strong> Claude outputs a tailored CV in LaTeX. Paste into Overleaf → Recompile → Download PDF. No signature upload needed.</li>
+          <li>Copy the AI's whole reply, open <strong>&#x2462; Export to Word</strong>, and download a formatted <code>.docx</code>. For cover letters, upload your signature there once and it is saved in your browser.</li>
         </ol>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
           <strong style="color:var(--text);font-size:0.83rem">&#x270F; Customising the prompt templates</strong>
@@ -610,6 +658,115 @@ function debouncedSave() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// EXAMPLE PROFILE — shown beside each section when "Show example" is on.
+// A fictional person (Steve Smith). Read-only; never saved or exported.
+// ═══════════════════════════════════════════════════════════════
+const SAMPLE_P = {
+  personal: { fullName:'Steve Smith' },
+  summary: {
+    headline: 'Operations Coordinator | Logistics & Supply Chain | Process Improvement',
+    paragraphs:
+      'Operations coordinator with seven years in freight, warehousing and local government, focused on making day-to-day operations run with fewer delays and less rework.\n' +
+      'Known for building simple tools that teams actually use: rosters, trackers and reporting templates that replace manual spreadsheets. Comfortable working between frontline staff, managers and external contractors.\n' +
+      'Worked across logistics, council operations and community programmes in Queensland and New South Wales.',
+    tagline: 'I grew up helping in my family\'s hardware store, so I learned early that good service is mostly about doing the small things reliably.'
+  },
+  skills: [
+    { category:'Operations & Logistics', items:'Fleet and delivery scheduling\nInventory control and stocktakes\nContractor coordination\nWHS inspections and incident reporting' },
+    { category:'Data & Reporting', items:'Advanced Excel (pivot tables, Power Query, macros)\nPower BI dashboards\nWeekly KPI and exception reporting' },
+    { category:'Communication', items:'Stakeholder updates to managers and executives\nTraining new staff on procedures\nWriting SOPs and user guides' }
+  ],
+  workHistory: [
+    { title:'Operations Coordinator', employer:'Brightwater Logistics Pty Ltd — Brisbane, QLD', startDate:'March 2022', endDate:'Present', nature:'Full-time, permanent',
+      respUrl:'https://example.com/steve/responsibilities', milestonesUrl:'https://example.com/steve/milestones',
+      bullets:'Coordinated daily dispatch for a fleet of 45 vehicles across three depots, keeping on-time delivery above 96%.\nBuilt an Excel rostering tool that cut weekly scheduling time from six hours to one.\nLed monthly WHS inspections and closed 38 corrective actions with zero lost-time injuries in 2023.\nReported weekly KPIs to the operations manager and two regional directors.' },
+    { title:'Administration Officer — Works Depot', employer:'Greenfield Shire Council — Toowoomba, QLD', startDate:'January 2019', endDate:'February 2022', nature:'Full-time',
+      respUrl:'', milestonesUrl:'',
+      bullets:'Processed 200+ purchase orders a month and reconciled contractor invoices against delivery records.\nRedesigned the depot job request form, reducing incomplete requests by 40%.\nTrained six new starters on council procurement and records procedures.' }
+  ],
+  education: [
+    { degree:'Bachelor of Business — Supply Chain Management', institution:'Example University, Brisbane', startYear:'2015', endYear:'2018', gpa:'Distinction average', thesis:'Reducing Last-Mile Delivery Costs in Regional Queensland', notes:'Dean\'s List 2017', credentialsUrl:'https://example.com/steve/degree' },
+    { degree:'Certificate IV in Work Health and Safety', institution:'Example TAFE, Toowoomba', startYear:'2020', endYear:'2020', gpa:'', thesis:'', notes:'Completed part-time while working', credentialsUrl:'' }
+  ],
+  certifications: [
+    { category:'Safety & Compliance', items:'Certificate IV in Work Health and Safety | https://example.com/steve/whs\nFirst Aid (HLTAID011) | https://example.com/steve/first-aid\nForklift Licence (LF)' },
+    { category:'Data & Technology', items:'Microsoft Power BI Data Analyst (PL-300) | https://example.com/steve/pl300\nExcel Expert (MO-201)' }
+  ],
+  publications: {
+    academic: 'Reducing Last-Mile Delivery Costs in Regional Queensland — Example University (Honours thesis)',
+    awards: 'Operations Excellence Award — Brightwater Logistics (2023)\nDean\'s List — Example University (2017)'
+  },
+  storyBank: [
+    { title:'The Rostering Rebuild — Automation & Process Improvement',
+      usedFor:'Operations, administration, scheduling, project support, data roles',
+      text:'Every Friday, the depot supervisor spent most of the afternoon building next week\'s driver roster by hand. Leave requests arrived by text message, and mistakes meant trucks leaving late on Monday.\n' +
+           'I built an Excel rostering tool with a leave-request tab, automatic clash checks and a one-click printable roster. I tested it alongside the manual roster for three weeks before switching over, so nobody had to trust it blindly.\n' +
+           'Scheduling time dropped from six hours to about one, Monday late departures fell from four or five a week to under one, and two other depots adopted the tool within the year.' },
+    { title:'The Storm Response — Working Under Pressure',
+      usedFor:'Operations, emergency management, local government, coordinator roles',
+      text:'In February 2022, flooding closed two of the council\'s main access roads with less than a day\'s notice. The works depot had to reroute contractors and keep residents informed while half the office was working from home.\n' +
+           'I set up a shared job board so crews could see which roads were open, called each contractor directly, and drafted the daily update the customer service team read out to residents.\n' +
+           'All 60 scheduled urgent jobs were completed within the week, and the job board became the depot\'s standard process for later weather events.' }
+  ],
+  projects: [
+    { name:'Community Tool Library', description:'Volunteer-run lending library for household tools in Toowoomba. Built the booking spreadsheet and coordinated 12 volunteers.', url:'https://example.com/steve/tool-library' },
+    { name:'Depot Dashboard', description:'Power BI dashboard showing daily deliveries, delays and fleet availability, now used in morning huddles.', url:'https://example.com/steve/dashboard' }
+  ],
+  achievements: [
+    { category:'Awards', items:'Operations Excellence Award — Brightwater Logistics (2023)\nDean\'s List — Example University (2017)' },
+    { category:'Volunteering', items:'Volunteer coordinator, Community Tool Library (2021–present)\nSES volunteer, Toowoomba unit (2019–2022)' }
+  ],
+  referees: [
+    { name:'Ms. Laura Bennett', title:'Operations Manager, Brightwater Logistics', email:'laura.bennett@example.com', phone:'+61 400 000 001', linkedin:'https://www.linkedin.com/in/example-laura' },
+    { name:'Mr. David Chen', title:'Depot Manager, Greenfield Shire Council', email:'david.chen@example.com', phone:'+61 400 000 002', linkedin:'' }
+  ],
+  usageNotes:
+    'Operations / Logistics roles: Stories 1, 2 + fleet of 45, 96% on-time delivery, rostering tool\n' +
+    'Administration / Local government: Story 2 + purchase orders, procurement procedures, records\n' +
+    'Data / Reporting roles: Story 1 + Power BI dashboard, weekly KPI reporting, PL-300\n' +
+    'WHS / Safety roles: Certificate IV WHS + 38 corrective actions closed, zero lost-time injuries\n' +
+    'Australian market — always include: full working rights, Brisbane QLD location'
+};
+
+// Sections whose example panel is open. Remembered per browser as a convenience.
+const sampleSections = (() => {
+  try { return new Set(JSON.parse(localStorage.getItem('gethired_sample_sections') || '[]')); }
+  catch (e) { return new Set(); }
+})();
+function _saveSampleSections(){
+  try { localStorage.setItem('gethired_sample_sections', JSON.stringify([...sampleSections])); } catch (e) {}
+}
+
+// Render a section's body against SAMPLE_P, read-only, with the add/remove buttons removed.
+let SAMPLE_MODE = false;
+function sampleBodyHTML(id, renderer){
+  const real = P;
+  P = SAMPLE_P; SAMPLE_MODE = true;
+  let html;
+  try { html = renderer(); } finally { P = real; SAMPLE_MODE = false; }
+  const box = document.createElement('div');
+  box.innerHTML = html;
+  box.querySelectorAll('button, .add-entry-row, .section-tip').forEach(n => n.remove());
+  return box.innerHTML;
+}
+
+function toggleSample(id){
+  if (sampleSections.has(id)) sampleSections.delete(id); else sampleSections.add(id);
+  _saveSampleSections();
+  // Showing the example should also open the section
+  if (sampleSections.has(id) && !openSections.has(id)) toggleBuilderSection(id);
+  const btn = document.getElementById('sb-' + id);
+  if (btn) { const on = sampleSections.has(id); btn.classList.toggle('on', on); btn.innerHTML = on ? '&#x2715; Hide example' : '&#x1F4A1; Show example'; }
+  renderSectionBody(id);
+}
+
+// Grow read-only example textareas to fit their text (browsers without field-sizing)
+function fitSampleFields(el){
+  if (!el || (window.CSS && CSS.supports && CSS.supports('field-sizing', 'content'))) return;
+  el.querySelectorAll('.sample-col textarea').forEach(t => { t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; });
+}
+
+// ═══════════════════════════════════════════════════════════════
 // PROFILE FORM — RENDERING
 // ═══════════════════════════════════════════════════════════════
 function renderProfileForm() {
@@ -642,7 +799,10 @@ function buildSectionShell(id, num, title) {
             <div class="panel-title">${title}</div>
           </div>
         </div>
-        <span class="section-toggle" id="st-${id}">${open ? '&#x25BE;' : '&#x25B8;'}</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          ${id === 'personal' ? '' : `<button class="btn btn-outline sample-btn${sampleSections.has(id) ? ' on' : ''}" id="sb-${id}" onclick="event.stopPropagation();toggleSample('${id}')" title="Show a filled-in example beside your fields">${sampleSections.has(id) ? '&#x2715; Hide example' : '&#x1F4A1; Show example'}</button>`}
+          <span class="section-toggle" id="st-${id}">${open ? '&#x25BE;' : '&#x25B8;'}</span>
+        </div>
       </div>
       <div class="builder-section-body${open ? '' : ' collapsed'}" id="bsb-${id}"></div>
     </div>`;
@@ -653,7 +813,7 @@ function toggleBuilderSection(id) {
   const icon = document.getElementById('st-' + id);
   const collapsed = body.classList.toggle('collapsed');
   if (collapsed) { openSections.delete(id); icon.innerHTML = '&#x25B8;'; }
-  else           { openSections.add(id);    icon.innerHTML = '&#x25BE;'; }
+  else           { openSections.add(id);    icon.innerHTML = '&#x25BE;'; fitSampleFields(body); }
 }
 
 function renderSectionBody(id) {
@@ -667,14 +827,23 @@ function renderSectionBody(id) {
     achievements: achievementsBodyHTML, referees: refereesBodyHTML,
     usageNotes: usageNotesBodyHTML
   };
-  if (map[id]) el.innerHTML = map[id]();
+  if (!map[id]) return;
+  const split = id !== 'personal' && sampleSections.has(id);
+  el.classList.toggle('split', split);
+  if (!split) { el.innerHTML = map[id](); return; }
+  el.innerHTML =
+    `<div class="sample-col"><div class="col-banner">EXAMPLE — Steve Smith (fictional). A guide to what to write; it is never saved.</div>${sampleBodyHTML(id, map[id])}</div>` +
+    `<div class="form-col"><div class="col-banner">YOUR ENTRY — write your own version here</div>${map[id]()}</div>`;
+  fitSampleFields(el);
 }
 
 // ─── field helpers ───
 function inp(path, placeholder='') {
+  if (SAMPLE_MODE) return `<input class="field-input" type="text" readonly tabindex="-1" value="${esc(getPath(P,path))}">`;
   return `<input class="field-input" type="text" data-path="${path}" value="${esc(getPath(P,path))}" placeholder="${esc(placeholder)}">`;
 }
 function ta(path, placeholder='', rows=3) {
+  if (SAMPLE_MODE) return `<textarea class="field-input" readonly tabindex="-1" rows="${rows}">${esc(getPath(P,path))}</textarea>`;
   return `<textarea class="field-input" data-path="${path}" rows="${rows}" placeholder="${esc(placeholder)}">${esc(getPath(P,path))}</textarea>`;
 }
 function fi(label, inner, opts='') {
@@ -727,9 +896,9 @@ function personalBodyHTML() {
 
 function summaryBodyHTML() {
   return `
-    ${fg(1, fi('LinkedIn Headline', inp('summary.headline', 'e.g. Project Manager | AI Integrationist | ESG')))}
+    ${fg(1, fi('LinkedIn Headline', inp('summary.headline', 'e.g. Operations Coordinator | Logistics | Process Improvement')))}
     ${fg(1, fi('Professional Summary (multiple paragraphs OK)', ta('summary.paragraphs', 'Write your professional summary here — 2 to 4 paragraphs. Be specific. Mention industries, years of experience, mission, strengths.', 6)))}
-    ${fg(1, fi('Personal Tagline <span class="opt">optional</span>', ta('summary.tagline', 'e.g. As someone from an engineering family background, I value sincerity, teamwork, and perseverance...', 2)))}`;
+    ${fg(1, fi('Personal Tagline <span class="opt">optional</span>', ta('summary.tagline', 'e.g. One sentence about your values that you want your cover letters to close on', 2)))}`;
 }
 
 function skillsBodyHTML() {
@@ -753,8 +922,8 @@ function workHistoryBodyHTML() {
         <button class="btn btn-danger" onclick="removeItem('workHistory',${i})">&#x2715; Remove</button>
       </div>
       ${fg(2,
-        fi('Job Title', inp(`workHistory.${i}.title`, 'e.g. Delivery Lead — Sustainable Finance')),
-        fi('Employer', inp(`workHistory.${i}.employer`, 'e.g. Acuity Knowledge Partners'))
+        fi('Job Title', inp(`workHistory.${i}.title`, 'e.g. Operations Coordinator')),
+        fi('Employer', inp(`workHistory.${i}.employer`, 'e.g. Company name — City, State'))
       )}
       ${fg(3,
         fi('Start Date', inp(`workHistory.${i}.startDate`, 'e.g. April 2025')),
@@ -765,7 +934,7 @@ function workHistoryBodyHTML() {
         fi('Responsibilities Link <span class="opt">optional</span>', inp(`workHistory.${i}.respUrl`, 'https://... — becomes a [Responsibilities] link')),
         fi('Milestones / Website Link <span class="opt">optional</span>', inp(`workHistory.${i}.milestonesUrl`, 'https://... — becomes a [Milestones] link'))
       )}
-      ${fg(1, fi('Bullet Points (one per line)', ta(`workHistory.${i}.bullets`, 'Led delivery of...\nCoordinated a 30-member team...\nBuilt automated dashboards...\n...', 6)))}
+      ${fg(1, fi('Bullet Points (one per line)', ta(`workHistory.${i}.bullets`, 'Led...\nCoordinated...\nBuilt...\n...', 6)))}
     </div>`).join('');
   return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('workHistory',{title:'',employer:'',startDate:'',endDate:'',nature:'',bullets:''})">+ Add Role</button></div>`;
 }
@@ -779,13 +948,13 @@ function educationBodyHTML() {
       </div>
       ${fg(1, fi('Degree / Qualification', inp(`education.${i}.degree`, 'e.g. Master of Business Administration (MBA) — Marketing')))}
       ${fg(3,
-        fi('Institution', inp(`education.${i}.institution`, 'e.g. Cardiff Metropolitan University, UK')),
+        fi('Institution', inp(`education.${i}.institution`, 'e.g. University name, City')),
         fi('Start Year', inp(`education.${i}.startYear`, 'e.g. 2020')),
         fi('End Year', inp(`education.${i}.endYear`, 'e.g. 2022'))
       )}
       ${fg(2,
         fi('Grade / GPA <span class="opt">optional</span>', inp(`education.${i}.gpa`, 'e.g. Merit / 3.2 GPA')),
-        fi('Thesis / Dissertation <span class="opt">optional</span>', inp(`education.${i}.thesis`, 'e.g. The Relationship Between Training and Job Satisfaction'))
+        fi('Thesis / Dissertation <span class="opt">optional</span>', inp(`education.${i}.thesis`, 'e.g. Thesis title'))
       )}
       ${fg(1, fi('Additional Notes <span class="opt">optional</span>', inp(`education.${i}.notes`, 'e.g. Full Tuition Scholarship Holder')))}
       ${fg(1, fi('Credentials Link <span class="opt">optional</span>', inp(`education.${i}.credentialsUrl`, 'https://... — becomes a [Credentials] link next to the institution')))}
@@ -806,8 +975,8 @@ function certificationsBodyHTML() {
   return cards +
     `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('certifications',{category:'',items:''})">+ Add Category</button></div>` +
     `<div style="margin-top:16px">` +
-    fg(1, fi('Academic Publications (one per line)', ta('publications.academic', 'The Relationship Between Training and Job Satisfaction — Cardiff Metropolitan University (MBA)\n...', 4))) +
-    fg(1, fi('Awards (one per line)', ta('publications.awards', 'Most Valuable Team Award — ESG.X (Acuity Knowledge Partners)\nBest Results Achiever — Ananda College (2015)\n...', 4))) +
+    fg(1, fi('Academic Publications (one per line)', ta('publications.academic', 'Title — Institution (Degree)\n...', 4))) +
+    fg(1, fi('Awards (one per line)', ta('publications.awards', 'Award name — Organisation (Year)\n...', 4))) +
     `</div>`;
 }
 
@@ -819,7 +988,7 @@ function storyBankBodyHTML() {
         <span class="entry-card-title">STORY ${i+1}</span>
         <button class="btn btn-danger" onclick="removeItem('storyBank',${i})">&#x2715; Remove</button>
       </div>
-      ${fg(1, fi('Story Title', inp(`storyBank.${i}.title`, 'e.g. The ESG Evidence Library — Automation & Problem Solving')))}
+      ${fg(1, fi('Story Title', inp(`storyBank.${i}.title`, 'e.g. The Rostering Rebuild — Process Improvement')))}
       ${fg(1, fi('Best Used For', inp(`storyBank.${i}.usedFor`, 'e.g. Project management, data/analytics, automation, admin, operations roles')))}
       ${fg(1, fi('Story Text', ta(`storyBank.${i}.text`, 'Write the full story here. Include the challenge, what you did, and the measurable outcome. Multiple paragraphs are fine.', 7)))}
     </div>`).join('');
@@ -833,9 +1002,9 @@ function projectsBodyHTML() {
         <span class="entry-card-title">PROJECT ${i+1}</span>
         <button class="btn btn-danger" onclick="removeItem('projects',${i})">&#x2715; Remove</button>
       </div>
-      ${fg(1, fi('Project Name', inp(`projects.${i}.name`, 'e.g. Gaia Symbiosis (Non-Profit)')))}
+      ${fg(1, fi('Project Name', inp(`projects.${i}.name`, 'e.g. Community Tool Library')))}
       ${fg(1, fi('Project Link <span class="opt">optional</span>', inp(`projects.${i}.url`, 'https://... — the project name becomes a link wherever it is mentioned')))}
-      ${fg(1, fi('Description', ta(`projects.${i}.description`, 'e.g. AI-human hybrid solutions for local sustainability issues; ISO 14001-aligned EMS services for local organisations', 3)))}
+      ${fg(1, fi('Description', ta(`projects.${i}.description`, 'e.g. What it is, who it serves, and what you did', 3)))}
     </div>`).join('');
   return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('projects',{name:'',description:''})">+ Add Project</button></div>`;
 }
@@ -848,7 +1017,7 @@ function achievementsBodyHTML() {
         <button class="btn btn-danger" onclick="removeItem('achievements',${i})">&#x2715; Remove</button>
       </div>
       ${fg(1, fi('Category', inp(`achievements.${i}.category`, 'e.g. Music Competitions')))}
-      ${fg(1, fi('Items (one per line)', ta(`achievements.${i}.items`, '2009: All-island 2nd place — harmonium solo\n2008: Negombo Zone 1st place\n...', 4)))}
+      ${fg(1, fi('Items (one per line)', ta(`achievements.${i}.items`, 'Year: placing — competition\n...', 4)))}
     </div>`).join('');
   return cards + `<div class="add-entry-row"><button class="btn btn-outline" onclick="addItem('achievements',{category:'',items:''})">+ Add Category</button></div>`;
 }
@@ -862,7 +1031,7 @@ function refereesBodyHTML() {
       </div>
       ${fg(2,
         fi('Full Name', inp(`referees.${i}.name`, 'e.g. Mrs. Jane Doe')),
-        fi('Title', inp(`referees.${i}.title`, 'e.g. Associate Director, Acuity Analytics'))
+        fi('Title', inp(`referees.${i}.title`, 'e.g. Operations Manager, Company name'))
       )}
       ${fg(2,
         fi('Email', inp(`referees.${i}.email`, 'e.g. jane.doe@email.com')),
@@ -1422,6 +1591,16 @@ function parseCVBankText(text) {
 // ═══════════════════════════════════════════════════════════════
 // IMPORT / EXPORT / SEND
 // ═══════════════════════════════════════════════════════════════
+// Load CV Bank text into the Profile Builder (used by Import and by Polish with AI)
+function _applyBankText(text) {
+  P = parseCVBankText(text);
+  saveProfileData();
+  renderProfileForm();
+  document.querySelectorAll('.builder-section-body').forEach(el => el.classList.remove('collapsed'));
+  document.querySelectorAll('.section-toggle').forEach(el => { el.innerHTML = '&#x25BE;'; });
+  document.querySelectorAll('.builder-section-body').forEach(fitSampleFields);
+}
+
 function importCVBank() {
   const text = document.getElementById('import-text').value.trim();
   if (!text) { toast('Paste a CV Bank text above first.', 'error'); return; }
@@ -1441,6 +1620,150 @@ function importCVBank() {
   } catch(e) {
     console.error(e);
     toast('Parse error \u2014 check the console for details.', 'error');
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// POLISH WITH AI — grammar and wording only; the structure is verified on return
+// ═══════════════════════════════════════════════════════════════
+const POLISH_PROMPT = `You are a careful copy editor. Below is my CV content bank. Software reads it line by line, so its layout is fixed. Your only job is to correct spelling, grammar and punctuation, and to improve the wording of sentences so they read clearly and professionally.
+
+Follow every rule exactly:
+1. Return exactly the same number of lines, in the same order. Line 1 of your output is the corrected line 1 of mine, line 2 is line 2, and so on. Never merge, split, add, remove or reorder lines. Keep every blank line exactly where it is.
+2. Do not change section headings (lines written in CAPITALS) or any "STORY n:" number.
+3. Where a line starts with a label and a colon (for example "Employer:", "Period:", "Title:", "Best used for:", "Project URL:"), keep the label exactly as written.
+4. Copy these lines character for character, with no changes at all: lines starting with Full Name, Date of Birth, Address, Mobile, Phone, Secondary Phone, Email, LinkedIn, GitHub / Portfolio, Right to Work, Employer, Period, Title, Responsibilities URL, Milestones URL, Credentials URL, or Project URL.
+5. Keep every number, figure, percentage, dollar amount, date and URL exactly as written. Do not turn words into numerals or numerals into words.
+6. Keep every name of a person, organisation, product, project, qualification and certification exactly as written.
+7. Do not add facts, skills, achievements, results or claims that are not already there, and do not remove any.
+8. Use Australian English spelling (organisation, programme, licence).
+9. Plain text only: no markdown, no bold, no bullet symbols, and no numbering that was not already there.
+
+Reply with the corrected content bank inside one code block, and nothing before or after it.
+
+MY CV CONTENT BANK:
+`;
+
+// What was sent to the AI, kept so the reply can be compared with it (survives a reload)
+function _polishSnapshot(set){
+  try {
+    if (set !== undefined) localStorage.setItem('gethired_polish_snapshot', set);
+    return localStorage.getItem('gethired_polish_snapshot');
+  } catch (e) { return set !== undefined ? set : null; }
+}
+
+function copyPolishPrompt(){
+  const bank = generateCVBankText().replace(/\s+$/, '');
+  _polishSnapshot(bank);
+  const text = POLISH_PROMPT + '```\n' + bank + '\n```\n';
+  const done = () => toast('Polish prompt copied ✔ — paste it into your AI chat', 'success');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, () => { _polishFallbackCopy(text); done(); });
+  } else { _polishFallbackCopy(text); done(); }
+}
+function _polishFallbackCopy(text){
+  const t = document.createElement('textarea');
+  t.value = text; t.style.position = 'fixed'; t.style.opacity = '0';
+  document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(t);
+}
+
+// Pull the bank out of an AI reply: the fenced block if there is one, else the whole text
+function _unfence(t){
+  t = _sanitize(t || '');
+  const m = t.match(/```[^\n]*\n([\s\S]*?)\n?```/);
+  if (m) t = m[1];
+  return t.replace(/^\s*\n/, '').replace(/\s+$/, '');
+}
+
+// Lines whose whole content must survive untouched (contact details, links, dates, employers)
+const _POLISH_LOCKED = /^(Full Name|Date of Birth|Address|Mobile|Phone|Secondary Phone|Sri Lanka Phone|Email|LinkedIn|GitHub \/ Portfolio|Portfolio|Right to Work URL|Right to Work \(Australia\)|Right to Work|SEEK Profile|NIC|Sex|Civil Status|Ethnic Group|Employer|Period|Responsibilities URL|Milestones URL|Credentials URL|Project URL|Grade\/GPA|Title):/;
+
+// Compare the polished text with what was sent. Returns a list of {line, msg}.
+function _polishCheck(orig, pol){
+  const A = orig.split('\n').map(l => l.replace(/\s+$/, ''));
+  const B = pol.split('\n').map(l => l.replace(/\s+$/, ''));
+  const out = [];
+  const cut = x => { x = x || ''; return x.length > 90 ? x.slice(0, 87) + '…' : x; };
+  const add = (line, msg, was, now) => out.push({ line, msg, was, now });
+
+  if (A.length !== B.length) {
+    add(null, `The number of lines changed (${A.length} sent, ${B.length} returned), so lines were added, removed or merged.`);
+    for (let i = 0; i < Math.max(A.length, B.length); i++) {
+      if ((A[i] || '') === (B[i] || '')) continue;
+      if (!!(A[i] || '').trim() !== !!(B[i] || '').trim() || i >= A.length || i >= B.length) {
+        add(i + 1, 'The layout first differs here', A[i], B[i]); break;
+      }
+    }
+    return out;
+  }
+  const isHeader = l => l.trim().length > 3 && !/[a-z]/.test(l) && /[A-Z]{3}/.test(l);
+  const label    = l => { const m = l.match(/^([A-Za-z][^:]{0,40}):\s/); return m ? m[1] : null; };
+  const bag      = (l, re) => (l.match(re) || []).map(x => x.replace(/[.,;:)]+$/, '')).sort().join(' ');
+  const URL_RE = /https?:\/\/\S+/g, NUM_RE = /\d[\d,.]*/g, MAIL_RE = /[\w.+-]+@[\w-]+\.[\w.]+/g;
+
+  for (let i = 0; i < A.length; i++) {
+    const a = A[i], b = B[i], n = i + 1;
+    if (!a.trim() || !b.trim()) { if (!!a.trim() !== !!b.trim()) add(n, 'A blank line moved', a, b); continue; }
+    if (isHeader(a)) { if (a !== b) add(n, 'Section heading changed', a, b); continue; }
+    const st = a.match(/^STORY \d+:/);
+    if (st && !b.startsWith(st[0])) add(n, 'Story number changed', a, b);
+    if (_POLISH_LOCKED.test(a)) { if (a !== b) add(n, 'Protected line changed', a, b); continue; }
+    const la = label(a);
+    if (la && label(b) !== la) { add(n, `Label "${la}:" changed`, a, b); continue; }
+    if (bag(a, URL_RE)  !== bag(b, URL_RE))  { add(n, 'A link changed', a, b); continue; }
+    if (bag(a, MAIL_RE) !== bag(b, MAIL_RE)) { add(n, 'An email address changed', a, b); continue; }
+    if (bag(a, NUM_RE)  !== bag(b, NUM_RE))  { add(n, 'A number or date changed', a, b); continue; }
+  }
+
+  // Names the importer keys on: compare the parsed profiles field by field
+  try {
+    const pa = parseCVBankText(orig), pb = parseCVBankText(pol);
+    const same = (k, fields) => (pa[k] || []).forEach((x, i) => fields.forEach(fl => {
+      const y = (pb[k] || [])[i] || {};
+      if ((x[fl] || '') !== (y[fl] || '')) add(null, `${k} ${i + 1}: "${fl}" changed`, x[fl], y[fl]);
+    }));
+    ['workHistory','education','projects','referees','storyBank','certifications','skills','achievements'].forEach(k => {
+      if ((pa[k] || []).length !== (pb[k] || []).length) add(null, `Number of ${k} entries changed (${(pa[k]||[]).length} → ${(pb[k]||[]).length})`);
+    });
+    same('workHistory', ['title','employer','startDate','endDate']);
+    same('education',   ['degree','institution','startYear','endYear']);
+    same('projects',    ['name','url']);
+    same('referees',    ['name','title','email','phone','linkedin']);
+  } catch (e) { add(null, 'The reply could not be read as a CV Bank: ' + e.message); }
+  out.forEach(o => { o.was = cut(o.was); o.now = cut(o.now); });
+  return out;
+}
+
+function checkPolished(force){
+  const rep = document.getElementById('polish-report');
+  const raw = document.getElementById('polish-text').value;
+  if (!raw.trim()) { toast('Paste the AI\'s reply first.', 'error'); return; }
+  const pol = _unfence(raw);
+  const orig = _polishSnapshot() || generateCVBankText().replace(/\s+$/, '');
+  const problems = force ? [] : _polishCheck(orig, pol);
+  const e = x => esc(x == null ? '' : x);
+  if (problems.length) {
+    rep.innerHTML =
+      `<div class="bad">&#x26A0; ${problems.length} change${problems.length > 1 ? 's' : ''} to the structure or to protected details. Nothing has been imported.</div>` +
+      `<ul>${problems.slice(0, 40).map(p =>
+        `<li>${p.line ? 'Line ' + p.line + ' — ' : ''}${e(p.msg)}` +
+        (p.was != null || p.now != null ? `<br>was: <code>${e(p.was)}</code><br>now: <code>${e(p.now)}</code>` : '') +
+        `</li>`).join('')}${problems.length > 40 ? `<li>…and ${problems.length - 40} more</li>` : ''}</ul>` +
+      `<div>Ask the AI to fix these (or re-run the prompt), then check again. If you've read the changes and accept them:</div>` +
+      `<div style="margin-top:8px"><button class="btn btn-outline" onclick="checkPolished(true)">Import anyway</button></div>`;
+    return;
+  }
+  try {
+    _applyBankText(pol);
+    document.getElementById('polish-text').value = '';
+    rep.innerHTML = `<div class="ok">&#x2714; ${force ? 'Imported without checking.' : 'Structure intact — every heading, label, link, name, date and figure matches.'} Your profile now holds the polished text. Click <strong>Export CV Bank</strong> to save it as your standard bank.</div>`;
+    toast('Polished CV Bank imported ✔', 'success');
+  } catch (err) {
+    console.error(err);
+    rep.innerHTML = `<div class="bad">&#x26A0; The reply could not be imported: ${e(err.message)}</div>`;
   }
 }
 
