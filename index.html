@@ -2283,17 +2283,11 @@ function _blocks(block){
 }
 // Drop unfilled angle-bracket placeholders the model copied from the template
 // (<YEAR RANGE>, <EMAIL>, <PHONE>, <Degree> ...) so they never reach the document.
-// Em dashes never reach the document: between two dates they become an en dash
-// ("March 2022 – Present"), anywhere else a comma.
-const _DATEISH = '(?:\\d{4}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\.?|Present|Current|Now|Ongoing)';
+// Em dashes never reach the document: each one becomes a spaced hyphen
+// ("Delivery Lead \u2014 Sustainable Finance" -> "Delivery Lead - Sustainable Finance").
 function _noEmDash(s){
   if(!s || String(s).indexOf('\u2014')<0) return s;
-  return String(s)
-    .replace(new RegExp('('+_DATEISH+')\\s*\u2014\\s*(?='+_DATEISH+')','g'), '$1 \u2013 ')
-    .replace(/\s*\u2014\s*/g, ', ')
-    .replace(/,\s*,/g, ',')
-    .replace(/,\s*([.;:!?)\]])/g, '$1')
-    .replace(/^\s*,\s*/, '');
+  return String(s).replace(/[ \t]*\u2014[ \t]*/g, ' - ');
 }
 function _noPlaceholder(s){
   if(!s) return '';
