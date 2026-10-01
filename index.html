@@ -597,7 +597,7 @@ function defaultP() {
   return {
     personal: {
       fullName:'', dob:'', address:'', location:'', phone:'', phone2:'',
-      email:'', linkedin:'', portfolio:'', rtwUrl:'',
+      email:'', linkedin:'', portfolio:'', rtwUrl:'', seekUrl:'',
       rightToWork:'', locationNote:'', languages:'',
       nic:'', sex:'', civilStatus:'', ethnicGroup:''
     },
@@ -878,6 +878,7 @@ function personalBodyHTML() {
       fi('LinkedIn URL <span class="req">*</span>', inp(`${p}.linkedin`, 'e.g. https://linkedin.com/in/yourname')),
       fi('Portfolio / GitHub URL <span class="opt">optional</span>', inp(`${p}.portfolio`, 'e.g. https://yourname.github.io'))
     )}
+    ${fg(1, fi('SEEK Profile URL <span class="opt">optional</span>', inp(`${p}.seekUrl`, 'e.g. https://www.seek.com.au/profiles/... — leave blank and the SEEK icon is left out of your letterhead')))}
     ${fg(2,
       fi('Right to Work URL <span class="opt">optional</span>', inp(`${p}.rtwUrl`, 'e.g. https://yourname.github.io/rtw — leave blank if none')),
       fi('Right to Work Statement', inp(`${p}.rightToWork`, 'e.g. Unrestricted — Subclass 485 visa, valid until 2029'))
@@ -1121,6 +1122,7 @@ function generateCVBankText() {
   if (p.linkedin)      push(`LinkedIn: ${p.linkedin}`);
   if (p.portfolio)     push(`GitHub / Portfolio: ${p.portfolio}`);
   if (p.rtwUrl)        push(`Right to Work URL: ${p.rtwUrl}`);
+  if (p.seekUrl)       push(`SEEK Profile: ${p.seekUrl}`);
   if (p.sex)           push(`Sex: ${p.sex}`);
   if (p.civilStatus)   push(`Civil Status: ${p.civilStatus}`);
   if (p.ethnicGroup)   push(`Ethnic Group: ${p.ethnicGroup}`);
@@ -1343,6 +1345,7 @@ function parseCVBankText(text) {
     result.personal.linkedin    = parseField(b, 'LinkedIn');
     result.personal.portfolio   = parseField(b, 'GitHub / Portfolio') || parseField(b, 'Portfolio');
     result.personal.rtwUrl      = parseField(b, 'Right to Work URL') || parseField(b, 'RTW URL');
+    result.personal.seekUrl     = parseField(b, 'SEEK Profile') || parseField(b, 'SEEK URL');
     result.personal.rightToWork = parseField(b, 'Right to Work \\(Australia\\)') || parseField(b, 'Right to Work');
     result.personal.locationNote= parseField(b, 'Location note');
     result.personal.languages   = parseField(b, 'Languages');
@@ -2280,14 +2283,69 @@ function _blocks(block){
 }
 // Drop unfilled angle-bracket placeholders the model copied from the template
 // (<YEAR RANGE>, <EMAIL>, <PHONE>, <Degree> ...) so they never reach the document.
+// Em dashes never reach the document: between two dates they become an en dash
+// ("March 2022 – Present"), anywhere else a comma.
+const _DATEISH = '(?:\\d{4}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\.?|Present|Current|Now|Ongoing)';
+function _noEmDash(s){
+  if(!s || String(s).indexOf('\u2014')<0) return s;
+  return String(s)
+    .replace(new RegExp('('+_DATEISH+')\\s*\u2014\\s*(?='+_DATEISH+')','g'), '$1 \u2013 ')
+    .replace(/\s*\u2014\s*/g, ', ')
+    .replace(/,\s*,/g, ',')
+    .replace(/,\s*([.;:!?)\]])/g, '$1')
+    .replace(/^\s*,\s*/, '');
+}
 function _noPlaceholder(s){
   if(!s) return '';
-  return String(s)
+  return _noEmDash(String(s))
     .replace(/<[A-Za-z][A-Za-z0-9 _\/.,'()-]{0,48}>/g,'')  // the placeholder itself
     .replace(/\s{2,}/g,' ')                                 // collapse the gap it left
     .replace(/\s*\|\s*$/,'')                                // trailing separator
     .replace(/^[\s,;:|-]+/,'')                              // leading punctuation
     .trim();
+}
+// Letterhead contact line: each item is an icon run followed by its own text or link
+// and spaces. Remove whole items the user left blank (no dead "#" links or bare
+// icons), then trim the trailing space so the centred line stays centred.
+function _pruneLetterhead(xml, rels, has){
+  if (Object.values(has).every(Boolean)) return xml;            // all filled: leave the template untouched
+  if (!/\[YOUR_(PHONE|EMAIL|LOCATION)\]/.test(xml)) return xml;
+  const W  = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+  const R  = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+  const MC = 'http://schemas.openxmlformats.org/markup-compatibility/2006';
+  const doc = new DOMParser().parseFromString(xml, 'application/xml');
+  if (doc.getElementsByTagName('parsererror').length) return xml;
+  const KEY = { '[YOUR_PHONE]':'phone', '[YOUR_EMAIL]':'email', '[YOUR_LOCATION]':'location',
+                '[YOUR_LINKEDIN_URL]':'linkedin', '[YOUR_PORTFOLIO_URL]':'portfolio',
+                '[YOUR_SEEK_URL]':'seek', '[YOUR_RIGHT_TO_WORK_URL]':'rtw' };
+  const target = {};
+  (rels.match(/<Relationship\b[^>]*>/g) || []).forEach(t => {
+    const id = (t.match(/\bId="([^"]+)"/) || [])[1], tg = (t.match(/\bTarget="([^"]+)"/) || [])[1];
+    if (id) target[id] = tg || '';
+  });
+  const para = [...doc.getElementsByTagNameNS(W, 'p')].find(x => /\[YOUR_(PHONE|EMAIL|LOCATION)\]/.test(x.textContent));
+  if (!para) return xml;
+  const isIcon = n => n.localName === 'r' && (n.getElementsByTagNameNS(W, 'drawing').length ||
+                      n.getElementsByTagNameNS(W, 'pict').length || n.getElementsByTagNameNS(MC, 'AlternateContent').length);
+  const groups = []; let g = null;
+  for (const n of [...para.childNodes]) {
+    if (n.nodeType !== 1 || n.localName === 'pPr') continue;
+    if (isIcon(n) || !g) { g = { nodes: [], key: null }; groups.push(g); }
+    g.nodes.push(n);
+  }
+  const tag = (gr, s) => { for (const ph in KEY) if (s.indexOf(ph) >= 0) gr.key = KEY[ph]; };
+  for (const gr of groups) for (const n of gr.nodes) {
+    tag(gr, n.textContent || '');
+    if (n.localName === 'hyperlink') tag(gr, target[n.getAttributeNS(R, 'id')] || '');
+  }
+  groups.filter(gr => gr.key && !has[gr.key]).forEach(gr => gr.nodes.forEach(n => para.removeChild(n)));
+  const ts = [...para.getElementsByTagNameNS(W, 't')];
+  for (let i = ts.length - 1; i >= 0; i--) {                     // trailing space would shift the centred line
+    ts[i].textContent = ts[i].textContent.replace(/\s+$/, '');
+    if (ts[i].textContent) break;
+  }
+  const decl = (xml.match(/^<\?xml[^>]*\?>\s*/) || [''])[0];
+  return decl + new XMLSerializer().serializeToString(doc).replace(/^<\?xml[^>]*\?>\s*/, '');
 }
 // short display name: "L.I.D. Amarasinghe (Indika Amarasinghe)" -> "Indika Amarasinghe"
 function _shortName(full){ full = full||''; const m = full.match(/\(([^)]+)\)/); return (m ? m[1] : full).trim(); }
@@ -2354,7 +2412,7 @@ function parseCV(text){
     return { name:_noPlaceholder(n.text), linkLabel:n.label, linkUrl:n.url,
              title:_noPlaceholder(b.lines[0]), contact:_noPlaceholder(b.lines[1]) };
   });
-  else referees = [{ available: _flat(refText) || 'Available upon request.' }];
+  else referees = [{ available: _noEmDash(_flat(refText)) || 'Available upon request.' }];
   return {
     summary: _noPlaceholder(_flat(m.SUMMARY)),
     competencies: comp.map(_noPlaceholder).filter(Boolean), experience, education,
@@ -2659,10 +2717,16 @@ async function downloadExportDocx(){
     const htext = { '[YOUR_FULL_NAME]': dispName.toUpperCase(), '[YOUR_PHONE]': p.phone||'',
                     '[YOUR_EMAIL]': p.email||'', '[YOUR_LOCATION]': p.location||'' };
     const hurl  = { '[YOUR_LINKEDIN_URL]': p.linkedin||'#', '[YOUR_PORTFOLIO_URL]': p.portfolio||'#',
-                    '[YOUR_RIGHT_TO_WORK_URL]': p.rtwUrl||'#', '[YOUR_SEEK_URL]': p.portfolio||'#' };
+                    '[YOUR_RIGHT_TO_WORK_URL]': p.rtwUrl||'#', '[YOUR_SEEK_URL]': p.seekUrl||'#' };
+    const filled = v => !!String(v||'').trim();
+    const has = { phone:filled(p.phone), email:filled(p.email), location:filled(p.location), linkedin:filled(p.linkedin),
+                  portfolio:filled(p.portfolio), seek:filled(p.seekUrl), rtw:filled(p.rtwUrl) };
     for(const name of Object.keys(zip.files)){
       if(/^word\/header\d*\.xml$/.test(name)){
         let h = await zip.file(name).async('string');
+        const relName = name.replace(/^word\//, 'word/_rels/') + '.rels';
+        const rels = zip.file(relName) ? await zip.file(relName).async('string') : '';
+        h = _pruneLetterhead(h, rels, has);
         for(const k in htext) h = h.split(k).join(xesc(htext[k]));
         zip.file(name, h);
       } else if(/^word\/_rels\/header\d*\.xml\.rels$/.test(name)){

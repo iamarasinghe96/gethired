@@ -185,6 +185,7 @@ Every bullet point must start with a past-tense action verb (Led, Delivered, Dev
 No bullet point should be longer than two lines
 No generic filler phrases ("responsible for," "assisted with," "helped to," "worked on") — replace all with specific, owned, active language
 The professional summary must not begin with "I"
+No em dashes (—) anywhere in the CV, including text copied from the content bank. Use a comma, colon or full stop instead. Use an en dash (–) only inside date ranges, e.g. "March 2022 – Present".
 The CV must feel like it was written specifically for this job — not a generic document with the job title swapped in
 If the role is local to where the candidate lives, reference proximity naturally where it adds genuine value
 If the role is in sustainability, ESG, or climate: lead with the largest-scale delivery in the content bank and any reporting or analysis tool the candidate built
