@@ -2545,6 +2545,9 @@ function buildCLBody(d, sigDrawing){
 // Title | dates columns for experience and education. The date column must hold
 // "September 2015 – June 2019" in bold italic on one line (the old 2335 wrapped).
 const CV_DATE_W = 3400, CV_TITLE_W = 10790 - CV_DATE_W;
+// Education dates are years only ("2015 \u2013 2019", at most "2020 \u2013 Present"), so that table
+// gets a narrow date column and gives the room to long degree titles.
+const EDU_DATE_W = 1800, EDU_TITLE_W = 10790 - EDU_DATE_W;
 function buildCVBody(d){
   let b=xline(true);                       // headline bar under the letterhead
   b+=xspacer();                            // clearance so the first heading doesn't touch the bar
@@ -2584,16 +2587,16 @@ function buildCVBody(d){
     b+=sec('Education');
     let rows='';
     for(const e of d.education){
-      rows+=xrow(xcell(CV_TITLE_W,xpara(e.degree,{b:true}))+xcell(CV_DATE_W,xpara(e.years,{align:'right',b:true})));
+      rows+=xrow(xcell(EDU_TITLE_W,xpara(e.degree,{b:true}))+xcell(EDU_DATE_W,xpara(e.years,{align:'right',b:true})));
       rows+=xrow(xcell(10790,xpara('',{runs:xrun(e.inst+' ',{i:true})+(e.instUrl?_linkRun(e.instLabel,e.instUrl,{u:true}):'')}),2));
     }
-    b+=xtbl([CV_TITLE_W,CV_DATE_W],rows,false);
+    b+=xtbl([EDU_TITLE_W,EDU_DATE_W],rows,false);
   }
 
   if(d.certifications.length){
     b+=sec('Certifications');
     const half=Math.ceil(d.certifications.length/2);
-    const col=items=>items.map(x=>xbullet(x,4)).join('')||xpara('');
+    const col=items=>items.map(x=>xbullet(x,4,{align:'left'})).join('')||xpara('');  // left, not justified: short items stretched badly
     b+=xtbl([5395,5395],xrow(xcell(5395,col(d.certifications.slice(0,half)))+xcell(5395,col(d.certifications.slice(half)))),false);
   }
 
